@@ -4,7 +4,7 @@ object BatchAddForm: TBatchAddForm
   Caption = 'Batch add'
   ClientHeight = 300
   ClientWidth = 635
-  Color = 16708071
+  Color = clBtnFace
   DoubleBuffered = True
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText

@@ -3,7 +3,7 @@ object SettingsForm: TSettingsForm
   Top = 0
   BorderStyle = bsToolWindow
   Caption = 'Settings'
-  ClientHeight = 173
+  ClientHeight = 208
   ClientWidth = 435
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -17,7 +17,7 @@ object SettingsForm: TSettingsForm
   OnCreate = FormCreate
   DesignSize = (
     435
-    173)
+    208)
   PixelsPerInch = 96
   TextHeight = 13
   object ProcessCountBar: TsTrackBar
@@ -40,8 +40,8 @@ object SettingsForm: TSettingsForm
   object DontDoubleDownloadBtn: TsCheckBox
     Left = 11
     Top = 90
-    Width = 255
-    Height = 19
+    Width = 248
+    Height = 20
     Caption = 'Don'#39't download again if  local file contains audio'
     Checked = True
     State = cbChecked
@@ -53,8 +53,8 @@ object SettingsForm: TSettingsForm
   object DontPreviewImgBtn: TsCheckBox
     Left = 11
     Top = 115
-    Width = 113
-    Height = 19
+    Width = 106
+    Height = 20
     Caption = 'Don'#39't load thumbs'
     TabOrder = 2
     SkinData.SkinSection = 'CHECKBOX'
@@ -91,8 +91,8 @@ object SettingsForm: TSettingsForm
   object DashVideoBtn: TsCheckBox
     Left = 11
     Top = 35
-    Width = 281
-    Height = 19
+    Width = 274
+    Height = 20
     Caption = 'When a "DASH" video is selected download audio too'
     Checked = True
     State = cbChecked
@@ -133,8 +133,8 @@ object SettingsForm: TSettingsForm
   object PlaySoundBtn: TsCheckBox
     Left = 224
     Top = 115
-    Width = 203
-    Height = 19
+    Width = 196
+    Height = 20
     Caption = 'Play a sound when download is done'
     TabOrder = 6
     SkinData.SkinSection = 'CHECKBOX'
@@ -143,7 +143,7 @@ object SettingsForm: TSettingsForm
   end
   object sButton1: TsButton
     Left = 352
-    Top = 140
+    Top = 175
     Width = 75
     Height = 25
     Anchors = [akRight, akBottom]
@@ -154,7 +154,7 @@ object SettingsForm: TSettingsForm
   end
   object sButton2: TsButton
     Left = 8
-    Top = 140
+    Top = 175
     Width = 75
     Height = 25
     Anchors = [akLeft, akBottom]
@@ -162,6 +162,19 @@ object SettingsForm: TSettingsForm
     TabOrder = 8
     OnClick = sButton2Click
     SkinData.SkinSection = 'BUTTON'
+  end
+  object CheckUpdateBtn: TsCheckBox
+    Left = 11
+    Top = 141
+    Width = 132
+    Height = 20
+    Caption = 'Check updates on start'
+    Checked = True
+    State = cbChecked
+    TabOrder = 9
+    SkinData.SkinSection = 'CHECKBOX'
+    ImgChecked = 0
+    ImgUnchecked = 0
   end
   object sSkinProvider1: TsSkinProvider
     AddedTitle.Font.Charset = DEFAULT_CHARSET

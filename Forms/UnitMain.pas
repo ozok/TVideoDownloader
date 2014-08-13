@@ -57,7 +57,6 @@ type
     Batchaddlinks1: TMenuItem;
     A2: TMenuItem;
     Batchaddplaylists1: TMenuItem;
-    AddPanel: TsPanel;
     DirectoryEdit: TsDirectoryEdit;
     OpenOutBtn: TsButton;
     Info: TJvComputerInfoEx;
@@ -84,13 +83,14 @@ type
     A1: TMenuItem;
     C1: TMenuItem;
     N1: TMenuItem;
-    C2: TMenuItem;
     C3: TMenuItem;
     N2: TMenuItem;
     M1: TMenuItem;
     S1: TMenuItem;
     LogsBtn: TsBitBtn;
     S2: TMenuItem;
+    DonateBtn: TsBitBtn;
+    ProcessingPanel: TsPanel;
     procedure AddLinkBtnClick(Sender: TObject);
     procedure ClearLinksBtnClick(Sender: TObject);
     procedure PassBtnClick(Sender: TObject);
@@ -115,6 +115,10 @@ type
     procedure C3Click(Sender: TObject);
     procedure LogsBtnClick(Sender: TObject);
     procedure S2Click(Sender: TObject);
+    procedure C1Click(Sender: TObject);
+    procedure S1Click(Sender: TObject);
+    procedure M1Click(Sender: TObject);
+    procedure A1Click(Sender: TObject);
   private
     { Private declarations }
     FDownloadItems: TDownloadItemList;
@@ -177,6 +181,8 @@ type
     // save/load settings
     procedure SaveOptions();
     procedure LoadOptions();
+
+    procedure ProcessPanelVisibility(const Visible: Boolean);
   public
     { Public declarations }
     FLogFolder: string;
@@ -190,14 +196,20 @@ var
   MainForm: TMainForm;
 
 const
-  Portable = False;
-  BuildInt = 100;
+  Portable = True;
+  BuildInt = 63;
 
 implementation
 
 {$R *.dfm}
 
-uses UnitSettings, UnitLogs, UnitBatchAdd;
+uses UnitSettings, UnitLogs, UnitBatchAdd, UnitAbout;
+
+procedure TMainForm.A1Click(Sender: TObject);
+begin
+  Self.Enabled := False;
+  AboutForm.Show;
+end;
 
 procedure TMainForm.A2Click(Sender: TObject);
 Var
@@ -234,7 +246,10 @@ begin
       begin
         if LYIE.PlayListVideoLinks.Count > 0 then
         begin
-          AddToLog(0, '');
+          if LogForm.Main.Lines.Count > 0 then
+          begin
+            AddToLog(0, '');
+          end;
           AddToLog(0, 'Found ' + FloatToStr(LYIE.PlayListVideoLinks.Count) + ' videos.');
           AddToLog(0, '');
           for I := 0 to LYIE.PlayListVideoLinks.Count - 1 do
@@ -507,9 +522,14 @@ begin
   BatchAddForm.Show;
 end;
 
+procedure TMainForm.C1Click(Sender: TObject);
+begin
+  ShellExecute(Application.Handle, 'open', PWideChar(ExtractFileDir(Application.ExeName) + '\changelog.txt'), nil, nil, SW_SHOWNORMAL);
+end;
+
 procedure TMainForm.C3Click(Sender: TObject);
 begin
-  ShellExecute(Application.Handle, 'open', PChar(ExtractFileDir(Application.ExeName) + '\tools\youtube-dl.exe'), '-U', nil, SW_SHOWNORMAL);
+  ShellExecute(Application.Handle, 'open', PWideChar(ExtractFileDir(Application.ExeName) + '\tools\youtube-dl.exe'), '-U', nil, SW_SHOWNORMAL);
 end;
 
 function TMainForm.CheckOutputFiles(out MissingFiles: TStringList): Boolean;
@@ -944,6 +964,11 @@ begin
   LogForm.Show;
 end;
 
+procedure TMainForm.M1Click(Sender: TObject);
+begin
+  ShellExecute(0, 'open', 'https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=2DCLCV369NLBW', nil, nil, SW_SHOWNORMAL);
+end;
+
 procedure TMainForm.MenuState(const _Enabled: Boolean);
 var
   I: Integer;
@@ -988,6 +1013,35 @@ begin
     PassPnl.Visible := True;
     PassBtn.Down := True;
   end;
+end;
+
+procedure TMainForm.ProcessPanelVisibility(const Visible: Boolean);
+begin
+  if Visible then
+  begin
+    ProcessingPanel.Left := (Self.Width div 2) - (ProcessingPanel.Width div 2);
+    ProcessingPanel.Top := (Self.Height div 2) - (ProcessingPanel.Height div 2);
+    ProcessingPanel.Visible := True;
+    ProcessingPanel.BringToFront;
+  end
+  else
+  begin
+    ProcessingPanel.Visible := False;
+  end;
+end;
+
+procedure TMainForm.S1Click(Sender: TObject);
+const
+  NewLine = '%0D%0A';
+var
+  mail: PChar;
+  mailbody: string;
+begin
+  mailbody := AboutForm.sLabel1.Caption;
+  mailbody := mailbody + NewLine + 'Bugs: ' + NewLine + NewLine + NewLine + 'Suggestions: ' + NewLine + NewLine + NewLine;
+  mail := PwideChar('mailto:ozok26@gmail.com?subject=TVideoDownloader&body=' + mailbody);
+
+  ShellExecute(0, 'open', mail, nil, nil, SW_SHOWNORMAL);
 end;
 
 procedure TMainForm.S2Click(Sender: TObject);
@@ -1100,8 +1154,7 @@ var
 begin
   if FVideoDownloadListItems.Count > 0 then
   begin
-    AddPanel.Caption := 'Creating command lines...';
-    AddPanel.Visible := True;
+    ProcessPanelVisibility(True);
     MainForm.Enabled := False;
     try
       LRenameFile := TStringList.Create;
@@ -1329,7 +1382,7 @@ begin
         LRenameFile.Free;
       end;
     finally
-      AddPanel.Visible := False;
+      ProcessPanelVisibility(False);
       Self.Enabled := True;
     end;
   end
@@ -1345,11 +1398,16 @@ var
 begin
   if ID_YES = Application.MessageBox('Stop downloading?', 'Stop', MB_ICONQUESTION or MB_YESNO) then
   begin
-    VideoDownloaderPosTimer.Enabled := False;
-    for I := Low(FVideoDownloadProcesses) to High(FVideoDownloadProcesses) do
-      FVideoDownloadProcesses[i].Stop;
-    ClearTempFolderEx(True);
-    DownloadNormalState;
+    ProcessPanelVisibility(True);
+    try
+      VideoDownloaderPosTimer.Enabled := False;
+      for I := Low(FVideoDownloadProcesses) to High(FVideoDownloadProcesses) do
+        FVideoDownloadProcesses[i].Stop;
+      ClearTempFolderEx(True);
+      DownloadNormalState;
+    finally
+      ProcessPanelVisibility(false);
+    end;
   end;
 end;
 
@@ -1716,7 +1774,7 @@ begin
         begin
           if ID_YES = Application.MessageBox('There is a new version. Would you like to download it?', 'New Version', MB_ICONQUESTION or MB_YESNO) then
           begin
-            ShellExecute(0, 'open', 'http://www.fosshub.com/TVideoDownloaderr.html', nil, nil, SW_SHOWNORMAL);
+            ShellExecute(0, 'open', 'https://sourceforge.net/projects/tvideodownloader/', nil, nil, SW_SHOWNORMAL);
           end;
 
         end;

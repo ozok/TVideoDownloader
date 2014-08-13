@@ -13,6 +13,9 @@ object LogForm: TLogForm
   Font.Style = []
   OldCreateOrder = False
   Position = poMainFormCenter
+  OnClose = FormClose
+  OnCreate = FormCreate
+  OnShow = FormShow
   PixelsPerInch = 96
   TextHeight = 13
   object sPageControl1: TsPageControl
@@ -20,7 +23,7 @@ object LogForm: TLogForm
     Top = 0
     Width = 784
     Height = 414
-    ActivePage = sTabSheet3
+    ActivePage = sTabSheet1
     Align = alClient
     TabOrder = 0
     SkinData.SkinSection = 'PAGECONTROL'
@@ -28,6 +31,10 @@ object LogForm: TLogForm
       Caption = 'Main'
       SkinData.CustomColor = False
       SkinData.CustomFont = False
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Main: TsMemo
         Left = 0
         Top = 0
@@ -60,6 +67,10 @@ object LogForm: TLogForm
       Caption = 'Command lines'
       SkinData.CustomColor = False
       SkinData.CustomFont = False
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object CMDLog: TsMemo
         Left = 0
         Top = 0
@@ -92,6 +103,10 @@ object LogForm: TLogForm
       Caption = 'Console outputs'
       SkinData.CustomColor = False
       SkinData.CustomFont = False
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object ConsoleLog: TsMemo
         Left = 0
         Top = 21
@@ -142,6 +157,7 @@ object LogForm: TLogForm
         Style = csDropDownList
         ItemIndex = -1
         TabOrder = 1
+        OnChange = ConsolesListChange
       end
     end
   end

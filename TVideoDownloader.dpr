@@ -18,7 +18,8 @@ uses
   MediaInfoDLL in 'Units\MediaInfoDLL.pas',
   windows7taskbar in 'Units\windows7taskbar.pas',
   UnitLogs in 'Forms\UnitLogs.pas' {LogForm} ,
-  UnitBatchAdd in 'Forms\UnitBatchAdd.pas' {BatchAddForm};
+  UnitBatchAdd in 'Forms\UnitBatchAdd.pas' {BatchAddForm} ,
+  UnitAbout in 'Forms\UnitAbout.pas' {AboutForm};
 
 {$R *.res}
 
@@ -30,6 +31,7 @@ begin
   Application.CreateForm(TSettingsForm, SettingsForm);
   Application.CreateForm(TLogForm, LogForm);
   Application.CreateForm(TBatchAddForm, BatchAddForm);
+  Application.CreateForm(TAboutForm, AboutForm);
   Application.Run;
 
 end.

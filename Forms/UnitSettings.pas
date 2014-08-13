@@ -19,6 +19,7 @@ type
     PlaySoundBtn: TsCheckBox;
     sButton1: TsButton;
     sButton2: TsButton;
+    CheckUpdateBtn: TsCheckBox;
     procedure sButton1Click(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure FormCreate(Sender: TObject);
@@ -73,6 +74,7 @@ begin
       ProcessCountBar.Position := ReadInteger('options', 'downloadcount', LProcCount);
       DontDoubleDownloadBtn.Checked := ReadBool('options', 'doubledownload', True);
       DontPreviewImgBtn.Checked := ReadBool('options', 'noimg', False);
+      CheckUpdateBtn.Checked := ReadBool('Options', 'Update', True);
     end;
   finally
     ProcessCountBarChange(Self);
@@ -98,6 +100,7 @@ begin
       WriteInteger('options', 'downloadcount', ProcessCountBar.Position);
       WriteBool('options', 'doubledownload', DontDoubleDownloadBtn.Checked);
       WriteBool('options', 'noimg', DontPreviewImgBtn.Checked);
+      WriteBool('Options', 'Update', CheckUpdateBtn.Checked);
     end;
   finally
     OptionFile.Free;
@@ -123,6 +126,7 @@ begin
   ProcessCountBar.Position := LProcCount;
   DontDoubleDownloadBtn.Checked := True;
   DontPreviewImgBtn.Checked := False;
+  CheckUpdateBtn.Checked := True;
 end;
 
 end.
