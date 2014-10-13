@@ -101,7 +101,7 @@ begin
     FProcess.ConsoleOutput.Add(FProcess.CommandLine);
     if FProcess.ConsoleOutput.Count > 0 then
     begin
-      FFileName := Trim(FProcess.ConsoleOutput[0]);
+      FFileName := (FProcess.ConsoleOutput[0]);
     end;
   finally
     FStatus := stDoneEx;

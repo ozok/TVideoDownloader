@@ -1,2 +1,15 @@
+--1.2
+-Added: Improved progress update performance
+-Fixed: Many memory leaks
+-Fixed: Couldn't mux if file name ended/started with space
+-Fixed: "Access violation" errors when removing items from the list
+-Fixed: A few interface bugs
+-Fixed: "Play a sound when download is done" option was not applied
+-Updated: youtube-dl
+
+--1.1 Hotfix
+-Fixed: Mp4Box was missing in the package
+-Fixed: Clicking to tray icon balloon didn't restore window
+
 --1.0
 -First release

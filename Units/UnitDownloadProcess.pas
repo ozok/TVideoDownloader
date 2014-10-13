@@ -17,18 +17,18 @@
   * along with TEncoder.  If not, see <http://www.gnu.org/licenses/>.
   *
   * }
-unit UnitEncoder;
+unit UnitDownloadProcess;
 
 interface
 
-uses Classes, Windows, SysUtils, JvCreateProcess, Messages, StrUtils, ComCtrls;
+uses Classes, Windows, SysUtils, JvCreateProcess, Messages, StrUtils, UnitSettings, ComCtrls;
 
 // current state of the process
 type
   TEncoderStatus = (esEncoding, esStopped, esDone);
 
 type
-  TEncoder = class(TObject)
+  TDownloadProcess = class(TObject)
   private
     // process
     FProcess: TJvCreateProcess;
@@ -48,30 +48,26 @@ type
     FFileNames: TStringList;
     // a list of types of encoders to be run.
     FProcessTypes: TStringList;
-    // a list of durations of files to be processed. generally to show progress.
-    FDurations: TStringList;
-    // index of currently used duration
-    FDurationIndex: integer;
     // list of informations about steps.
     FInfos: TStringList;
     // a list of indexes indicating to the files in a list. to show progress in the list.
     FFileIndexes: TStringList;
-    // a list of output files. generally to check if they are created.
-    FOutputFiles: TStringList;
 
     // process events
     procedure ProcessRead(Sender: TObject; const S: string; const StartsOnNewLine: Boolean);
     procedure ProcessTerminate(Sender: TObject; ExitCode: Cardinal);
 
+    procedure UpdateMainFormItem(const ProgressStr: string; const Progress: integer);
+
     // field variable read funcs
     function GetProcessID: integer;
     function GetFileName: string;
     function GetCurrentProcessType: string;
-    function GetCurrentDuration: string;
     function GetInfo: string;
     function GetCommandCount: integer;
     function GetExeName: string;
     function GetFileIndex: Integer;
+    function GetProgress(const ConsoleOutput: string): Integer;
   public
     property ConsoleOutput: string read FConsoleOutput;
     property EncoderStatus: TEncoderStatus read FEncoderStatus;
@@ -81,17 +77,14 @@ type
     property FilesDone: integer read FCommandIndex;
     property ProcessID: integer read GetProcessID;
     property CurrentFile: string read GetFileName;
-    property Durations: TStringList read FDurations write FDurations;
     property ProcessTypes: TStringList read FProcessTypes write FProcessTypes;
     property CurrentProcessType: string read GetCurrentProcessType;
-    property CurrentDuration: string read GetCurrentDuration;
     property Info: string read GetInfo;
     property Infos: TStringList read FInfos write FInfos;
     property CommandCount: integer read GetCommandCount;
     property ExeName: string read GetExeName;
     property FileIndexes: TStringList read FFileIndexes write FFileIndexes;
     property FileIndex: Integer read GetFileIndex;
-    property OutputFiles: TStringList read FOutputFiles write FOutputFiles;
 
     constructor Create();
     destructor Destroy(); override;
@@ -104,11 +97,11 @@ type
 
 implementation
 
-{ TEncoder }
+{ TDownloadProcess }
 
 uses UnitMain;
 
-constructor TEncoder.Create;
+constructor TDownloadProcess.Create;
 begin
   inherited Create;
 
@@ -138,99 +131,108 @@ begin
   FEncoderStatus := esStopped;
   FStoppedByUser := False;
   FProcessTypes := TStringList.Create;
-  FDurations := TStringList.Create;
   FInfos := TStringList.Create;
   FFileIndexes := TStringList.Create;
-  FDurationIndex := 0;
   FCommandIndex := 0;
-  FOutputFiles := TStringList.Create;
 end;
 
-destructor TEncoder.Destroy;
+destructor TDownloadProcess.Destroy;
 begin
-
   inherited Destroy;
   FreeAndNil(FCommandLines);
   FreeAndNil(FPaths);
   FreeAndNil(FInfos);
   FreeAndNil(FFileNames);
   FreeAndNil(FProcessTypes);
-  FreeAndNil(FDurations);
   FreeAndNil(FFileIndexes);
-  FreeAndNil(FOutputFiles);
   FProcess.Free;
-
 end;
 
-function TEncoder.GetCommandCount: integer;
+function TDownloadProcess.GetCommandCount: integer;
 begin
   Result := FCommandLines.Count;
 end;
 
-function TEncoder.GetConsoleOutput: TStrings;
+function TDownloadProcess.GetConsoleOutput: TStrings;
 begin
   Result := FProcess.ConsoleOutput;
 end;
 
-function TEncoder.GetCurrentDuration: string;
-begin
-  if FCommandIndex < FDurations.Count then
-    Result := FDurations[FDurationIndex];
-end;
-
-function TEncoder.GetCurrentProcessType: string;
+function TDownloadProcess.GetCurrentProcessType: string;
 begin
   if FCommandIndex < FProcessTypes.Count then
     Result := FProcessTypes[FCommandIndex];
 end;
 
-function TEncoder.GetExeName: string;
+function TDownloadProcess.GetExeName: string;
 begin
   if FCommandIndex < FPaths.Count then
     Result := FPaths[FCommandIndex];
 end;
 
-function TEncoder.GetFileIndex: Integer;
+function TDownloadProcess.GetFileIndex: Integer;
 begin
   if FCommandIndex < FFileIndexes.Count then
     Result := StrToInt(FFileIndexes[FCommandIndex]);
 end;
 
-function TEncoder.GetFileName: string;
+function TDownloadProcess.GetFileName: string;
 begin
   if FCommandIndex < FFileNames.Count then
     Result := FFileNames[FCommandIndex];
 end;
 
-function TEncoder.GetInfo: string;
+function TDownloadProcess.GetInfo: string;
 begin
   if FCommandIndex < FInfos.Count then
     Result := FInfos[FCommandIndex];
 end;
 
-function TEncoder.GetProcessID: integer;
+function TDownloadProcess.GetProcessID: integer;
 begin
   Result := FProcess.ProcessInfo.hProcess;
 end;
 
-procedure TEncoder.ProcessRead(Sender: TObject; const S: string; const StartsOnNewLine: Boolean);
+function TDownloadProcess.GetProgress(const ConsoleOutput: string): Integer;
+var
+  StrPos1, StrPos2: Integer;
+  TmpStr: string;
+  TmpInt: Integer;
 begin
-  FConsoleOutput := Trim(S);
+  Result := 0;
+  TmpStr := ConsoleOutput;
+  StrPos1 := Pos('[download] ', TmpStr);
+  StrPos2 := Pos('%', TmpStr);
+  TmpStr := Trim(copy(TmpStr, StrPos1 + 10, StrPos2 - StrPos1 - 12));
+  if TryStrToInt(TmpStr, TmpInt) then
+  begin
+    Result := TmpInt;
+  end;
 end;
 
-procedure TEncoder.ProcessTerminate(Sender: TObject; ExitCode: Cardinal);
+procedure TDownloadProcess.ProcessRead(Sender: TObject; const S: string; const StartsOnNewLine: Boolean);
+begin
+  FConsoleOutput := Trim(S);
+  UpdateMainFormItem(S, GetProgress(S));
+end;
+
+procedure TDownloadProcess.ProcessTerminate(Sender: TObject; ExitCode: Cardinal);
 begin
   FEncoderStatus := esStopped;
   if FStoppedByUser then
   begin
+    UpdateMainFormItem('Stopped', 0);
     FEncoderStatus := esStopped;
   end
   else
   begin
-    // processed that need duration information
-    if (GetCurrentProcessType = '2') or (GetCurrentProcessType = '19') then
+    if ExitCode <> 0 then
     begin
-      Inc(FDurationIndex);
+      UpdateMainFormItem('Error code: ' + FloatToStr(ExitCode), 0);
+    end
+    else
+    begin
+      UpdateMainFormItem('Done', 100);
     end;
 
     // run next command
@@ -241,6 +243,7 @@ begin
       FProcess.ApplicationName := FPaths[FCommandIndex];
       FEncoderStatus := esEncoding;
       FConsoleOutput := '';
+      UpdateMainFormItem('Starting...', 0);
       FProcess.Run;
     end
     else
@@ -252,22 +255,20 @@ begin
   end;
 end;
 
-procedure TEncoder.ResetValues;
+procedure TDownloadProcess.ResetValues;
 begin
   // reset all lists, indexes etc
   FCommandLines.Clear;
   FPaths.Clear;
   FCommandIndex := 0;
-  FDurationIndex := 0;
   FConsoleOutput := '';
   FProcess.ConsoleOutput.Clear;
   FProcessTypes.Clear;
-  FDurations.Clear;
   FStoppedByUser := False;
   FInfos.Clear;
 end;
 
-procedure TEncoder.Start;
+procedure TDownloadProcess.Start;
 begin
   if FProcess.ProcessInfo.hProcess = 0 then
   begin
@@ -278,6 +279,7 @@ begin
         FProcess.ApplicationName := FPaths[0];
         FProcess.CommandLine := FCommandLines[0];
         FEncoderStatus := esEncoding;
+        UpdateMainFormItem('Starting...', 0);
         FProcess.Run;
       end
       else
@@ -290,14 +292,24 @@ begin
     FConsoleOutput := 'not 0'
 end;
 
-procedure TEncoder.Stop;
+procedure TDownloadProcess.Stop;
 begin
   if FProcess.ProcessInfo.hProcess > 0 then
   begin
     TerminateProcess(FProcess.ProcessInfo.hProcess, 0);
+    UpdateMainFormItem('Stopped', 0);
     FFileNames.Clear;
     FEncoderStatus := esStopped;
     FStoppedByUser := true;
+  end;
+end;
+
+procedure TDownloadProcess.UpdateMainFormItem(const ProgressStr: string; const Progress: integer);
+begin
+  if GetFileIndex < MainForm.FVideoDownloadListItems.Count then
+  begin
+    MainForm.FVideoDownloadListItems[GetFileIndex].ProgressLabel.Caption := ProgressStr;
+    MainForm.FVideoDownloadListItems[GetFileIndex].ProgressBar.Position := Progress;
   end;
 end;
 

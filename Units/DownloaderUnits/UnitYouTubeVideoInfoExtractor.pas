@@ -237,6 +237,7 @@ begin
   FTitleExtractProcess.Free;
   FPlayListProcess.Free;
   FPlayListVideoLinks.Free;
+  FSubtitleProcess.Free;
   FOutExt.Free;
   FSubtitles.Free;
 end;
@@ -433,8 +434,8 @@ var
 begin
   FThumbStatus := stReading;
 //FThumbProcess.ConsoleOutput.SaveToFile('C:\thumb.txt');
+  LImageTypeExt := TImageType.Create(FImageName);
   try
-    LImageTypeExt := TImageType.Create(FImageName);
     if LImageTypeExt.ImageType = '.jpg' then
     begin
       ResizeImg;
@@ -444,6 +445,7 @@ begin
       FImageName := '';
     end;
   finally
+    LImageTypeExt.Free;
     FThumbStatus := stDone;
   end;
 end;
@@ -475,13 +477,13 @@ begin
         begin
           if Length(Trim(FTitleExtractProcess.ConsoleOutput[i])) > 0 then
           begin
-            FFileName := Trim(ChangeFileExt(FTitleExtractProcess.ConsoleOutput[i], ''));
+            FFileName := (ChangeFileExt(FTitleExtractProcess.ConsoleOutput[i], ''));
           end;
         end;
       end
       else
       begin
-        FFileName := Trim(ChangeFileExt(FTitleExtractProcess.ConsoleOutput[0], ''));
+        FFileName := (ChangeFileExt(FTitleExtractProcess.ConsoleOutput[0], ''));
       end;
     end;
   finally

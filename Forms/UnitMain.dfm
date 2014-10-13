@@ -839,7 +839,7 @@ object MainForm: TMainForm
         Height = 21
         Alignment = taLeftJustify
         BoundLabel.Active = True
-        BoundLabel.Caption = 'Post-encode action:'
+        BoundLabel.Caption = 'Post-download action:'
         BoundLabel.Indent = 0
         BoundLabel.Font.Charset = DEFAULT_CHARSET
         BoundLabel.Font.Color = clWindowText
@@ -1517,7 +1517,6 @@ object MainForm: TMainForm
         OnClick = M1Click
         SkinData.SkinSection = 'BUTTON'
         Reflected = True
-        ExplicitLeft = 353
       end
     end
   end
@@ -6347,6 +6346,7 @@ object MainForm: TMainForm
       260000012600000126000001260000012600000126000001260000012600}
     IconIndex = 0
     Visibility = [tvVisibleTaskBar, tvVisibleTaskList, tvRestoreClick, tvRestoreDbClick, tvMinimizeClick, tvMinimizeDbClick]
+    OnBalloonClick = TrayIconBalloonClick
     Left = 423
     Top = 128
   end

@@ -7,7 +7,7 @@ uses
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, sSkinProvider, sSkinManager,
   Vcl.StdCtrls, sComboBox, Vcl.ComCtrls, acProgressBar, sCheckBox, Vcl.Buttons,
   sBitBtn, sScrollBox, sEdit, sLabel, Vcl.ExtCtrls, sPanel, Vcl.Menus, acImage,
-  sButton, Generics.Collections, UnitEncoder, Vcl.Mask, sMaskEdit,
+  sButton, Generics.Collections, UnitDownloadProcess, Vcl.Mask, sMaskEdit,
   sCustomComboEdit, sToolEdit, JvComponentBase, JvComputerInfoEx, StrUtils, MediaInfoDll, windows7taskbar, UnitCommonTypes,
   JvTrayIcon, acPNG, UnitYouTubeVideoInfoExtractor, ShellAPI, Winapi.MMSystem, IniFiles,
   JvUrlListGrabber, JvUrlGrabbers, JvThread;
@@ -119,12 +119,10 @@ type
     procedure S1Click(Sender: TObject);
     procedure M1Click(Sender: TObject);
     procedure A1Click(Sender: TObject);
+    procedure TrayIconBalloonClick(Sender: TObject);
   private
     { Private declarations }
     FDownloadItems: TDownloadItemList;
-    // video download list items
-    FVideoDownloadListItems: TVideoDownloaderItemList;
-    FProgressStrs: array [0 .. 15] of string;
     // total download cmd
     FVideoDownloadTotalCMDCount: Integer;
     // time passed downloading
@@ -159,8 +157,6 @@ type
     procedure DownloadState;
     procedure DownloadNormalState;
     procedure MenuState(const _Enabled: Boolean);
-    // download progress
-    procedure UpdateDownloadProgressUI;
     function GetStatusInfo(const ProcessIndex: Integer): string;
     function GetProgress(const ProcessIndex: Integer): Integer;
     // clear temp folder
@@ -187,7 +183,9 @@ type
     { Public declarations }
     FLogFolder: string;
     // download processes
-    FVideoDownloadProcesses: array [0 .. 15] of TEncoder;
+    FVideoDownloadProcesses: array [0 .. 15] of TDownloadProcess;
+    // video download list items
+    FVideoDownloadListItems: TVideoDownloaderItemList;
     // add linksin batch
     procedure BatchAdd(const Links: TStrings; const SingleLink: Boolean);
   end;
@@ -197,7 +195,7 @@ var
 
 const
   Portable = True;
-  BuildInt = 63;
+  BuildInt = 84;
 
 implementation
 
@@ -274,6 +272,8 @@ begin
       // SendMessage(LinkList.Handle, WM_SETREDRAW, 1, 0);
       RedrawWindow(VideoDownloaderList.Handle, nil, 0, RDW_ERASE or RDW_INVALIDATE or RDW_FRAME or RDW_ALLCHILDREN);
       MenuState(true);
+      Self.Width := Self.Width + 1;
+      Self.Width := Self.Width - 1;
     end;
   end;
 end;
@@ -302,6 +302,8 @@ begin
       // SendMessage(LinkList.Handle, WM_SETREDRAW, 1, 0);
       RedrawWindow(VideoDownloaderList.Handle, nil, 0, RDW_ERASE or RDW_INVALIDATE or RDW_FRAME or RDW_ALLCHILDREN);
       MenuState(true);
+      Self.Width := Self.Width + 1;
+      Self.Width := Self.Width - 1;
     end;
   end;
 end;
@@ -504,6 +506,8 @@ begin
       // SendMessage(LinkList.Handle, WM_SETREDRAW, 1, 0);
       RedrawWindow(VideoDownloaderList.Handle, nil, 0, RDW_ERASE or RDW_INVALIDATE or RDW_FRAME or RDW_ALLCHILDREN);
       MenuState(true);
+      Self.Width := Self.Width + 1;
+      Self.Width := Self.Width - 1;
     end;
   end;
 end;
@@ -662,11 +666,19 @@ end;
 procedure TMainForm.DeleteBtnClick(Sender: TObject);
 var
   LItemIndex: integer;
+  I: Integer;
 begin
   LItemIndex := (Sender as TsButton).Tag;
   FVideoDownloadListItems[LItemIndex].Panel.Visible := False;
   FVideoDownloadListItems.Delete(LItemIndex);
   FDownloadItems.Delete(LItemIndex);
+  for I := 0 to FVideoDownloadListItems.Count-1 do
+  begin
+    if FVideoDownloadListItems[i].DeleteButton.Tag > LItemIndex then
+    begin
+      FVideoDownloadListItems[i].DeleteButton.Tag := FVideoDownloadListItems[i].DeleteButton.Tag - 1;
+    end;
+  end;
 end;
 
 procedure TMainForm.DownloadNormalState;
@@ -751,7 +763,7 @@ begin
   FDownloadItems := TDownloadItemList.Create;
   FVideoDownloadListItems := TVideoDownloaderItemList.Create;
   for I := Low(FVideoDownloadProcesses) to High(FVideoDownloadProcesses) do
-    FVideoDownloadProcesses[i] := TEncoder.Create;
+    FVideoDownloadProcesses[i] := TDownloadProcess.Create;
   FFilesToCheck := TStringList.Create;
   // windows 7 taskbar
   if CheckWin32Version(6, 1) then
@@ -800,6 +812,12 @@ begin
     Application.MessageBox('Cannot find renametool!', 'Fatal Error', MB_ICONERROR);
     Application.Terminate;
   end;
+  Mp4BoxPath := ExtractFileDir(Application.ExeName) + '\tools\mp4box.exe';
+  if not FileExists(Mp4BoxPath) then
+  begin
+    Application.MessageBox('Cannot find Mp4BoxPath!', 'Fatal Error', MB_ICONERROR);
+    Application.Terminate;
+  end;
   FTempFolder := Info.Folders.Temp + '\TVideoDownloader';
   if not DirectoryExists(FTempFolder) then
   begin
@@ -811,6 +829,14 @@ procedure TMainForm.FormDestroy(Sender: TObject);
 var
   i: integer;
 begin
+  for I := 0 to FVideoDownloadListItems.Count - 1 do
+  begin
+    FVideoDownloadListItems[i].Free;
+  end;
+  for I := 0 to FDownloadItems.Count - 1 do
+  begin
+    FDownloadItems[i].Free;
+  end;
   FFilesToCheck.Free;
   FDownloadItems.Free;
   FVideoDownloadListItems.Free;
@@ -1182,7 +1208,6 @@ begin
         for I := Low(FVideoDownloadProcesses) to High(FVideoDownloadProcesses) do
         begin
           FVideoDownloadProcesses[i].ResetValues;
-          FProgressStrs[i] := '';
         end;
         FVideoDownloadTotalCMDCount := 0;
         FVideoDownloaderTime := 0;
@@ -1422,66 +1447,10 @@ begin
   FDownloadItems[LItemIndex] := LTmp;
 end;
 
-procedure TMainForm.UpdateDownloadProgressUI;
-var
-  i: integer;
-  j: Integer;
-  Lprogress: Integer;
+procedure TMainForm.TrayIconBalloonClick(Sender: TObject);
 begin
-  for j := Low(FVideoDownloadProcesses) to High(FVideoDownloadProcesses) do
-  begin
-    if FVideoDownloadProcesses[j].CommandCount > 0 then
-    begin
-      if FVideoDownloadProcesses[j].EncoderStatus = esEncoding then
-      begin
-        if FVideoDownloadProcesses[j].FilesDone < FVideoDownloadProcesses[j].CommandCount then
-        begin
-          for I := 0 to FVideoDownloadProcesses[j].FileIndexes.Count - 1 do
-          begin
-            Application.ProcessMessages;
-            if StrToInt(FVideoDownloadProcesses[j].FileIndexes[i]) < FVideoDownloadProcesses[j].FileIndex then
-            begin
-              FProgressStrs[j] := 'Done';
-              if FProgressStrs[j] <> FVideoDownloadListItems[StrToInt(FVideoDownloadProcesses[j].FileIndexes[i])].ProgressLabel.Caption then
-              begin
-                FVideoDownloadListItems[StrToInt(FVideoDownloadProcesses[j].FileIndexes[i])].ProgressLabel.Caption := 'Done';
-              end;
-              FVideoDownloadListItems[StrToInt(FVideoDownloadProcesses[j].FileIndexes[i])].ProgressBar.Position := 100;
-            end
-            else if StrToInt(FVideoDownloadProcesses[j].FileIndexes[i]) = FVideoDownloadProcesses[j].FileIndex then
-            begin
-              FProgressStrs[j] := GetStatusInfo(j);
-              if FProgressStrs[j] <> FVideoDownloadListItems[StrToInt(FVideoDownloadProcesses[j].FileIndexes[i])].ProgressLabel.Caption then
-              begin
-                FVideoDownloadListItems[StrToInt(FVideoDownloadProcesses[j].FileIndexes[i])].ProgressLabel.Caption := FProgressStrs[j];
-              end;
-              Lprogress := GetProgress(j);
-              if FVideoDownloadListItems[StrToInt(FVideoDownloadProcesses[j].FileIndexes[i])].ProgressBar.Position <> Lprogress then
-              begin
-                FVideoDownloadListItems[StrToInt(FVideoDownloadProcesses[j].FileIndexes[i])].ProgressBar.Position := Lprogress;
-              end;
-            end;
-          end;
-        end;
-      end
-      else
-      begin
-        if FVideoDownloadProcesses[j].CommandCount > 0 then
-        begin
-          for I := 0 to FVideoDownloadProcesses[j].FileIndexes.Count - 1 do
-          begin
-            Application.ProcessMessages;
-            FProgressStrs[j] := 'Done';
-            if FProgressStrs[j] <> FVideoDownloadListItems[StrToInt(FVideoDownloadProcesses[j].FileIndexes[i])].ProgressLabel.Caption then
-            begin
-              FVideoDownloadListItems[StrToInt(FVideoDownloadProcesses[j].FileIndexes[i])].ProgressLabel.Caption := 'Done';
-            end;
-            FVideoDownloadListItems[StrToInt(FVideoDownloadProcesses[j].FileIndexes[i])].ProgressBar.Position := 100;
-          end;
-        end;
-      end;
-    end;
-  end;
+  TrayIcon.ShowApplication;
+  TrayIcon.Active := False;
 end;
 
 procedure TMainForm.VideoDownloaderPosTimerTimer(Sender: TObject);
@@ -1501,7 +1470,6 @@ begin
 
   if LTotalFilesDone = FVideoDownloadTotalCMDCount then
   begin
-    UpdateDownloadProgressUI;
     VideoDownloaderPosTimer.Enabled := False;
     // TimeTimer.Enabled := False;
     ClearTempFolderEx(True);
@@ -1577,7 +1545,6 @@ begin
   end
   else
   begin
-    UpdateDownloadProgressUI;
     TotalBar.Max := FVideoDownloadTotalCMDCount + FSkippedVideoCount;
     TotalBar.Position := LTotalFilesDone + FSkippedVideoCount;
     VideoDownloaderProgressLabel.Caption := 'Progress: ' + FloatToStr(LTotalFilesDone + FSkippedVideoCount) + '/' + FloatToStr(FVideoDownloadTotalCMDCount + FSkippedVideoCount);

@@ -330,7 +330,7 @@ object AboutForm: TAboutForm
     Align = alTop
     Alignment = taCenter
     AutoSize = False
-    Caption = 'TVideoDownloader 1.0'
+    Caption = 'TVideoDownloader 1.2.84'
     ExplicitTop = 105
     ExplicitWidth = 645
   end
@@ -368,8 +368,6 @@ object AboutForm: TAboutForm
     TabOrder = 0
     OnClick = sButton1Click
     SkinData.SkinSection = 'BUTTON'
-    ExplicitLeft = 562
-    ExplicitTop = 281
   end
   object sButton2: TsButton
     Left = 89
@@ -381,7 +379,6 @@ object AboutForm: TAboutForm
     TabOrder = 1
     OnClick = sButton2Click
     SkinData.SkinSection = 'BUTTON'
-    ExplicitTop = 281
   end
   object sButton3: TsButton
     Left = 8
@@ -393,6 +390,5 @@ object AboutForm: TAboutForm
     TabOrder = 2
     OnClick = sButton3Click
     SkinData.SkinSection = 'BUTTON'
-    ExplicitTop = 281
   end
 end
