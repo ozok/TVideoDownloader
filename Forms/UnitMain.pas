@@ -198,7 +198,7 @@ var
   MainForm: TMainForm;
 
 const
-  Portable = False;
+  Portable = True;
   BuildInt = 119;
 
 implementation
