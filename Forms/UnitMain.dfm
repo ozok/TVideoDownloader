@@ -16,6 +16,7 @@ object MainForm: TMainForm
   Position = poScreenCenter
   ShowHint = True
   OnClose = FormClose
+  OnCloseQuery = FormCloseQuery
   OnCreate = FormCreate
   OnDestroy = FormDestroy
   OnMouseWheelDown = FormMouseWheelDown
@@ -837,6 +838,7 @@ object MainForm: TMainForm
         Top = 16
         Width = 155
         Height = 21
+        Anchors = [akRight, akBottom]
         Alignment = taLeftJustify
         BoundLabel.Active = True
         BoundLabel.Caption = 'Post-download action:'
@@ -8109,5 +8111,13 @@ object MainForm: TMainForm
     OnDoneStream = UpdateCheckerDoneStream
     Left = 608
     Top = 200
+  end
+  object DropTextTarget1: TDropTextTarget
+    DragTypes = [dtCopy, dtLink]
+    OnDrop = DropTextTarget1Drop
+    Target = VideoDownloaderList
+    WinTarget = 0
+    Left = 544
+    Top = 312
   end
 end

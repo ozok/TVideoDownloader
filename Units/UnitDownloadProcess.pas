@@ -56,7 +56,7 @@ type
     // process events
     procedure ProcessRead(Sender: TObject; const S: string; const StartsOnNewLine: Boolean);
     procedure ProcessTerminate(Sender: TObject; ExitCode: Cardinal);
-
+    // updates progress information shown in the list item
     procedure UpdateMainFormItem(const ProgressStr: string; const Progress: integer);
 
     // field variable read funcs
@@ -219,6 +219,7 @@ end;
 procedure TDownloadProcess.ProcessTerminate(Sender: TObject; ExitCode: Cardinal);
 begin
   FEncoderStatus := esStopped;
+  // if user has stopped downloading do not try the next item
   if FStoppedByUser then
   begin
     UpdateMainFormItem('Stopped', 0);
@@ -226,9 +227,12 @@ begin
   end
   else
   begin
+    // if process has not exited properly, add it to the log
     if ExitCode <> 0 then
     begin
       UpdateMainFormItem('Error code: ' + FloatToStr(ExitCode), 0);
+      MainForm.AddToLog(0, ExtractFileName(FPaths[FCommandIndex]) + ' has exited with ' + FloatToStr(ExitCode) + '.');
+      Inc(MainForm.FProcessErrorCount);
     end
     else
     begin
@@ -270,6 +274,7 @@ end;
 
 procedure TDownloadProcess.Start;
 begin
+  // start with the first item if download is not already started
   if FProcess.ProcessInfo.hProcess = 0 then
   begin
     if FCommandLines.Count > 0 then
@@ -294,6 +299,7 @@ end;
 
 procedure TDownloadProcess.Stop;
 begin
+  // terminate running process unless it's already stopped
   if FProcess.ProcessInfo.hProcess > 0 then
   begin
     TerminateProcess(FProcess.ProcessInfo.hProcess, 0);

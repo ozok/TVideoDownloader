@@ -10,7 +10,8 @@ uses
   sButton, Generics.Collections, UnitDownloadProcess, Vcl.Mask, sMaskEdit,
   sCustomComboEdit, sToolEdit, JvComponentBase, JvComputerInfoEx, StrUtils, MediaInfoDll, windows7taskbar, UnitCommonTypes,
   JvTrayIcon, acPNG, UnitYouTubeVideoInfoExtractor, ShellAPI, Winapi.MMSystem, IniFiles,
-  JvUrlListGrabber, JvUrlGrabbers, JvThread;
+  JvUrlListGrabber, JvUrlGrabbers, JvThread, System.Types, DragDrop, DropTarget,
+  DragDropInternet, DragDropText;
 
 type
   TVideoDownloaderItem = class(TCustomControl)
@@ -91,6 +92,7 @@ type
     S2: TMenuItem;
     DonateBtn: TsBitBtn;
     ProcessingPanel: TsPanel;
+    DropTextTarget1: TDropTextTarget;
     procedure AddLinkBtnClick(Sender: TObject);
     procedure ClearLinksBtnClick(Sender: TObject);
     procedure PassBtnClick(Sender: TObject);
@@ -120,6 +122,8 @@ type
     procedure M1Click(Sender: TObject);
     procedure A1Click(Sender: TObject);
     procedure TrayIconBalloonClick(Sender: TObject);
+    procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
+    procedure DropTextTarget1Drop(Sender: TObject; ShiftState: TShiftState; APoint: TPoint; var Effect: Integer);
   private
     { Private declarations }
     FDownloadItems: TDownloadItemList;
@@ -146,8 +150,6 @@ type
     function CreateTempName: string;
     // check if video has audio
     function HasAudio(const FileName: string): Boolean;
-    // add line to log
-    procedure AddToLog(const LogID: Integer; const Msg: string);
     procedure SaveDownloadLogs;
     //
     function VideoTypeToAudio(const TypeStr: string): string;
@@ -157,8 +159,6 @@ type
     procedure DownloadState;
     procedure DownloadNormalState;
     procedure MenuState(const _Enabled: Boolean);
-    function GetStatusInfo(const ProcessIndex: Integer): string;
-    function GetProgress(const ProcessIndex: Integer): Integer;
     // clear temp folder
     procedure ClearTempFolderEx(const DeleteOnlyText: Boolean);
     // add a link to the list
@@ -186,16 +186,20 @@ type
     FVideoDownloadProcesses: array [0 .. 15] of TDownloadProcess;
     // video download list items
     FVideoDownloadListItems: TVideoDownloaderItemList;
-    // add linksin batch
+    // number of processes that exited with an exitcode other than 0
+    FProcessErrorCount: integer;
+    // add links in batch
     procedure BatchAdd(const Links: TStrings; const SingleLink: Boolean);
+    // add line to log
+    procedure AddToLog(const LogID: Integer; const Msg: string);
   end;
 
 var
   MainForm: TMainForm;
 
 const
-  Portable = True;
-  BuildInt = 84;
+  Portable = False;
+  BuildInt = 119;
 
 implementation
 
@@ -402,7 +406,12 @@ begin
           // load program icon if download of thumb fails or user selected not to load it
           if FileExists(YIE.ImageName) then
           begin
-            LVideoDownloaderItem.PrevievImg.Picture.LoadFromFile(YIE.ImageName);
+            try
+              LVideoDownloaderItem.PrevievImg.Picture.LoadFromFile(YIE.ImageName);
+            except
+              // load default image in case of an error
+              LVideoDownloaderItem.PrevievImg.Picture.LoadFromFile(ExtractFileDir(Application.ExeName) + '\icon.ico');
+            end;
           end
           else
           begin
@@ -589,6 +598,7 @@ var
   lPath: string;
   LType: string;
 begin
+  // remove files from temp folder
   lPath := IncludeTrailingPathDelimiter(FTempFolder);
   if DeleteOnlyText then
   begin
@@ -602,8 +612,14 @@ begin
     lFind := FindFirst(lPath + LType, faAnyFile, lSearchRec);
     while lFind = 0 do
     begin
-      DeleteFile(lPath + lSearchRec.Name);
-
+      try
+        DeleteFile(lPath + lSearchRec.Name);
+      except
+        on E: Exception do
+        begin
+          AddToLog(0, 'Unable to delete ' + lSearchRec.Name + '. Error: ' + E.Message);
+        end;
+      end;
       lFind := FindNext(lSearchRec);
     end;
   finally
@@ -663,6 +679,27 @@ begin
   end;
 end;
 
+procedure TMainForm.DropTextTarget1Drop(Sender: TObject; ShiftState: TShiftState; APoint: TPoint; var Effect: Integer);
+begin
+  AbortVideoAddBtn.Top := (LoadPanel.Height div 2) - (AbortVideoAddBtn.Height div 2);
+  LoadPanel.Visible := True;
+  LoadPanel.BringToFront;
+  MenuState(False);
+  FStopAddingLink := False;
+  try
+    LoadPanel.Caption := 'Adding given URL to list...';
+    AddURL(Trim(TDropTextTarget(Sender).Text));
+  finally
+    Self.Enabled := True;
+    LoadPanel.Visible := False;
+    // SendMessage(LinkList.Handle, WM_SETREDRAW, 1, 0);
+    RedrawWindow(VideoDownloaderList.Handle, nil, 0, RDW_ERASE or RDW_INVALIDATE or RDW_FRAME or RDW_ALLCHILDREN);
+    MenuState(true);
+    Self.Width := Self.Width + 1;
+    Self.Width := Self.Width - 1;
+  end;
+end;
+
 procedure TMainForm.DeleteBtnClick(Sender: TObject);
 var
   LItemIndex: integer;
@@ -672,7 +709,7 @@ begin
   FVideoDownloadListItems[LItemIndex].Panel.Visible := False;
   FVideoDownloadListItems.Delete(LItemIndex);
   FDownloadItems.Delete(LItemIndex);
-  for I := 0 to FVideoDownloadListItems.Count-1 do
+  for I := 0 to FVideoDownloadListItems.Count - 1 do
   begin
     if FVideoDownloadListItems[i].DeleteButton.Tag > LItemIndex then
     begin
@@ -754,6 +791,12 @@ begin
   begin
     FVideoDownloadProcesses[i].Stop;
   end;
+  ClearTempFolderEx(False);
+end;
+
+procedure TMainForm.FormCloseQuery(Sender: TObject; var CanClose: Boolean);
+begin
+  FStopAddingLink := True;
 end;
 
 procedure TMainForm.FormCreate(Sender: TObject);
@@ -823,6 +866,7 @@ begin
   begin
     ForceDirectories(FTempFolder);
   end;
+  ClearTempFolderEx(False);
 end;
 
 procedure TMainForm.FormDestroy(Sender: TObject);
@@ -877,48 +921,6 @@ begin
     finally
       LFS.Free;
     end;
-  end;
-end;
-
-function TMainForm.GetProgress(const ProcessIndex: Integer): Integer;
-var
-  StrPos1, StrPos2: Integer;
-  TmpStr: string;
-  TmpInt: Integer;
-begin
-  Result := 0;
-  TmpStr := FVideoDownloadProcesses[ProcessIndex].ConsoleOutput;
-  StrPos1 := Pos('[download]', TmpStr);
-  StrPos2 := Pos('%', TmpStr);
-  TmpStr := Trim(copy(TmpStr, StrPos1 + 10, StrPos2 - StrPos1 - 12));
-  if TryStrToInt(TmpStr, TmpInt) then
-  begin
-    Result := TmpInt;
-  end;
-end;
-
-function TMainForm.GetStatusInfo(const ProcessIndex: Integer): string;
-const
-  Download_STR = '[download]';
-begin
-  if FVideoDownloadProcesses[ProcessIndex].CurrentProcessType = '5' then
-  begin
-    if copy(FVideoDownloadProcesses[ProcessIndex].ConsoleOutput, 1, Length(Download_STR)) = Download_STR then
-    begin
-      Result := FVideoDownloadProcesses[ProcessIndex].Info + ' ' + Trim(StringReplace(FVideoDownloadProcesses[ProcessIndex].ConsoleOutput, Download_STR, '', [rfReplaceAll, rfIgnoreCase]))
-    end;
-  end
-  else if FVideoDownloadProcesses[ProcessIndex].CurrentProcessType = '2' then
-  begin
-    Result := 'Muxing...';
-  end
-  else if FVideoDownloadProcesses[ProcessIndex].CurrentProcessType = '7' then
-  begin
-    Result := FVideoDownloadProcesses[ProcessIndex].Info + ' ' + FVideoDownloadProcesses[ProcessIndex].ConsoleOutput;
-  end
-  else
-  begin
-    Result := 'N/A';
   end;
 end;
 
@@ -1168,7 +1170,7 @@ var
   j: Integer;
   LDownloadedVideoName: string;
   LCMD: string;
-  LDownloadSub: Boolean;
+  // LDownloadSub: Boolean;
   LRenameFile: TStringList;
   LOutputFile: string;
   // LFileNameExtractor: TFileNameExtractor;
@@ -1209,6 +1211,10 @@ begin
         begin
           FVideoDownloadProcesses[i].ResetValues;
         end;
+        for I := 0 to FVideoDownloadListItems.Count - 1 do
+        begin
+          FVideoDownloadListItems[i].ProgressLabel.Caption := 'Waiting...';
+        end;
         FVideoDownloadTotalCMDCount := 0;
         FVideoDownloaderTime := 0;
         // remove cmd log from last time
@@ -1217,6 +1223,7 @@ begin
           DeleteFile(FLogFolder + '\cmd.txt')
         end;
         FSkippedVideoCount := 0;
+        FProcessErrorCount := 0;
 {$ENDREGION}
         // create command line
         for i := 0 to FVideoDownloadListItems.Count - 1 do
@@ -1269,11 +1276,11 @@ begin
                 LCMD := ' ' + LPass + ' -o "' + ExcludeTrailingPathDelimiter(DirectoryEdit.Text) + '\%(uploader)s - %(title)s.%(ext)s" -i --no-playlist -x --audio-format ' + FDownloadItems[i].FormatIntegers[FDownloadItems[i].FormatIndex];
               end;
           end;
-          LDownloadSub := False;
+          // LDownloadSub := False;
           if FDownloadItems[i].SubIndex > 0 then
           begin
             LCMD := LCMD + ' --write-sub --sub-lang ' + LowerCase(FVideoDownloadListItems[i].SubtitleList.Text);
-            LDownloadSub := True;
+            // LDownloadSub := True;
           end;
           LCMD := LCMD + ' -v -c -w ' + FVideoDownloadListItems[i].LinkLabel.Caption;
           FVideoDownloadProcesses[i mod SettingsForm.ProcessCountBar.Position].CommandLines.Add(LCMD);
@@ -1401,7 +1408,7 @@ begin
         end
         else
         begin
-          Application.MessageBox('Did not create any commands. Perhaps you already downloaded all videos? Check logs please.', 'Info', MB_ICONINFORMATION);
+          Application.MessageBox('Did not create any commands. Perhaps you''ve already downloaded all videos? Check logs please.', 'Info', MB_ICONINFORMATION);
         end;
       finally
         LRenameFile.Free;
@@ -1506,6 +1513,10 @@ begin
             AddToLog(0, '');
           finally
             LMissingFileList.Free;
+          end;
+          if FProcessErrorCount > 0 then
+          begin
+            AddToLog(0, FloatToStr(FProcessErrorCount) + ' processes did not exit properly. This may mean something went wrong.');
           end;
           SaveOptions;
         end;

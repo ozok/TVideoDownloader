@@ -1,3 +1,11 @@
+--1.3
+-Added: Video thumbnails will be resized more smoothly
+-Added: Users can now drag and drop single links
+-Fixed: Temporary images weren't deleted
+-Fixed: icon.ico was missing from the package
+-Fixed: Resizing the window didn't move some controls properly
+-Fixed: Couldn't close the program while adding links
+
 --1.2
 -Added: Improved progress update performance
 -Fixed: Many memory leaks
