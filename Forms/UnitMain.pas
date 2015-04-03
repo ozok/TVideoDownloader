@@ -10,8 +10,7 @@ uses
   sButton, Generics.Collections, UnitDownloadProcess, Vcl.Mask, sMaskEdit,
   sCustomComboEdit, sToolEdit, JvComponentBase, JvComputerInfoEx, StrUtils, MediaInfoDll, windows7taskbar, UnitCommonTypes,
   JvTrayIcon, acPNG, UnitYouTubeVideoInfoExtractor, ShellAPI, Winapi.MMSystem, IniFiles,
-  JvUrlListGrabber, JvUrlGrabbers, JvThread, System.Types, DragDrop, DropTarget,
-  DragDropInternet, DragDropText;
+  JvUrlListGrabber, JvUrlGrabbers, JvThread, System.Types;
 
 type
   TVideoDownloaderItem = class(TCustomControl)
@@ -92,7 +91,10 @@ type
     S2: TMenuItem;
     DonateBtn: TsBitBtn;
     ProcessingPanel: TsPanel;
-    DropTextTarget1: TDropTextTarget;
+    sPanel1: TsPanel;
+    LinkEdit: TsEdit;
+    LinkTypeList: TsComboBox;
+    AddSingleLinkBtn: TsBitBtn;
     procedure AddLinkBtnClick(Sender: TObject);
     procedure ClearLinksBtnClick(Sender: TObject);
     procedure PassBtnClick(Sender: TObject);
@@ -123,7 +125,9 @@ type
     procedure A1Click(Sender: TObject);
     procedure TrayIconBalloonClick(Sender: TObject);
     procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
-    procedure DropTextTarget1Drop(Sender: TObject; ShiftState: TShiftState; APoint: TPoint; var Effect: Integer);
+    procedure AddSingleLinkBtnClick(Sender: TObject);
+    procedure LinkEditKeyDown(Sender: TObject; var Key: Word;
+      Shift: TShiftState);
   private
     { Private declarations }
     FDownloadItems: TDownloadItemList;
@@ -199,7 +203,7 @@ var
 
 const
   Portable = True;
-  BuildInt = 119;
+  BuildInt = 126;
 
 implementation
 
@@ -324,6 +328,101 @@ begin
   P := AddLinkBtn.ClientToScreen(Point(0, 0));
 
   AddLinkMenu.Popup(P.X, P.Y + AddLinkBtn.Height)
+end;
+
+procedure TMainForm.AddSingleLinkBtnClick(Sender: TObject);
+var
+  LURL: string;
+  LYIE: TYouTubeVideoInfoExtractor;
+  I: Integer;
+  LPass: TUserPass;
+begin
+  LURL := Trim(LinkEdit.Text);
+  if Length(LURL) > 0 then
+  begin
+    case LinkTypeList.ItemIndex of
+      0: // single link
+        begin
+          AbortVideoAddBtn.Top := (LoadPanel.Height div 2) - (AbortVideoAddBtn.Height div 2);
+          LoadPanel.Visible := True;
+          LoadPanel.BringToFront;
+          MenuState(False);
+          FStopAddingLink := False;
+          // SendMessage(LinkList.Handle, WM_SETREDRAW, 0, 0);
+          try
+            LoadPanel.Caption := 'Adding given URL to list...';
+            AddURL(Trim(LURL));
+          finally
+            Self.Enabled := True;
+            LoadPanel.Visible := False;
+            // SendMessage(LinkList.Handle, WM_SETREDRAW, 1, 0);
+            RedrawWindow(VideoDownloaderList.Handle, nil, 0, RDW_ERASE or RDW_INVALIDATE or RDW_FRAME or RDW_ALLCHILDREN);
+            MenuState(true);
+            Self.Width := Self.Width + 1;
+            Self.Width := Self.Width - 1;
+          end;
+        end;
+      1: // playlist/user
+        begin
+          LPass.UserName := UserEdit.Text;
+          LPass.Password := PassEdit.Text;
+          LYIE := TYouTubeVideoInfoExtractor.Create(LURL, YouTubePath, FTempFolder, LPass, not SettingsForm.DontPreviewImgBtn.Checked);
+          LYIE.GetPlayListInfo;
+          AbortVideoAddBtn.Top := (LoadPanel.Height div 2) - (AbortVideoAddBtn.Height div 2);
+          LoadPanel.Visible := True;
+          LoadPanel.BringToFront;
+          MenuState(false);
+          FStopAddingLink := False;
+          try
+            LoadPanel.Caption := 'Extracting video links from playlist, this may take a while...';
+            while LYIE.PlaylistStatus = stReading do
+            begin
+              if FStopAddingLink then
+              begin
+                LYIE.StopAll;
+                Break;
+              end;
+              Application.ProcessMessages;
+              Sleep(100);
+            end;
+            if not FStopAddingLink then
+            begin
+              if LYIE.PlayListVideoLinks.Count > 0 then
+              begin
+                if LogForm.Main.Lines.Count > 0 then
+                begin
+                  AddToLog(0, '');
+                end;
+                AddToLog(0, 'Found ' + FloatToStr(LYIE.PlayListVideoLinks.Count) + ' videos.');
+                AddToLog(0, '');
+                for I := 0 to LYIE.PlayListVideoLinks.Count - 1 do
+                begin
+                  if FStopAddingLink then
+                  begin
+                    Break;
+                  end;
+                  LoadPanel.Caption := 'Adding videos to the list...(' + FloatToStr(i + 1) + '/' + FloatToStr(LYIE.PlayListVideoLinks.Count) + ')';
+                  AddURL('http://www.youtube.com/watch?v=' + LYIE.PlayListVideoLinks[i]);
+                end;
+              end
+              else
+              begin
+                Application.MessageBox('Could not get any links from playlist.', 'Error', MB_ICONERROR);
+              end;
+            end;
+          finally
+            LYIE.Free;
+            Self.Enabled := True;
+            LoadPanel.Visible := False;
+            // SendMessage(LinkList.Handle, WM_SETREDRAW, 1, 0);
+            RedrawWindow(VideoDownloaderList.Handle, nil, 0, RDW_ERASE or RDW_INVALIDATE or RDW_FRAME or RDW_ALLCHILDREN);
+            MenuState(true);
+            Self.Width := Self.Width + 1;
+            Self.Width := Self.Width - 1;
+          end;
+        end;
+    end;
+  end;
 end;
 
 procedure TMainForm.AddToLog(const LogID: Integer; const Msg: string);
@@ -679,27 +778,6 @@ begin
   end;
 end;
 
-procedure TMainForm.DropTextTarget1Drop(Sender: TObject; ShiftState: TShiftState; APoint: TPoint; var Effect: Integer);
-begin
-  AbortVideoAddBtn.Top := (LoadPanel.Height div 2) - (AbortVideoAddBtn.Height div 2);
-  LoadPanel.Visible := True;
-  LoadPanel.BringToFront;
-  MenuState(False);
-  FStopAddingLink := False;
-  try
-    LoadPanel.Caption := 'Adding given URL to list...';
-    AddURL(Trim(TDropTextTarget(Sender).Text));
-  finally
-    Self.Enabled := True;
-    LoadPanel.Visible := False;
-    // SendMessage(LinkList.Handle, WM_SETREDRAW, 1, 0);
-    RedrawWindow(VideoDownloaderList.Handle, nil, 0, RDW_ERASE or RDW_INVALIDATE or RDW_FRAME or RDW_ALLCHILDREN);
-    MenuState(true);
-    Self.Width := Self.Width + 1;
-    Self.Width := Self.Width - 1;
-  end;
-end;
-
 procedure TMainForm.DeleteBtnClick(Sender: TObject);
 var
   LItemIndex: integer;
@@ -967,6 +1045,15 @@ begin
   ShellExecute(Handle, 'open', PWideChar(TsLabel(Sender).Caption), nil, nil, SW_SHOWNORMAL);
 end;
 
+procedure TMainForm.LinkEditKeyDown(Sender: TObject; var Key: Word;
+  Shift: TShiftState);
+begin
+  if Key = VK_RETURN then
+  begin
+    AddSingleLinkBtnClick(Self);
+  end;
+end;
+
 procedure TMainForm.LoadOptions;
 var
   OptionFile: TIniFile;
@@ -977,6 +1064,7 @@ begin
     begin
       PostEncodeList2.ItemIndex := ReadInteger('Options', 'PostEncode2', 0);
       DirectoryEdit.Text := ReadString('Options', 'Out', FMyDocFolder);
+      LinkTypeList.ItemIndex := ReadInteger('Options', 'LinkType', 0);
       if ReadBool('Options', 'Update', True) then
       begin
         CheckUpdateThread.Execute(nil);
@@ -1122,6 +1210,7 @@ begin
     begin
       WriteInteger('Options', 'PostEncode2', PostEncodeList2.ItemIndex);
       WriteString('Options', 'Out', DirectoryEdit.Text);
+      WriteInteger('Options', 'LinkType', LinkTypeList.ItemIndex);
     end;
   finally
     OptionFile.Free
@@ -1671,6 +1760,7 @@ begin
   LinkLabel.Cursor := crHandPoint;
   LinkLabel.Font.Style := [fsUnderline];
   ProgressBar.Smooth := True;
+  DeleteButton.AlignWithMargins := True;
 
   Panel.InsertControl(PrevievImg);
   Panel.InsertControl(Panel2);

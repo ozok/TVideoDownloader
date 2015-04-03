@@ -318,8 +318,8 @@ end;
 
 procedure TYouTubeVideoInfoExtractor.ProcessTerminate(Sender: TObject; ExitCode: Cardinal);
 const
-  AvailFormat = 'format code extension resolution  note';
-  SoundCloudStr = 'format code      extension resolution  note';
+  AvailFormat = 'format code  extension  resolution note';
+//  SoundCloudStr = 'format code      extension resolution  note';
 var
   I: Integer;
   LLine: string;
@@ -342,13 +342,13 @@ begin
         FURLType := general;
         Break;
       end
-      else if SoundCloudStr = Copy(LLine, 1, Length(SoundCloudStr)) then
-      begin
-        // sound cloud
-        LStartIndex := i;
-        FURLType := soundcloud;
-        Break;
-      end;
+//      else if SoundCloudStr = Copy(LLine, 1, Length(SoundCloudStr)) then
+//      begin
+//        // sound cloud
+//        LStartIndex := i;
+//        FURLType := soundcloud;
+//        Break;
+//      end;
     end;
     // extract avail. formats and their codes
     if LStartIndex > -1 then

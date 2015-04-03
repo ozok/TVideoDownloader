@@ -70,7 +70,7 @@ begin
     with OptionFile do
     begin
       PlaySoundBtn.Checked := ReadBool('options', 'playsound', True);
-      PreferedFormatEdit.Text := ReadString('options', 'downloadformat', 'mp4, 1080p, DASH, video');
+      PreferedFormatEdit.Text := ReadString('options', 'downloadformat', 'mp4, 1920x1080, DASH, video');
       ProcessCountBar.Position := ReadInteger('options', 'downloadcount', LProcCount);
       DontDoubleDownloadBtn.Checked := ReadBool('options', 'doubledownload', True);
       DontPreviewImgBtn.Checked := ReadBool('options', 'noimg', False);
@@ -122,7 +122,7 @@ begin
     LProcCount := ProcessCountBar.Max
   end;
   PlaySoundBtn.Checked := True;
-  PreferedFormatEdit.Text := 'mp4, 1080p, DASH, video';
+  PreferedFormatEdit.Text := 'mp4, 1920x1080, DASH, video';
   ProcessCountBar.Position := LProcCount;
   DontDoubleDownloadBtn.Checked := True;
   DontPreviewImgBtn.Checked := False;

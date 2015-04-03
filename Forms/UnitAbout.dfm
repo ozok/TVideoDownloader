@@ -330,7 +330,7 @@ object AboutForm: TAboutForm
     Align = alTop
     Alignment = taCenter
     AutoSize = False
-    Caption = 'TVideoDownloader 1.3.119'
+    Caption = 'TVideoDownloader 1.4.125'
     ExplicitTop = 105
     ExplicitWidth = 645
   end
@@ -342,7 +342,7 @@ object AboutForm: TAboutForm
     Align = alTop
     Alignment = taCenter
     AutoSize = False
-    Caption = '2014 (c) ozok - ozok26@gmail.com GPLv2'
+    Caption = '2014-2015 (c) ozok - ozok26@gmail.com GPLv2'
     ExplicitTop = 120
     ExplicitWidth = 645
   end

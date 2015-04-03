@@ -11,6 +11,7 @@ object MainForm: TMainForm
   Font.Height = -11
   Font.Name = 'Tahoma'
   Font.Style = []
+  KeyPreview = True
   Menu = MainMenu1
   OldCreateOrder = False
   Position = poScreenCenter
@@ -692,6 +693,7 @@ object MainForm: TMainForm
         ParentFont = False
         TabOrder = 0
         Text = ''
+        CheckOnExit = True
         BoundLabel.Active = True
         BoundLabel.Caption = 'Output directory:'
         BoundLabel.Indent = 0
@@ -722,7 +724,7 @@ object MainForm: TMainForm
     end
     object PassPnl: TsPanel
       Left = 0
-      Top = 55
+      Top = 90
       Width = 784
       Height = 58
       Align = alTop
@@ -874,9 +876,9 @@ object MainForm: TMainForm
     end
     object VideoDownloaderList: TsScrollBox
       Left = 0
-      Top = 113
+      Top = 148
       Width = 784
-      Height = 344
+      Height = 309
       Align = alClient
       TabOrder = 1
       SkinData.SkinSection = 'PANEL_LOW'
@@ -885,7 +887,7 @@ object MainForm: TMainForm
       Left = 0
       Top = 0
       Width = 784
-      Height = 55
+      Height = 90
       Align = alTop
       TabOrder = 0
       SkinData.SkinSection = 'TOOLBAR'
@@ -893,7 +895,7 @@ object MainForm: TMainForm
         Left = 1
         Top = 1
         Width = 70
-        Height = 53
+        Height = 55
         Cursor = crHandPoint
         Hint = 'Add links to download'
         Align = alLeft
@@ -972,7 +974,7 @@ object MainForm: TMainForm
         Left = 71
         Top = 1
         Width = 70
-        Height = 53
+        Height = 55
         Cursor = crHandPoint
         Hint = 'Remove all items from list'
         Align = alLeft
@@ -1051,7 +1053,7 @@ object MainForm: TMainForm
         Left = 573
         Top = 1
         Width = 70
-        Height = 53
+        Height = 55
         Cursor = crHandPoint
         Hint = 'Video downloader options'
         Align = alRight
@@ -1130,7 +1132,7 @@ object MainForm: TMainForm
         Left = 713
         Top = 1
         Width = 70
-        Height = 53
+        Height = 55
         Cursor = crHandPoint
         Hint = 'Start to download videos'
         Align = alRight
@@ -1209,7 +1211,7 @@ object MainForm: TMainForm
         Left = 643
         Top = 1
         Width = 70
-        Height = 53
+        Height = 55
         Cursor = crHandPoint
         Hint = 'Stop video downloading'
         Align = alRight
@@ -1289,7 +1291,7 @@ object MainForm: TMainForm
         Left = 498
         Top = 1
         Width = 75
-        Height = 53
+        Height = 55
         Cursor = crHandPoint
         Align = alRight
         Caption = 'Password'
@@ -1367,7 +1369,7 @@ object MainForm: TMainForm
         Left = 428
         Top = 1
         Width = 70
-        Height = 53
+        Height = 55
         Cursor = crHandPoint
         Hint = 'Command lines, console outputs etc'
         Align = alRight
@@ -1445,7 +1447,7 @@ object MainForm: TMainForm
         Left = 358
         Top = 1
         Width = 70
-        Height = 53
+        Height = 55
         Cursor = crHandPoint
         Hint = 'Support this project'
         Align = alRight
@@ -1519,6 +1521,79 @@ object MainForm: TMainForm
         OnClick = M1Click
         SkinData.SkinSection = 'BUTTON'
         Reflected = True
+      end
+      object sPanel1: TsPanel
+        Left = 1
+        Top = 56
+        Width = 782
+        Height = 33
+        Align = alBottom
+        TabOrder = 8
+        SkinData.SkinSection = 'PANEL'
+        DesignSize = (
+          782
+          33)
+        object LinkEdit: TsEdit
+          Left = 32
+          Top = 6
+          Width = 465
+          Height = 21
+          Anchors = [akLeft, akTop, akRight]
+          TabOrder = 0
+          TextHint = 'Copy&paste your link here and hit Enter'
+          OnKeyDown = LinkEditKeyDown
+          SkinData.SkinSection = 'EDIT'
+          BoundLabel.Active = True
+          BoundLabel.Caption = 'Link:'
+          BoundLabel.Indent = 0
+          BoundLabel.Font.Charset = DEFAULT_CHARSET
+          BoundLabel.Font.Color = clWindowText
+          BoundLabel.Font.Height = -11
+          BoundLabel.Font.Name = 'Tahoma'
+          BoundLabel.Font.Style = []
+          BoundLabel.Layout = sclLeft
+          BoundLabel.MaxWidth = 0
+          BoundLabel.UseSkinColor = True
+        end
+        object LinkTypeList: TsComboBox
+          Left = 573
+          Top = 7
+          Width = 133
+          Height = 21
+          Anchors = [akTop, akRight]
+          Alignment = taLeftJustify
+          BoundLabel.Active = True
+          BoundLabel.Caption = 'Link type:'
+          BoundLabel.Indent = 0
+          BoundLabel.Font.Charset = DEFAULT_CHARSET
+          BoundLabel.Font.Color = clWindowText
+          BoundLabel.Font.Height = -11
+          BoundLabel.Font.Name = 'Tahoma'
+          BoundLabel.Font.Style = []
+          BoundLabel.Layout = sclLeft
+          BoundLabel.MaxWidth = 0
+          BoundLabel.UseSkinColor = True
+          SkinData.SkinSection = 'COMBOBOX'
+          VerticalAlignment = taAlignTop
+          Style = csDropDownList
+          ItemIndex = 0
+          TabOrder = 1
+          Text = 'Single video/audio'
+          Items.Strings = (
+            'Single video/audio'
+            'Playlist/User')
+        end
+        object AddSingleLinkBtn: TsBitBtn
+          Left = 712
+          Top = 6
+          Width = 70
+          Height = 21
+          Anchors = [akTop, akRight]
+          Caption = 'Add'
+          TabOrder = 2
+          OnClick = AddSingleLinkBtnClick
+          SkinData.SkinSection = 'BUTTON'
+        end
       end
     end
   end
@@ -8078,6 +8153,7 @@ object MainForm: TMainForm
     ThirdParty.ThirdUpDown = ' '#13#10
     ThirdParty.ThirdScrollBar = ' '#13#10
     ThirdParty.ThirdStaticText = ' '
+    ThirdParty.ThirdNativePaint = ' '
     Left = 120
     Top = 128
   end
@@ -8111,13 +8187,5 @@ object MainForm: TMainForm
     OnDoneStream = UpdateCheckerDoneStream
     Left = 608
     Top = 200
-  end
-  object DropTextTarget1: TDropTextTarget
-    DragTypes = [dtCopy, dtLink]
-    OnDrop = DropTextTarget1Drop
-    Target = VideoDownloaderList
-    WinTarget = 0
-    Left = 544
-    Top = 312
   end
 end
