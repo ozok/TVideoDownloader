@@ -19,7 +19,8 @@ uses
   windows7taskbar in 'Units\windows7taskbar.pas',
   UnitLogs in 'Forms\UnitLogs.pas' {LogForm},
   UnitBatchAdd in 'Forms\UnitBatchAdd.pas' {BatchAddForm},
-  UnitAbout in 'Forms\UnitAbout.pas' {AboutForm};
+  UnitAbout in 'Forms\UnitAbout.pas' {AboutForm},
+  DownloadItemFrame in 'Forms\DownloadItemFrame.pas' {DownloadItem: TFrame};
 
 {$R *.res}
 

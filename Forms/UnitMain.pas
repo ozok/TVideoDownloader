@@ -10,7 +10,7 @@ uses
   sButton, Generics.Collections, UnitDownloadProcess, Vcl.Mask, sMaskEdit,
   sCustomComboEdit, sToolEdit, JvComponentBase, JvComputerInfoEx, StrUtils, MediaInfoDll, windows7taskbar, UnitCommonTypes,
   JvTrayIcon, acPNG, UnitYouTubeVideoInfoExtractor, ShellAPI, Winapi.MMSystem, IniFiles,
-  JvUrlListGrabber, JvUrlGrabbers, JvThread, System.Types;
+  JvUrlListGrabber, JvUrlGrabbers, JvThread, System.Types, DownloadItemFrame;
 
 type
   TVideoDownloaderItem = class(TCustomControl)
@@ -141,7 +141,7 @@ type
     FMyDocFolder: string;
 
     // backend paths
-    YouTubePath: string;
+    FYoutubedlPath: string;
     FFMpegPath: string;
     FTempFolder: string;
     FRenamePath: string;
@@ -189,7 +189,8 @@ type
     // download processes
     FVideoDownloadProcesses: array [0 .. 15] of TDownloadProcess;
     // video download list items
-    FVideoDownloadListItems: TVideoDownloaderItemList;
+//    FVideoDownloadListItems: TVideoDownloaderItemList;
+    FVideoDownloadListItems: TDownloadItem;
     // number of processes that exited with an exitcode other than 0
     FProcessErrorCount: integer;
     // add links in batch
@@ -229,7 +230,7 @@ begin
   begin
     LPass.UserName := UserEdit.Text;
     LPass.Password := PassEdit.Text;
-    LYIE := TYouTubeVideoInfoExtractor.Create(LURL, YouTubePath, FTempFolder, LPass, not SettingsForm.DontPreviewImgBtn.Checked);
+    LYIE := TYouTubeVideoInfoExtractor.Create(LURL, FYoutubedlPath, FTempFolder, LPass, not SettingsForm.DontPreviewImgBtn.Checked);
     LYIE.GetPlayListInfo;
     AbortVideoAddBtn.Top := (LoadPanel.Height div 2) - (AbortVideoAddBtn.Height div 2);
     LoadPanel.Visible := True;
@@ -366,7 +367,7 @@ begin
         begin
           LPass.UserName := UserEdit.Text;
           LPass.Password := PassEdit.Text;
-          LYIE := TYouTubeVideoInfoExtractor.Create(LURL, YouTubePath, FTempFolder, LPass, not SettingsForm.DontPreviewImgBtn.Checked);
+          LYIE := TYouTubeVideoInfoExtractor.Create(LURL, FYoutubedlPath, FTempFolder, LPass, not SettingsForm.DontPreviewImgBtn.Checked);
           LYIE.GetPlayListInfo;
           AbortVideoAddBtn.Top := (LoadPanel.Height div 2) - (AbortVideoAddBtn.Height div 2);
           LoadPanel.Visible := True;
@@ -454,7 +455,7 @@ begin
   begin
     LPass.UserName := UserEdit.Text;
     LPass.Password := PassEdit.Text;
-    YIE := TYouTubeVideoInfoExtractor.Create(Url, YouTubePath, FTempFolder, LPass, not SettingsForm.DontPreviewImgBtn.Checked);
+    YIE := TYouTubeVideoInfoExtractor.Create(Url, FYoutubedlPath, FTempFolder, LPass, not SettingsForm.DontPreviewImgBtn.Checked);
     try
       // read info from link
       YIE.Start;
@@ -578,7 +579,7 @@ begin
             LoadPanel.Caption := 'Extracting video links from playlist, this may take a while...';
             LPass.UserName := UserEdit.Text;
             LPass.Password := PassEdit.Text;
-            LYIE := TYouTubeVideoInfoExtractor.Create(LURL, YouTubePath, FTempFolder, LPass, not SettingsForm.DontPreviewImgBtn.Checked);
+            LYIE := TYouTubeVideoInfoExtractor.Create(LURL, FYoutubedlPath, FTempFolder, LPass, not SettingsForm.DontPreviewImgBtn.Checked);
             try
               LYIE.GetPlayListInfo;
               while (LYIE.PlaylistStatus = stReading) and (not FStopAddingLink) do
@@ -915,8 +916,8 @@ begin
   begin
     ForceDirectories(FLogFolder);
   end;
-  YouTubePath := ExtractFileDir(Application.ExeName) + '\tools\youtube-dl.exe';
-  if not FileExists(YouTubePath) then
+  FYoutubedlPath := ExtractFileDir(Application.ExeName) + '\tools\youtube-dl.exe';
+  if not FileExists(FYoutubedlPath) then
   begin
     Application.MessageBox('Cannot find youtube-dl!', 'Fatal Error', MB_ICONERROR);
     Application.Terminate;
@@ -1374,7 +1375,7 @@ begin
           LCMD := LCMD + ' -v -c -w ' + FVideoDownloadListItems[i].LinkLabel.Caption;
           FVideoDownloadProcesses[i mod SettingsForm.ProcessCountBar.Position].CommandLines.Add(LCMD);
           FVideoDownloadProcesses[i mod SettingsForm.ProcessCountBar.Position].ProcessTypes.Add('5');
-          FVideoDownloadProcesses[i mod SettingsForm.ProcessCountBar.Position].EncoderPaths.Add(YouTubePath);
+          FVideoDownloadProcesses[i mod SettingsForm.ProcessCountBar.Position].EncoderPaths.Add(FYoutubedlPath);
           FVideoDownloadProcesses[i mod SettingsForm.ProcessCountBar.Position].FileIndexes.Add(FloatToStr(i));
           FVideoDownloadProcesses[i mod SettingsForm.ProcessCountBar.Position].Infos.Add('[Downloading]');
           Inc(FVideoDownloadTotalCMDCount);
@@ -1391,7 +1392,7 @@ begin
             FVideoDownloadProcesses[i mod SettingsForm.ProcessCountBar.Position].CommandLines.Add(' -o "' + ExcludeTrailingPathDelimiter(DirectoryEdit.Text) + '\%(uploader)s - %(title)s.%(ext)s" -i --no-playlist -f ' + LDASHAudioCode +
               ' -c -w ' + FVideoDownloadListItems[i].LinkLabel.Caption);
             FVideoDownloadProcesses[i mod SettingsForm.ProcessCountBar.Position].ProcessTypes.Add('5');
-            FVideoDownloadProcesses[i mod SettingsForm.ProcessCountBar.Position].EncoderPaths.Add(YouTubePath);
+            FVideoDownloadProcesses[i mod SettingsForm.ProcessCountBar.Position].EncoderPaths.Add(FYoutubedlPath);
             FVideoDownloadProcesses[i mod SettingsForm.ProcessCountBar.Position].FileIndexes.Add(FloatToStr(i));
             FVideoDownloadProcesses[i mod SettingsForm.ProcessCountBar.Position].Infos.Add('[Downloading]');
             Inc(FVideoDownloadTotalCMDCount);

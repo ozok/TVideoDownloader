@@ -684,8 +684,9 @@ object MainForm: TMainForm
         Height = 21
         Anchors = [akLeft, akRight, akBottom]
         AutoSize = False
+        Color = clWhite
         Font.Charset = DEFAULT_CHARSET
-        Font.Color = clWindowText
+        Font.Color = clBlack
         Font.Height = -11
         Font.Name = 'Tahoma'
         Font.Style = []
@@ -856,8 +857,9 @@ object MainForm: TMainForm
         SkinData.SkinSection = 'COMBOBOX'
         VerticalAlignment = taAlignTop
         Style = csDropDownList
+        Color = clWhite
         Font.Charset = DEFAULT_CHARSET
-        Font.Color = clWindowText
+        Font.Color = clBlack
         Font.Height = -11
         Font.Name = 'Tahoma'
         Font.Style = []
@@ -1539,6 +1541,13 @@ object MainForm: TMainForm
           Width = 465
           Height = 21
           Anchors = [akLeft, akTop, akRight]
+          Color = clWhite
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clBlack
+          Font.Height = -11
+          Font.Name = 'Tahoma'
+          Font.Style = []
+          ParentFont = False
           TabOrder = 0
           TextHint = 'Copy&paste your link here and hit Enter'
           OnKeyDown = LinkEditKeyDown
@@ -1576,7 +1585,14 @@ object MainForm: TMainForm
           SkinData.SkinSection = 'COMBOBOX'
           VerticalAlignment = taAlignTop
           Style = csDropDownList
+          Color = clWhite
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clBlack
+          Font.Height = -11
+          Font.Name = 'Tahoma'
+          Font.Style = []
           ItemIndex = 0
+          ParentFont = False
           TabOrder = 1
           Text = 'Single video/audio'
           Items.Strings = (
@@ -6499,7 +6515,6 @@ object MainForm: TMainForm
     AnimEffects.Minimizing.Active = False
     AnimEffects.PageChange.Active = False
     AnimEffects.SkinChanging.Active = False
-    Active = False
     InternalSkins = <
       item
         Name = 'WEB2 (internal)'
@@ -8128,7 +8143,7 @@ object MainForm: TMainForm
     MenuSupport.ExtraLineFont.Style = []
     SkinDirectory = 'C:\delphi\alphaskin\acnt_regdelphixe4\Skins'
     SkinName = 'WEB2 (internal)'
-    SkinInfo = 'N/A'
+    SkinInfo = '8'
     ThirdParty.ThirdEdits = 
       'TEdit'#13#10'TMemo'#13#10'THotKey'#13#10'TCheckListBox'#13#10'TCategoryButtons'#13#10'TFileLis' +
       'tBox'#13#10

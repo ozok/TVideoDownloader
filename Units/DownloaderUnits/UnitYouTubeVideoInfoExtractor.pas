@@ -607,7 +607,7 @@ begin
   begin
     LPass := ' -u ' + FPass.UserName + ' -p ' + FPass.Password;
   end;
-  FFormatProcess.CommandLine := ' ' + LPass + ' -s --skip-download -i -F --no-playlist "' + FURL + '"';
+  FFormatProcess.CommandLine := ' ' + LPass + ' -s --skip-download -i -F --no-playlist --playlist-start 1 --playlist-end 1 "' + FURL + '"';
   FFormatProcess.Run;
   Start2;
   Start3;
@@ -627,7 +627,7 @@ begin
     end;
     FImageName := FTempFolder + '\' + CreateTempFileName + '.jpg';
     FThumbProcess.ApplicationName := FYouTube_dlPath;
-    FThumbProcess.CommandLine := ' ' + LPass + ' -o "' + FImageName + '" -i --write-thumbnail --no-playlist "' + FURL + '"';
+    FThumbProcess.CommandLine := ' ' + LPass + ' -o "' + FImageName + '" -i --write-thumbnail --no-playlist --playlist-start 1 --playlist-end 1 "' + FURL + '"';
     FThumbProcess.Run;
   end
   else
@@ -646,7 +646,7 @@ begin
   begin
     LPass := ' -u ' + FPass.UserName + ' -p ' + FPass.Password;
   end;
-  FTitleExtractProcess.CommandLine := ' ' + LPass + ' -s --skip-download -i --no-playlist --get-filename -o "%(uploader)s - %(title)s.%(ext)s" "' + FURL + '"';
+  FTitleExtractProcess.CommandLine := ' ' + LPass + ' -s --skip-download -i --no-playlist --playlist-start 1 --playlist-end 1 --get-filename -o "%(uploader)s - %(title)s.%(ext)s" "' + FURL + '"';
   FTitleExtractProcess.Run;
 end;
 
@@ -659,7 +659,7 @@ begin
   begin
     LPass := ' -u ' + FPass.UserName + ' -p ' + FPass.Password;
   end;
-  FSubtitleProcess.CommandLine := ' ' + LPass + ' -s --skip-download -i --list-subs --no-playlist "' + FURL + '"';
+  FSubtitleProcess.CommandLine := ' ' + LPass + ' -s --skip-download -i --list-subs --no-playlist --playlist-start 1 --playlist-end 1 "' + FURL + '"';
   FSubtitleProcess.Run;
 end;
 
