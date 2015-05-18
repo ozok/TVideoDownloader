@@ -31,10 +31,6 @@ object LogForm: TLogForm
       Caption = 'Main'
       SkinData.CustomColor = False
       SkinData.CustomFont = False
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Main: TsMemo
         Left = 0
         Top = 0
@@ -67,10 +63,6 @@ object LogForm: TLogForm
       Caption = 'Command lines'
       SkinData.CustomColor = False
       SkinData.CustomFont = False
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object CMDLog: TsMemo
         Left = 0
         Top = 0
@@ -103,10 +95,6 @@ object LogForm: TLogForm
       Caption = 'Console outputs'
       SkinData.CustomColor = False
       SkinData.CustomFont = False
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object ConsoleLog: TsMemo
         Left = 0
         Top = 21
@@ -133,8 +121,6 @@ object LogForm: TLogForm
         BoundLabel.MaxWidth = 0
         BoundLabel.UseSkinColor = True
         SkinData.SkinSection = 'EDIT'
-        ExplicitTop = 0
-        ExplicitHeight = 386
       end
       object ConsolesList: TsComboBox
         Left = 0
@@ -155,7 +141,13 @@ object LogForm: TLogForm
         SkinData.SkinSection = 'COMBOBOX'
         VerticalAlignment = taAlignTop
         Style = csDropDownList
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'Tahoma'
+        Font.Style = []
         ItemIndex = -1
+        ParentFont = False
         TabOrder = 1
         OnChange = ConsolesListChange
       end

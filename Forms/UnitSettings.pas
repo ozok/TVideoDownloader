@@ -65,7 +65,7 @@ begin
     LProcCount := ProcessCountBar.Max
   end;
 
-  OptionFile := TIniFile.Create(MainForm.FLogFolder + '\Settings.ini');
+  OptionFile := TIniFile.Create(MainForm.FAppDataFolder + '\Settings.ini');
   try
     with OptionFile do
     begin
@@ -91,7 +91,7 @@ procedure TSettingsForm.SaveOptions;
 var
   OptionFile: TIniFile;
 begin
-  OptionFile := TIniFile.Create(MainForm.FLogFolder + '\Settings.ini');
+  OptionFile := TIniFile.Create(MainForm.FAppDataFolder + '\Settings.ini');
   try
     with OptionFile do
     begin

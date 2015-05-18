@@ -5,7 +5,7 @@ object AboutForm: TAboutForm
   Caption = 'About TVideoDownloader'
   ClientHeight = 137
   ClientWidth = 296
-  Color = clBtnFace
+  Color = 3485741
   DoubleBuffered = True
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -330,7 +330,7 @@ object AboutForm: TAboutForm
     Align = alTop
     Alignment = taCenter
     AutoSize = False
-    Caption = 'TVideoDownloader 1.4.125'
+    Caption = 'TVideoDownloader 1.5.202'
     ExplicitTop = 105
     ExplicitWidth = 645
   end
@@ -390,5 +390,16 @@ object AboutForm: TAboutForm
     TabOrder = 2
     OnClick = sButton3Click
     SkinData.SkinSection = 'BUTTON'
+  end
+  object sSkinProvider1: TsSkinProvider
+    AddedTitle.Font.Charset = DEFAULT_CHARSET
+    AddedTitle.Font.Color = clNone
+    AddedTitle.Font.Height = -11
+    AddedTitle.Font.Name = 'Tahoma'
+    AddedTitle.Font.Style = []
+    SkinData.SkinSection = 'FORM'
+    TitleButtons = <>
+    Left = 232
+    Top = 16
   end
 end

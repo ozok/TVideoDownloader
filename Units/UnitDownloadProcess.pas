@@ -52,6 +52,7 @@ type
     FInfos: TStringList;
     // a list of indexes indicating to the files in a list. to show progress in the list.
     FFileIndexes: TStringList;
+    FCurrentProgress: integer;
 
     // process events
     procedure ProcessRead(Sender: TObject; const S: string; const StartsOnNewLine: Boolean);
@@ -85,6 +86,7 @@ type
     property ExeName: string read GetExeName;
     property FileIndexes: TStringList read FFileIndexes write FFileIndexes;
     property FileIndex: Integer read GetFileIndex;
+    property CurrentProgress: integer read FCurrentProgress;
 
     constructor Create();
     destructor Destroy(); override;
@@ -315,7 +317,8 @@ begin
   if GetFileIndex < MainForm.FVideoDownloadListItems.Count then
   begin
     MainForm.FVideoDownloadListItems[GetFileIndex].ProgressLabel.Caption := ProgressStr;
-    MainForm.FVideoDownloadListItems[GetFileIndex].ProgressBar.Position := Progress;
+    MainForm.FVideoDownloadListItems[GetFileIndex].ProgressBar.Progress := Progress;
+    FCurrentProgress := Progress;
   end;
 end;
 

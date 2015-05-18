@@ -627,7 +627,7 @@ begin
     end;
     FImageName := FTempFolder + '\' + CreateTempFileName + '.jpg';
     FThumbProcess.ApplicationName := FYouTube_dlPath;
-    FThumbProcess.CommandLine := ' ' + LPass + ' -o "' + FImageName + '" -i --write-thumbnail --no-playlist --playlist-start 1 --playlist-end 1 "' + FURL + '"';
+    FThumbProcess.CommandLine := ' ' + LPass + ' -i "' + FURL + '" --write-thumbnail -o "' + FImageName + '"  --no-playlist --playlist-start 1 --playlist-end 1';
     FThumbProcess.Run;
   end
   else

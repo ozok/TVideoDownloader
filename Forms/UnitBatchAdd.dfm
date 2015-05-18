@@ -33,8 +33,9 @@ object BatchAddForm: TBatchAddForm
     Width = 619
     Height = 234
     Anchors = [akLeft, akTop, akRight, akBottom]
+    Color = clWhite
     Font.Charset = DEFAULT_CHARSET
-    Font.Color = clWindowText
+    Font.Color = clBlack
     Font.Height = -11
     Font.Name = 'Tahoma'
     Font.Style = []
