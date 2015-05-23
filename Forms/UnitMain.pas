@@ -11,7 +11,7 @@ uses
   sCustomComboEdit, sToolEdit, JvComponentBase, JvComputerInfoEx, StrUtils, MediaInfoDll, windows7taskbar, UnitCommonTypes,
   JvTrayIcon, acPNG, UnitYouTubeVideoInfoExtractor, ShellAPI, Winapi.MMSystem, IniFiles,
   JvUrlListGrabber, JvUrlGrabbers, JvThread, System.Types, DownloadItemFrame,
-  JvDragDrop, DragDrop, DropTarget, DragDropText;
+  JvDragDrop, DragDrop, DropTarget, DragDropText, sDialogs;
 
 type
   TMainForm = class(TForm)
@@ -80,6 +80,11 @@ type
     DropDummy1: TDropDummy;
     LoadProgressBar: TsProgressBar;
     C2: TMenuItem;
+    SaveDialog: TsSaveDialog;
+    E2: TMenuItem;
+    sPanel2: TsPanel;
+    TimeLabel: TsLabel;
+    TimeTimer: TTimer;
     procedure AddLinkBtnClick(Sender: TObject);
     procedure ClearLinksBtnClick(Sender: TObject);
     procedure PassBtnClick(Sender: TObject);
@@ -116,13 +121,14 @@ type
     procedure DropTextTarget1Drop(Sender: TObject; ShiftState: TShiftState; APoint: TPoint; var Effect: Integer);
     procedure FormResize(Sender: TObject);
     procedure C2Click(Sender: TObject);
+    procedure E2Click(Sender: TObject);
+    procedure TimeTimerTimer(Sender: TObject);
   private
     { Private declarations }
     FDownloadItems: TDownloadItemList;
     // total download cmd
     FVideoDownloadTotalCMDCount: Integer;
     // time passed downloading
-    // todo: use this
     FVideoDownloaderTime: Integer;
     FStopAddingLink: Boolean;
     FSkippedVideoCount: integer;
@@ -176,6 +182,8 @@ type
 
     procedure ProcessPanelVisibility(const Visible: Boolean);
     procedure AddPanelVisibility(const Visible: Boolean);
+
+    function IntToTime(const TimeAsInt: integer):string;
   public
     { Public declarations }
     FAppDataFolder: string;
@@ -196,7 +204,7 @@ var
   MainForm: TMainForm;
 
 const
-  Portable = True;
+  Portable = False;
   BuildInt = 202;
 
 implementation
@@ -529,7 +537,7 @@ begin
           FDownloadItems.Add(LDownloadItem);
           LVideoDownloaderItem := TDownloadUIItem.Create(nil);
           LVideoDownloaderItem.Width := VideoDownloaderList.ClientWidth;
-          LVideoDownloaderItem.Top := FVideoDownloadListItems.Count * 140;
+          LVideoDownloaderItem.Top := FVideoDownloadListItems.Count * 112;
           LVideoDownloaderItem.LinkLabel.Caption := Url;
           LVideoDownloaderItem.FileNameLabel.Caption := YIE.FileName;
           LVideoDownloaderItem.FileNameLabel.Hint := LVideoDownloaderItem.FileNameLabel.Caption;
@@ -676,7 +684,7 @@ procedure TMainForm.C2Click(Sender: TObject);
 begin
   if UpdateChecker.Status <> gsStopped then
   begin
-    Application.MessageBox('Update checker is already running.', 'Error', MB_ICONERROR);
+    Application.MessageBox('Update checker is already running.', 'Error', MB_ICONINFORMATION);
     Exit;
   end;
   CheckUpdateThread.Execute(PWideChar('User'));
@@ -852,6 +860,29 @@ begin
   end;
 end;
 
+procedure TMainForm.E2Click(Sender: TObject);
+var
+  LOutputFile: TStringList;
+  I: Integer;
+begin
+  if FVideoDownloadListItems.Count > 0 then
+  begin
+    if SaveDialog.Execute then
+    begin
+      LOutputFile := TStringList.Create;
+      try
+        for I := 0 to FVideoDownloadListItems.Count-1 do
+        begin
+          LOutputFile.Add(FVideoDownloadListItems[i].LinkLabel.Caption);
+        end;
+        LOutputFile.SaveToFile(ChangeFileExt(SaveDialog.FileName, '.txt'));
+      finally
+        LOutputFile.Free;
+      end;
+    end;
+  end;
+end;
+
 procedure TMainForm.DeleteBtnClick(Sender: TObject);
 var
   LItemIndex: integer;
@@ -916,6 +947,8 @@ begin
   Self.Caption := 'TVideoDownloader';
   TotalBar.Position := 0;
   VideoDownloaderProgressLabel.Caption := 'Progress: 0/0';
+  FVideoDownloaderTime := 0;
+  TimeLabel.Caption := '00:00:00';
   SetProgressValue(Handle, 0, MaxInt);
 end;
 
@@ -1076,6 +1109,10 @@ end;
 procedure TMainForm.FormShow(Sender: TObject);
 begin
   LoadOptions;
+  if FindCmdLineSwitch('/UpdateYoutube-dl') then
+  begin
+    YoutubedlUpdateChecker.UpdateThread.Execute(nil);
+  end;
 end;
 
 function TMainForm.GetFileSizeEx(const FilePath: string): Int64;
@@ -1134,6 +1171,41 @@ begin
         MediaInfo_Close(MediaInfoHandle);
       end;
     end;
+  end;
+end;
+
+function TMainForm.IntToTime(const TimeAsInt: integer): string;
+var
+  LHours: Cardinal;
+  LMinutes: Cardinal;
+  LSeconds: Cardinal;
+  LHoursStr: string;
+  LMinutesStr: string;
+  LSecondsStr: string;
+begin
+  if TimeAsInt > 0 then
+  begin
+    LHours := TimeAsInt div 3600;
+    LMinutes := (TimeAsInt div 60) - (LHours * 60);
+    LSeconds := (TimeAsInt mod 60);
+
+    if LHours > 9 then
+      LHoursStr := LHours.ToString()
+    else
+      LHoursStr := '0' + LHours.ToString();
+    if LMinutes > 9 then
+      LMinutesStr := LMinutes.ToString()
+    else
+      LMinutesStr := '0' + LMinutes.ToString();
+    if LSeconds > 9 then
+      LSecondsStr := LSeconds.ToString()
+    else
+      LSecondsStr := '0' + LSeconds.ToString();
+    Result := LHoursStr + ':' +  LMinutesStr + ':' + LSecondsStr;
+  end
+  else
+  begin
+    Result := '00:00:00';
   end;
 end;
 
@@ -1598,6 +1670,7 @@ begin
           end;
           VideoDownloaderPosTimer.Enabled := True;
           TrayIcon.Active := True;
+          TimeTimer.Enabled := VideoDownloaderPosTimer.Enabled;
           DownloadState();
           SetProgressState(Handle, tbpsNormal);
         end
@@ -1628,6 +1701,7 @@ begin
     ProcessPanelVisibility(True);
     try
       VideoDownloaderPosTimer.Enabled := False;
+          TimeTimer.Enabled := VideoDownloaderPosTimer.Enabled;
       for I := Low(FVideoDownloadProcesses) to High(FVideoDownloadProcesses) do
         FVideoDownloadProcesses[i].Stop;
       ClearTempFolderEx(True);
@@ -1649,6 +1723,12 @@ begin
   FDownloadItems[LItemIndex] := LTmp;
 end;
 
+procedure TMainForm.TimeTimerTimer(Sender: TObject);
+begin
+  Inc(FVideoDownloaderTime);
+  TimeLabel.Caption := IntToTime(FVideoDownloaderTime);
+end;
+
 procedure TMainForm.TrayIconBalloonClick(Sender: TObject);
 begin
   TrayIcon.ShowApplication;
@@ -1661,6 +1741,7 @@ var
   I: Integer;
   LMissingFileList: TStringList;
   LTotalCurrentProgress: integer;
+  LNewPos: integer;
 begin
   LTotalFilesDone := 0;
   LTotalCurrentProgress := 0;
@@ -1679,6 +1760,7 @@ begin
   if LTotalFilesDone = FVideoDownloadTotalCMDCount then
   begin
     VideoDownloaderPosTimer.Enabled := False;
+          TimeTimer.Enabled := VideoDownloaderPosTimer.Enabled;
     // TimeTimer.Enabled := False;
     ClearTempFolderEx(True);
     DownloadNormalState;
@@ -1758,12 +1840,16 @@ begin
   else
   begin
     TotalBar.Max := 100;
-    TotalBar.Position := (100 * (LTotalFilesDone + FSkippedVideoCount) div FVideoDownloadTotalCMDCount) + LTotalCurrentProgress;
-    VideoDownloaderProgressLabel.Caption := 'Progress: ' + FloatToStr(LTotalFilesDone + FSkippedVideoCount) + '/' + FloatToStr(FVideoDownloadTotalCMDCount + FSkippedVideoCount);
-    if FVideoDownloadTotalCMDCount > 0 then
+    LNewPos := (100 * (LTotalFilesDone + FSkippedVideoCount) div FVideoDownloadTotalCMDCount) + LTotalCurrentProgress;
+    if LNewPos > TotalBar.Position then
     begin
-      MainForm.Caption := FloatToStr(TotalBar.Position) + '% [TVideoDownloader]';
-      SetProgressValue(Handle, LTotalFilesDone + FSkippedVideoCount, FVideoDownloadTotalCMDCount + FSkippedVideoCount);
+      TotalBar.Position := LNewPos;
+      VideoDownloaderProgressLabel.Caption := 'Progress: ' + FloatToStr(LTotalFilesDone + FSkippedVideoCount) + '/' + FloatToStr(FVideoDownloadTotalCMDCount + FSkippedVideoCount);
+      if FVideoDownloadTotalCMDCount > 0 then
+      begin
+        MainForm.Caption := FloatToStr(TotalBar.Position) + '% [TVideoDownloader]';
+        SetProgressValue(Handle, LTotalFilesDone + FSkippedVideoCount, FVideoDownloadTotalCMDCount + FSkippedVideoCount);
+      end;
     end;
   end;
 end;

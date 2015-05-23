@@ -5,7 +5,7 @@ object YoutubedlUpdateChecker: TYoutubedlUpdateChecker
   Caption = 'Youtube-dl Update Checker'
   ClientHeight = 202
   ClientWidth = 645
-  Color = 16183528
+  Color = 3485741
   DoubleBuffered = True
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -27,9 +27,9 @@ object YoutubedlUpdateChecker: TYoutubedlUpdateChecker
     Width = 629
     Height = 155
     Anchors = [akLeft, akTop, akRight, akBottom]
-    Color = clWhite
+    Color = 2038810
     Font.Charset = DEFAULT_CHARSET
-    Font.Color = clBlack
+    Font.Color = 13417908
     Font.Height = -11
     Font.Name = 'Tahoma'
     Font.Style = []
@@ -74,6 +74,7 @@ object YoutubedlUpdateChecker: TYoutubedlUpdateChecker
     AddedTitle.Font.Height = -11
     AddedTitle.Font.Name = 'Tahoma'
     AddedTitle.Font.Style = []
+    FormHeader.AdditionalHeight = 0
     SkinData.SkinSection = 'FORM'
     TitleButtons = <>
     Left = 432
@@ -81,6 +82,9 @@ object YoutubedlUpdateChecker: TYoutubedlUpdateChecker
   end
   object Downloader: TIdHTTP
     IOHandler = IdSSLIOHandlerSocketOpenSSL1
+    OnWork = DownloaderWork
+    OnWorkBegin = DownloaderWorkBegin
+    OnWorkEnd = DownloaderWorkEnd
     AllowCookies = True
     ProxyParams.BasicAuthentication = False
     ProxyParams.ProxyPort = 0

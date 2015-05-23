@@ -23,8 +23,14 @@ type
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure FormShow(Sender: TObject);
     procedure UpdateThreadExecute(Sender: TObject; Params: Pointer);
+    procedure DownloaderWorkBegin(ASender: TObject; AWorkMode: TWorkMode;
+      AWorkCountMax: Int64);
+    procedure DownloaderWork(ASender: TObject; AWorkMode: TWorkMode;
+      AWorkCount: Int64);
+    procedure DownloaderWorkEnd(ASender: TObject; AWorkMode: TWorkMode);
   private
     { Private declarations }
+    FWorkSize: int64;
   public
     { Public declarations }
     Path: string;
@@ -42,6 +48,39 @@ implementation
 
 uses UnitMain;
 
+procedure TYoutubedlUpdateChecker.DownloaderWork(ASender: TObject;
+  AWorkMode: TWorkMode; AWorkCount: Int64);
+var
+  LPercent: integer;
+begin
+  if FWorkSize > 0 then
+  begin
+    LPercent := (100 * AWorkCount) div FWorkSize;
+    if (LPercent mod 10) = 0 then
+    begin
+      OutputList.Lines[OutputList.Lines.Count-1] := ('[' + DateTimeToStr(Now) + '] Downloading the latest version...(%' + FloatToStr(LPercent) + ')');
+    end;
+  end;
+end;
+
+procedure TYoutubedlUpdateChecker.DownloaderWorkBegin(ASender: TObject;
+  AWorkMode: TWorkMode; AWorkCountMax: Int64);
+begin
+  FWorkSize := AWorkCountMax;
+end;
+
+procedure TYoutubedlUpdateChecker.DownloaderWorkEnd(ASender: TObject;
+  AWorkMode: TWorkMode);
+var
+  LPath: string;
+begin
+  LPath := ChangeFileExt(Path, '.tmp');
+  if FileExists(LPath) then
+  begin
+    
+  end;
+end;
+
 procedure TYoutubedlUpdateChecker.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
   if Downloader.Connected then
@@ -54,6 +93,8 @@ end;
 procedure TYoutubedlUpdateChecker.FormShow(Sender: TObject);
 begin
   DownloadBtn.Enabled := True;
+  OutputList.Lines.Clear;
+  FWorkSize := 0;
 end;
 
 procedure TYoutubedlUpdateChecker.sButton1Click(Sender: TObject);
@@ -70,6 +111,7 @@ var
   LLine: string;
   LPos: integer;
   LFS: TFileStream;
+  LPath: string;
 begin
   OutputList.Lines.Add('[' + DateTimeToStr(Now) + '] Starting the update process.');
   DownloadBtn.Enabled := False;
@@ -98,10 +140,20 @@ begin
           OutputList.Lines.Add('[' + DateTimeToStr(Now) + '] Link: ' + LLine);
 
           try
+            LPath := ChangeFileExt(Path, '.tmp');
+            if FileExists(LPath) then
+            begin
+              DeleteFile(LPath);
+            end;
             LFS := TFileStream.Create(Path, fmCreate);
             try
               OutputList.Lines.Add('[' + DateTimeToStr(Now) + '] Downloading the latest version...');
               Downloader.Get(LLine, LFS);
+              if FileExists(Path) then
+              begin
+                DeleteFile(Path);
+              end;
+              RenameFile(LPath, Path);
               OutputList.Lines.Add('[' + DateTimeToStr(Now) + '] Downloaded the latest version.');
             except
               on E: Exception do
@@ -129,6 +181,10 @@ begin
   end;
 
   UpdateThread.CancelExecute;
+  if Params <> nil then
+  begin
+    Application.Terminate;
+  end;
 end;
 
 procedure TYoutubedlUpdateChecker.DownloadBtnClick(Sender: TObject);

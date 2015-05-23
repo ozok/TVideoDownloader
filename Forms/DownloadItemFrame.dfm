@@ -1,35 +1,38 @@
 object DownloadUIItem: TDownloadUIItem
   Left = 0
   Top = 0
-  Width = 451
-  Height = 140
+  Width = 1116
+  Height = 112
   Anchors = [akLeft, akTop, akRight]
   TabOrder = 0
   object sPanel1: TsPanel
-    Left = 137
+    Left = 178
     Top = 0
-    Width = 314
-    Height = 140
+    Width = 938
+    Height = 112
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 0
     SkinData.SkinSection = 'PANEL'
-    ExplicitHeight = 137
+    ExplicitLeft = 137
+    ExplicitWidth = 314
+    ExplicitHeight = 140
     DesignSize = (
-      314
-      140)
+      938
+      112)
     object ProgressLabel: TsLabel
       Left = 55
-      Top = 95
+      Top = 67
       Width = 67
       Height = 13
       Anchors = [akLeft, akBottom]
       Caption = 'ProgressLabel'
+      ExplicitTop = 95
     end
     object ProgressBar: TsGauge
       Left = 6
-      Top = 112
-      Width = 216
+      Top = 84
+      Width = 840
       Height = 19
       Anchors = [akLeft, akRight, akBottom]
       Animated = False
@@ -64,7 +67,7 @@ object DownloadUIItem: TDownloadUIItem
     object FormatList: TsComboBox
       Left = 55
       Top = 41
-      Width = 246
+      Width = 610
       Height = 21
       Anchors = [akLeft, akTop, akRight]
       Alignment = taLeftJustify
@@ -85,11 +88,11 @@ object DownloadUIItem: TDownloadUIItem
       TabOrder = 0
     end
     object SubtitleList: TsComboBox
-      Left = 55
-      Top = 68
-      Width = 246
+      Left = 726
+      Top = 41
+      Width = 200
       Height = 21
-      Anchors = [akLeft, akTop, akRight]
+      Anchors = [akTop, akRight]
       Alignment = taLeftJustify
       BoundLabel.Active = True
       BoundLabel.Caption = 'Subtitles:'
@@ -108,40 +111,37 @@ object DownloadUIItem: TDownloadUIItem
       TabOrder = 1
     end
     object DeleteButton: TsButton
-      Left = 228
-      Top = 109
+      Left = 852
+      Top = 81
       Width = 75
       Height = 25
       Anchors = [akRight, akBottom]
       Caption = 'Remove'
       TabOrder = 2
-      ExplicitTop = 106
+      ExplicitLeft = 228
+      ExplicitTop = 109
     end
   end
   object sPanel2: TsPanel
     Left = 0
     Top = 0
-    Width = 137
-    Height = 140
+    Width = 178
+    Height = 112
     Align = alLeft
     TabOrder = 1
     SkinData.SkinSection = 'PANEL'
-    ExplicitHeight = 137
     object PrevievImg: TsImage
       Left = 1
       Top = 1
-      Width = 135
-      Height = 138
+      Width = 176
+      Height = 110
       Align = alClient
       Center = True
       Picture.Data = {07544269746D617000000000}
       Proportional = True
       Transparent = True
       SkinData.SkinSection = 'CHECKBOX'
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 140
-      ExplicitHeight = 140
+      ExplicitWidth = 110
     end
   end
 end
