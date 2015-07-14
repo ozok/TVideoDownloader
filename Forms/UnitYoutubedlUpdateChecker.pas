@@ -7,7 +7,8 @@ uses
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, sButton, sMemo,
   sSkinProvider, IdIOHandler, IdIOHandlerSocket, IdIOHandlerStack, IdSSL,
   IdSSLOpenSSL, IdBaseComponent, IdComponent, IdTCPConnection, IdTCPClient,
-  IdHTTP, IdThreadComponent, JvComponentBase, JvThread;
+  IdHTTP, IdThreadComponent, JvComponentBase, JvThread, Vcl.ComCtrls,
+  acProgressBar, sGauge;
 
 type
   TYoutubedlUpdateChecker = class(TForm)
@@ -18,15 +19,14 @@ type
     IdSSLIOHandlerSocketOpenSSL1: TIdSSLIOHandlerSocketOpenSSL;
     DownloadBtn: TsButton;
     UpdateThread: TJvThread;
+    ProgressBar: TsGauge;
     procedure sButton1Click(Sender: TObject);
     procedure DownloadBtnClick(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure FormShow(Sender: TObject);
     procedure UpdateThreadExecute(Sender: TObject; Params: Pointer);
-    procedure DownloaderWorkBegin(ASender: TObject; AWorkMode: TWorkMode;
-      AWorkCountMax: Int64);
-    procedure DownloaderWork(ASender: TObject; AWorkMode: TWorkMode;
-      AWorkCount: Int64);
+    procedure DownloaderWorkBegin(ASender: TObject; AWorkMode: TWorkMode; AWorkCountMax: Int64);
+    procedure DownloaderWork(ASender: TObject; AWorkMode: TWorkMode; AWorkCount: Int64);
     procedure DownloaderWorkEnd(ASender: TObject; AWorkMode: TWorkMode);
   private
     { Private declarations }
@@ -48,36 +48,30 @@ implementation
 
 uses UnitMain;
 
-procedure TYoutubedlUpdateChecker.DownloaderWork(ASender: TObject;
-  AWorkMode: TWorkMode; AWorkCount: Int64);
+procedure TYoutubedlUpdateChecker.DownloaderWork(ASender: TObject; AWorkMode: TWorkMode; AWorkCount: Int64);
 var
   LPercent: integer;
 begin
   if FWorkSize > 0 then
   begin
     LPercent := (100 * AWorkCount) div FWorkSize;
-    if (LPercent mod 10) = 0 then
-    begin
-      OutputList.Lines[OutputList.Lines.Count-1] := ('[' + DateTimeToStr(Now) + '] Downloading the latest version...(%' + FloatToStr(LPercent) + ')');
-    end;
+    ProgressBar.Progress := LPercent;
   end;
 end;
 
-procedure TYoutubedlUpdateChecker.DownloaderWorkBegin(ASender: TObject;
-  AWorkMode: TWorkMode; AWorkCountMax: Int64);
+procedure TYoutubedlUpdateChecker.DownloaderWorkBegin(ASender: TObject; AWorkMode: TWorkMode; AWorkCountMax: Int64);
 begin
   FWorkSize := AWorkCountMax;
 end;
 
-procedure TYoutubedlUpdateChecker.DownloaderWorkEnd(ASender: TObject;
-  AWorkMode: TWorkMode);
+procedure TYoutubedlUpdateChecker.DownloaderWorkEnd(ASender: TObject; AWorkMode: TWorkMode);
 var
   LPath: string;
 begin
   LPath := ChangeFileExt(Path, '.tmp');
   if FileExists(LPath) then
   begin
-    
+
   end;
 end;
 
@@ -94,6 +88,7 @@ procedure TYoutubedlUpdateChecker.FormShow(Sender: TObject);
 begin
   DownloadBtn.Enabled := True;
   OutputList.Lines.Clear;
+  ProgressBar.Progress := 0;
   FWorkSize := 0;
 end;
 

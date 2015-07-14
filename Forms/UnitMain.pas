@@ -74,7 +74,7 @@ type
     LinkEdit: TsEdit;
     LinkTypeList: TsComboBox;
     AddSingleLinkBtn: TsBitBtn;
-    GetLatestYoutubedlBtn: TsButton;
+    GetLatestYoutubedlBtn: TsBitBtn;
     LoadPanelLabel: TsLabel;
     DropTextTarget1: TDropTextTarget;
     DropDummy1: TDropDummy;
@@ -85,6 +85,7 @@ type
     sPanel2: TsPanel;
     TimeLabel: TsLabel;
     TimeTimer: TTimer;
+    OpenOutputFolderBtn: TsBitBtn;
     procedure AddLinkBtnClick(Sender: TObject);
     procedure ClearLinksBtnClick(Sender: TObject);
     procedure PassBtnClick(Sender: TObject);
@@ -117,7 +118,6 @@ type
     procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
     procedure AddSingleLinkBtnClick(Sender: TObject);
     procedure LinkEditKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
-    procedure JvDragDrop1Drop(Sender: TObject; Pos: TPoint; Value: TStrings);
     procedure DropTextTarget1Drop(Sender: TObject; ShiftState: TShiftState; APoint: TPoint; var Effect: Integer);
     procedure FormResize(Sender: TObject);
     procedure C2Click(Sender: TObject);
@@ -136,15 +136,13 @@ type
 
     // backend paths
     FYoutubedlPath: string;
-    FFMpegPath: string;
+    FFFMpegPath: string;
     FTempFolder: string;
-    FRenamePath: string;
-    Mp4BoxPath: string;
+    FMp4BoxPath: string;
     // backend paths
     // list of output files to be checked
     FFilesToCheck: TStringList;
     FUserUpdateCheck: Boolean;
-
 
     // create guid file name
     function CreateTempName: string;
@@ -183,7 +181,7 @@ type
     procedure ProcessPanelVisibility(const Visible: Boolean);
     procedure AddPanelVisibility(const Visible: Boolean);
 
-    function IntToTime(const TimeAsInt: integer):string;
+    function IntToTime(const TimeAsInt: integer): string;
   public
     { Public declarations }
     FAppDataFolder: string;
@@ -541,6 +539,7 @@ begin
           LVideoDownloaderItem.LinkLabel.Caption := Url;
           LVideoDownloaderItem.FileNameLabel.Caption := YIE.FileName;
           LVideoDownloaderItem.FileNameLabel.Hint := LVideoDownloaderItem.FileNameLabel.Caption;
+          LVideoDownloaderItem.DeleteButton.OnClick := DeleteBtnClick;
           // load program icon if download of thumb fails or user selected not to load it
           if FileExists(YIE.ImageName) then
           begin
@@ -821,7 +820,7 @@ begin
   begin
     MainMenu1.Items[i].Enabled := False;
   end;
-  for I := 0 to FVideoDownloadListItems.Count-1 do
+  for I := 0 to FVideoDownloadListItems.Count - 1 do
   begin
     FVideoDownloadListItems[i].Disable;
   end;
@@ -830,9 +829,6 @@ end;
 procedure TMainForm.DropTextTarget1Drop(Sender: TObject; ShiftState: TShiftState; APoint: TPoint; var Effect: Integer);
 var
   LURL: string;
-  LYIE: TYouTubeVideoInfoExtractor;
-  I: Integer;
-  LPass: TUserPass;
 begin
   LURL := DropTextTarget1.Text.Trim;
   if Length(LURL) > 0 then
@@ -871,7 +867,7 @@ begin
     begin
       LOutputFile := TStringList.Create;
       try
-        for I := 0 to FVideoDownloadListItems.Count-1 do
+        for I := 0 to FVideoDownloadListItems.Count - 1 do
         begin
           LOutputFile.Add(FVideoDownloadListItems[i].LinkLabel.Caption);
         end;
@@ -898,6 +894,7 @@ begin
     begin
       FVideoDownloadListItems[i].DeleteButton.Tag := FVideoDownloadListItems[i].DeleteButton.Tag - 1;
     end;
+      FVideoDownloadListItems[i].Top := i * 112;
   end;
 end;
 
@@ -939,7 +936,7 @@ begin
       FVideoDownloadListItems[i].ResetProgressLabel;
     end;
   end;
-  for I := 0 to FVideoDownloadListItems.Count-1 do
+  for I := 0 to FVideoDownloadListItems.Count - 1 do
   begin
     FVideoDownloadListItems[i].Enable;
   end;
@@ -1043,20 +1040,14 @@ begin
       FYoutubedlPath := FAppDataFolder + '\youtube-dl.exe';
     end;
   end;
-  FFMpegPath := ExtractFileDir(Application.ExeName) + '\tools\ffmpeg.exe';
-  if not FileExists(FFMpegPath) then
+  FFFMpegPath := ExtractFileDir(Application.ExeName) + '\tools\ffmpeg.exe';
+  if not FileExists(FFFMpegPath) then
   begin
     Application.MessageBox('Cannot find ffmpeg!', 'Fatal Error', MB_ICONERROR);
     Application.Terminate;
   end;
-  FRenamePath := ExtractFileDir(Application.ExeName) + '\tools\renametool.exe';
-  if not FileExists(FRenamePath) then
-  begin
-    Application.MessageBox('Cannot find renametool!', 'Fatal Error', MB_ICONERROR);
-    Application.Terminate;
-  end;
-  Mp4BoxPath := ExtractFileDir(Application.ExeName) + '\tools\mp4box.exe';
-  if not FileExists(Mp4BoxPath) then
+  FMp4BoxPath := ExtractFileDir(Application.ExeName) + '\tools\mp4box.exe';
+  if not FileExists(FMp4BoxPath) then
   begin
     Application.MessageBox('Cannot find Mp4BoxPath!', 'Fatal Error', MB_ICONERROR);
     Application.Terminate;
@@ -1176,9 +1167,9 @@ end;
 
 function TMainForm.IntToTime(const TimeAsInt: integer): string;
 var
-  LHours: Cardinal;
-  LMinutes: Cardinal;
-  LSeconds: Cardinal;
+  LHours: integer;
+  LMinutes: integer;
+  LSeconds: integer;
   LHoursStr: string;
   LMinutesStr: string;
   LSecondsStr: string;
@@ -1201,17 +1192,12 @@ begin
       LSecondsStr := LSeconds.ToString()
     else
       LSecondsStr := '0' + LSeconds.ToString();
-    Result := LHoursStr + ':' +  LMinutesStr + ':' + LSecondsStr;
+    Result := LHoursStr + ':' + LMinutesStr + ':' + LSecondsStr;
   end
   else
   begin
     Result := '00:00:00';
   end;
-end;
-
-procedure TMainForm.JvDragDrop1Drop(Sender: TObject; Pos: TPoint; Value: TStrings);
-begin
-  ShowMessage(Value[0]);
 end;
 
 procedure TMainForm.LabelClick(Sender: TObject);
@@ -1430,7 +1416,6 @@ procedure TMainForm.StartDownloadBtnClick(Sender: TObject);
 var
   i: Integer;
   LSelectedFormatStr: string;
-  LStreamWriter: TStreamWriter;
   j: Integer;
   LDownloadedVideoName: string;
   LCMD: string;
@@ -1443,6 +1428,8 @@ var
   LDASHVideoExt: string;
   LPos1: integer;
   LPass: string;
+  LDownloadJob: TDownloadJob;
+  LRenameJob: TRenameJob;
 begin
   if FVideoDownloadListItems.Count > 0 then
   begin
@@ -1481,11 +1468,6 @@ begin
         end;
         FVideoDownloadTotalCMDCount := 0;
         FVideoDownloaderTime := 0;
-        // remove cmd log from last time
-        if FileExists(FAppDataFolder + '\cmd.txt') then
-        begin
-          DeleteFile(FAppDataFolder + '\cmd.txt')
-        end;
         FSkippedVideoCount := 0;
         FProcessErrorCount := 0;
 {$ENDREGION}
@@ -1549,12 +1531,12 @@ begin
             // LDownloadSub := True;
           end;
           LCMD := LCMD + ' -v -c -w ' + FVideoDownloadListItems[i].LinkLabel.Caption;
-          FVideoDownloadProcesses[i mod SettingsForm.ProcessCountBar.Position].CommandLines.Add(LCMD);
-          FVideoDownloadProcesses[i mod SettingsForm.ProcessCountBar.Position].ProcessTypes.Add('5');
-          FVideoDownloadProcesses[i mod SettingsForm.ProcessCountBar.Position].EncoderPaths.Add(FYoutubedlPath);
-          FVideoDownloadProcesses[i mod SettingsForm.ProcessCountBar.Position].FileIndexes.Add(FloatToStr(i));
-          FVideoDownloadProcesses[i mod SettingsForm.ProcessCountBar.Position].Infos.Add('[Downloading]');
-          Inc(FVideoDownloadTotalCMDCount);
+          LDownloadJob.CommandLine := LCMD;
+          LDownloadJob.ProcessType := youtubedl;
+          LDownloadJob.ApplicationPath := FYoutubedlPath;
+          LDownloadJob.FileIndex := i;
+          LDownloadJob.ProcessInfo := '[Downloading Video]';
+          FVideoDownloadProcesses[i mod SettingsForm.ProcessCountBar.Position].DownloadJobs.Add(LDownloadJob);
           // if dash video selected
           // detect if selected format is indeed dash video only
           LSelectedFormatStr := FVideoDownloadListItems[i].FormatList.Text;
@@ -1564,35 +1546,31 @@ begin
             LDASHAudioExt := VideoTypeToAudio(LSelectedFormatStr);
             LDASHVideoExt := VideoTypeToVideo(LSelectedFormatStr);
             LDASHAudioCode := VideoTypeToAudioCode(LSelectedFormatStr);
+
             // get audio
-            FVideoDownloadProcesses[i mod SettingsForm.ProcessCountBar.Position].CommandLines.Add(' -o "' + ExcludeTrailingPathDelimiter(DirectoryEdit.Text) +
-              '\%(uploader)s - %(title)s.%(ext)s" -i --no-playlist -f ' + LDASHAudioCode + ' -c -w ' + FVideoDownloadListItems[i].LinkLabel.Caption);
-            FVideoDownloadProcesses[i mod SettingsForm.ProcessCountBar.Position].ProcessTypes.Add('5');
-            FVideoDownloadProcesses[i mod SettingsForm.ProcessCountBar.Position].EncoderPaths.Add(FYoutubedlPath);
-            FVideoDownloadProcesses[i mod SettingsForm.ProcessCountBar.Position].FileIndexes.Add(FloatToStr(i));
-            FVideoDownloadProcesses[i mod SettingsForm.ProcessCountBar.Position].Infos.Add('[Downloading]');
-            Inc(FVideoDownloadTotalCMDCount);
+            LDownloadJob.CommandLine := ' -o "' + ExcludeTrailingPathDelimiter(DirectoryEdit.Text) + '\%(uploader)s - %(title)s' + LDASHAudioExt + '" -i --no-playlist -f ' + LDASHAudioCode + ' -c -w '
+              + FVideoDownloadListItems[i].LinkLabel.Caption;
+            LDownloadJob.ProcessType := youtubedl;
+            LDownloadJob.ApplicationPath := FYoutubedlPath;
+            LDownloadJob.FileIndex := i;
+            LDownloadJob.ProcessInfo := '[Downloading Audio]';
+            FVideoDownloadProcesses[i mod SettingsForm.ProcessCountBar.Position].DownloadJobs.Add(LDownloadJob);
+
             // mux both into video file
-            FVideoDownloadProcesses[i mod SettingsForm.ProcessCountBar.Position].CommandLines.Add(' -y -i "' + DirectoryEdit.Text + '\' + FVideoDownloadListItems[i].FileNameLabel.Caption +
-              LDASHVideoExt + '" -i "' + DirectoryEdit.Text + '\' + FVideoDownloadListItems[i].FileNameLabel.Caption + LDASHAudioExt + '" -acodec copy -vcodec copy "' + DirectoryEdit.Text + '\' +
-              FVideoDownloadListItems[i].FileNameLabel.Caption + '_muxed' + LDASHVideoExt + '"');
-            FVideoDownloadProcesses[i mod SettingsForm.ProcessCountBar.Position].ProcessTypes.Add('');
-            FVideoDownloadProcesses[i mod SettingsForm.ProcessCountBar.Position].EncoderPaths.Add(FFMpegPath);
-            FVideoDownloadProcesses[i mod SettingsForm.ProcessCountBar.Position].FileIndexes.Add(FloatToStr(i));
-            FVideoDownloadProcesses[i mod SettingsForm.ProcessCountBar.Position].Infos.Add('[Muxing]');
-            Inc(FVideoDownloadTotalCMDCount);
-            // delete downloaded video and audio files
+            LDownloadJob.CommandLine := ' -y -i "' + DirectoryEdit.Text + '\' + FVideoDownloadListItems[i].FileNameLabel.Caption + LDASHVideoExt + '" -i "' + DirectoryEdit.Text + '\' +
+              FVideoDownloadListItems[i].FileNameLabel.Caption + LDASHAudioExt + '" -acodec copy -vcodec copy "' + DirectoryEdit.Text + '\' + FVideoDownloadListItems[i].FileNameLabel.Caption +
+              '_muxed' + LDASHVideoExt + '"';
+            LDownloadJob.ProcessType := ffmpeg;
+            LDownloadJob.ApplicationPath := FFFMpegPath;
+            LDownloadJob.FileIndex := i;
+            LDownloadJob.ProcessInfo := '[Muxing Audio and Video]';
+            // delete downloaded temp. video and audio files
             // rename muxed video to normal
-            LRenameFile.Add(DirectoryEdit.Text + '\' + FVideoDownloadListItems[i].FileNameLabel.Caption + LDASHAudioExt);
-            LRenameFile.Add(DirectoryEdit.Text + '\' + LOutputFile);
-            LRenameFile.Add(DirectoryEdit.Text + '\' + FVideoDownloadListItems[i].FileNameLabel.Caption + '_muxed' + LDASHVideoExt);
-            LRenameFile.SaveToFile(FTempFolder + '\' + FloatToStr(i) + '.txt', TEncoding.UTF8);
-            FVideoDownloadProcesses[i mod SettingsForm.ProcessCountBar.Position].CommandLines.Add('"' + FRenamePath + '" "' + FTempFolder + '\' + FloatToStr(i) + '.txt"');
-            FVideoDownloadProcesses[i mod SettingsForm.ProcessCountBar.Position].ProcessTypes.Add('6');
-            FVideoDownloadProcesses[i mod SettingsForm.ProcessCountBar.Position].EncoderPaths.Add('');
-            FVideoDownloadProcesses[i mod SettingsForm.ProcessCountBar.Position].FileIndexes.Add(FloatToStr(i));
-            FVideoDownloadProcesses[i mod SettingsForm.ProcessCountBar.Position].Infos.Add('[Renaming]');
-            Inc(FVideoDownloadTotalCMDCount);
+            LRenameJob.AudioFilePath := DirectoryEdit.Text + '\' + FVideoDownloadListItems[i].FileNameLabel.Caption + LDASHAudioExt;
+            LRenameJob.VideoFilePath := DirectoryEdit.Text + '\' + LOutputFile;
+            LRenameJob.TempMuxedFilePath := DirectoryEdit.Text + '\' + FVideoDownloadListItems[i].FileNameLabel.Caption + '_muxed' + LDASHVideoExt;
+            LDownloadJob.RenameJob := LRenameJob;
+            FVideoDownloadProcesses[i mod SettingsForm.ProcessCountBar.Position].DownloadJobs.Add(LDownloadJob);
           end;
           // file check
           FFilesToCheck.Add(DirectoryEdit.Text + '\' + LOutputFile);
@@ -1601,24 +1579,24 @@ begin
           if ContainsText(LSelectedFormatStr, 'M4A, AUDIO, ONLY, DASH') then
           begin
             LCMD := ' -add "' + DirectoryEdit.Text + '\' + LOutputFile + '" -new "' + DirectoryEdit.Text + '\' + LOutputFile + '"';
-            FVideoDownloadProcesses[i mod SettingsForm.ProcessCountBar.Position].CommandLines.Add(LCMD);
-            FVideoDownloadProcesses[i mod SettingsForm.ProcessCountBar.Position].ProcessTypes.Add('1');
-            FVideoDownloadProcesses[i mod SettingsForm.ProcessCountBar.Position].EncoderPaths.Add(Mp4BoxPath);
-            FVideoDownloadProcesses[i mod SettingsForm.ProcessCountBar.Position].FileIndexes.Add(FloatToStr(i));
-            FVideoDownloadProcesses[i mod SettingsForm.ProcessCountBar.Position].Infos.Add('[Remuxing]');
-            Inc(FVideoDownloadTotalCMDCount);
+            LDownloadJob.CommandLine := LCMD;
+            LDownloadJob.ProcessType := mp4box;
+            LDownloadJob.ApplicationPath := FMp4BoxPath;
+            LDownloadJob.FileIndex := i;
+            LDownloadJob.ProcessInfo := '[Remuxing to Mp4]';
+            FVideoDownloadProcesses[i mod SettingsForm.ProcessCountBar.Position].DownloadJobs.Add(LDownloadJob);
           end;
 
           // extract ogg file from webm
           if ContainsText(LSelectedFormatStr, 'WEBM, AUDIO, ONLY, DASH') then
           begin
             LCMD := ' -y -i "' + DirectoryEdit.Text + '\' + LOutputFile + '" -vn -f ogg "' + DirectoryEdit.Text + '\' + ChangeFileExt(LOutputFile, '.ogg') + '"';
-            FVideoDownloadProcesses[i mod SettingsForm.ProcessCountBar.Position].CommandLines.Add(LCMD);
-            FVideoDownloadProcesses[i mod SettingsForm.ProcessCountBar.Position].ProcessTypes.Add('1');
-            FVideoDownloadProcesses[i mod SettingsForm.ProcessCountBar.Position].EncoderPaths.Add(FFMpegPath);
-            FVideoDownloadProcesses[i mod SettingsForm.ProcessCountBar.Position].FileIndexes.Add(FloatToStr(i));
-            FVideoDownloadProcesses[i mod SettingsForm.ProcessCountBar.Position].Infos.Add('[Extracting audio]');
-            Inc(FVideoDownloadTotalCMDCount);
+            LDownloadJob.CommandLine := LCMD;
+            LDownloadJob.ProcessType := ffmpeg;
+            LDownloadJob.ApplicationPath := FFFMpegPath;
+            LDownloadJob.FileIndex := i;
+            LDownloadJob.ProcessInfo := '[Extracting Ogg]';
+            FVideoDownloadProcesses[i mod SettingsForm.ProcessCountBar.Position].DownloadJobs.Add(LDownloadJob);
             FFilesToCheck.Add(DirectoryEdit.Text + '\' + ChangeFileExt(LOutputFile, '.ogg'));
           end;
         end;
@@ -1629,8 +1607,15 @@ begin
           Lines.Clear;
           for I := Low(FVideoDownloadProcesses) to High(FVideoDownloadProcesses) do
           begin
-            Lines.Add('Command lines' + FloatToStr(i + 1) + ':');
-            Lines.AddStrings(FVideoDownloadProcesses[i].CommandLines);
+            if FVideoDownloadProcesses[i].DownloadJobs.Count > 0 then
+            begin
+              Lines.Add('Command lines' + FloatToStr(i + 1) + ':');
+              for j := 0 to FVideoDownloadProcesses[i].DownloadJobs.Count - 1 do
+              begin
+                Lines.Add(FVideoDownloadProcesses[i].DownloadJobs[j].CommandLine);
+                Inc(FVideoDownloadTotalCMDCount);
+              end;
+            end;
           end;
         end;
 
@@ -1639,27 +1624,7 @@ begin
         // start downloading
         if FVideoDownloadTotalCMDCount > 0 then
         begin
-          // write commands to text file
-          if FileExists(FAppDataFolder + '\cmd.txt') then
-          begin
-            DeleteFile(FAppDataFolder + '\cmd.txt')
-          end;
-          for I := Low(FVideoDownloadProcesses) to High(FVideoDownloadProcesses) do
-          begin
-            Application.ProcessMessages;
-            LStreamWriter := TStreamWriter.Create(FAppDataFolder + '\cmd.txt', True, TEncoding.UTF8);
-            try
-              LStreamWriter.WriteLine('Download process' + FloatToStr(i + 1) + ': ');
-              for j := 0 to FVideoDownloadProcesses[i].CommandLines.Count - 1 do
-              begin
-                Application.ProcessMessages;
-                LStreamWriter.WriteLine(FVideoDownloadProcesses[i].CommandLines[j]);
-              end;
-            finally
-              LStreamWriter.Close;
-              LStreamWriter.Free;
-            end;
-          end;
+          VideoDownloaderProgressLabel.Caption := 'Progress: 0/' + FVideoDownloadTotalCMDCount.ToString();
           TotalBar.Max := FVideoDownloadTotalCMDCount + FSkippedVideoCount;
           for I := Low(FVideoDownloadProcesses) to High(FVideoDownloadProcesses) do
           begin
@@ -1701,7 +1666,7 @@ begin
     ProcessPanelVisibility(True);
     try
       VideoDownloaderPosTimer.Enabled := False;
-          TimeTimer.Enabled := VideoDownloaderPosTimer.Enabled;
+      TimeTimer.Enabled := VideoDownloaderPosTimer.Enabled;
       for I := Low(FVideoDownloadProcesses) to High(FVideoDownloadProcesses) do
         FVideoDownloadProcesses[i].Stop;
       ClearTempFolderEx(True);
@@ -1740,27 +1705,21 @@ var
   LTotalFilesDone: integer;
   I: Integer;
   LMissingFileList: TStringList;
-  LTotalCurrentProgress: integer;
   LNewPos: integer;
 begin
   LTotalFilesDone := 0;
-  LTotalCurrentProgress := 0;
   for I := Low(FVideoDownloadProcesses) to High(FVideoDownloadProcesses) do
   begin
-    if FVideoDownloadProcesses[i].CommandCount > 0 then
+    if FVideoDownloadProcesses[i].DownloadJobs.Count > 0 then
     begin
       Inc(LTotalFilesDone, FVideoDownloadProcesses[i].FilesDone);
     end;
-    if FVideoDownloadProcesses[i].ProcessID > 0 then
-    begin
-      Inc(LTotalCurrentProgress, FVideoDownloadProcesses[i].CurrentProgress);
-    end;
   end;
-  LTotalCurrentProgress := LTotalCurrentProgress div FVideoDownloadTotalCMDCount;
+
   if LTotalFilesDone = FVideoDownloadTotalCMDCount then
   begin
     VideoDownloaderPosTimer.Enabled := False;
-          TimeTimer.Enabled := VideoDownloaderPosTimer.Enabled;
+    TimeTimer.Enabled := VideoDownloaderPosTimer.Enabled;
     // TimeTimer.Enabled := False;
     ClearTempFolderEx(True);
     DownloadNormalState;
@@ -1840,7 +1799,7 @@ begin
   else
   begin
     TotalBar.Max := 100;
-    LNewPos := (100 * (LTotalFilesDone + FSkippedVideoCount) div FVideoDownloadTotalCMDCount) + LTotalCurrentProgress;
+    LNewPos := (100 * (LTotalFilesDone + FSkippedVideoCount) div FVideoDownloadTotalCMDCount);
     if LNewPos > TotalBar.Position then
     begin
       TotalBar.Position := LNewPos;

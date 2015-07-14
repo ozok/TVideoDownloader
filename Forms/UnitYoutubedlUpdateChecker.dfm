@@ -3,7 +3,7 @@ object YoutubedlUpdateChecker: TYoutubedlUpdateChecker
   Top = 0
   BorderStyle = bsToolWindow
   Caption = 'Youtube-dl Update Checker'
-  ClientHeight = 202
+  ClientHeight = 172
   ClientWidth = 645
   Color = 3485741
   DoubleBuffered = True
@@ -18,14 +18,27 @@ object YoutubedlUpdateChecker: TYoutubedlUpdateChecker
   OnShow = FormShow
   DesignSize = (
     645
-    202)
+    172)
   PixelsPerInch = 96
   TextHeight = 13
+  object ProgressBar: TsGauge
+    Left = 8
+    Top = 139
+    Width = 394
+    Height = 25
+    Anchors = [akLeft, akRight, akBottom]
+    Animated = False
+    SkinData.SkinSection = 'GAUGE'
+    ForeColor = clBlack
+    Progress = 0
+    Suffix = '%'
+    ExplicitTop = 169
+  end
   object OutputList: TsMemo
     Left = 8
     Top = 8
     Width = 629
-    Height = 155
+    Height = 125
     Anchors = [akLeft, akTop, akRight, akBottom]
     Color = 2038810
     Font.Charset = DEFAULT_CHARSET
@@ -50,23 +63,25 @@ object YoutubedlUpdateChecker: TYoutubedlUpdateChecker
   end
   object sButton1: TsButton
     Left = 562
-    Top = 169
+    Top = 139
     Width = 75
     Height = 25
     Anchors = [akRight, akBottom]
     Caption = 'Close'
     TabOrder = 1
     OnClick = sButton1Click
+    ExplicitTop = 169
   end
   object DownloadBtn: TsButton
     Left = 408
-    Top = 169
+    Top = 139
     Width = 148
     Height = 25
     Anchors = [akRight, akBottom]
     Caption = 'Get the latest version'
     TabOrder = 2
     OnClick = DownloadBtnClick
+    ExplicitTop = 169
   end
   object sSkinProvider1: TsSkinProvider
     AddedTitle.Font.Charset = DEFAULT_CHARSET
@@ -77,8 +92,8 @@ object YoutubedlUpdateChecker: TYoutubedlUpdateChecker
     FormHeader.AdditionalHeight = 0
     SkinData.SkinSection = 'FORM'
     TitleButtons = <>
-    Left = 432
-    Top = 80
+    Left = 384
+    Top = 32
   end
   object Downloader: TIdHTTP
     IOHandler = IdSSLIOHandlerSocketOpenSSL1
@@ -98,8 +113,8 @@ object YoutubedlUpdateChecker: TYoutubedlUpdateChecker
     Request.Ranges.Units = 'bytes'
     Request.Ranges = <>
     HTTPOptions = [hoForceEncodeParams]
-    Left = 96
-    Top = 40
+    Left = 176
+    Top = 16
   end
   object IdSSLIOHandlerSocketOpenSSL1: TIdSSLIOHandlerSocketOpenSSL
     MaxLineAction = maException
@@ -108,8 +123,8 @@ object YoutubedlUpdateChecker: TYoutubedlUpdateChecker
     SSLOptions.Mode = sslmUnassigned
     SSLOptions.VerifyMode = []
     SSLOptions.VerifyDepth = 0
-    Left = 96
-    Top = 88
+    Left = 56
+    Top = 16
   end
   object UpdateThread: TJvThread
     Exclusive = True
@@ -117,7 +132,7 @@ object YoutubedlUpdateChecker: TYoutubedlUpdateChecker
     RunOnCreate = True
     FreeOnTerminate = True
     OnExecute = UpdateThreadExecute
-    Left = 320
-    Top = 72
+    Left = 280
+    Top = 24
   end
 end

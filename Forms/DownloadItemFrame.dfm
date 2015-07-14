@@ -14,9 +14,6 @@ object DownloadUIItem: TDownloadUIItem
     BevelOuter = bvNone
     TabOrder = 0
     SkinData.SkinSection = 'PANEL'
-    ExplicitLeft = 137
-    ExplicitWidth = 314
-    ExplicitHeight = 140
     DesignSize = (
       938
       112)
@@ -118,8 +115,6 @@ object DownloadUIItem: TDownloadUIItem
       Anchors = [akRight, akBottom]
       Caption = 'Remove'
       TabOrder = 2
-      ExplicitLeft = 228
-      ExplicitTop = 109
     end
   end
   object sPanel2: TsPanel
