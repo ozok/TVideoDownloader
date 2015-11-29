@@ -59,12 +59,14 @@ type
     FURLType: TLinkType;
     FPass: TUserPass;
     FDownloadImg: Boolean;
+    FPlaylistFoundVideos: integer;
 
     procedure ProcessTerminate(Sender: TObject; ExitCode: Cardinal);
     procedure ProcessTerminate2(Sender: TObject; ExitCode: Cardinal);
     procedure ProcessTerminate3(Sender: TObject; ExitCode: Cardinal);
     procedure ProcessTerminate4(Sender: TObject; ExitCode: Cardinal);
     procedure ProcessTerminate5(Sender: TObject; ExitCode: Cardinal);
+    procedure PlaylistProcessRead(Sender: TObject; const S: string; const StartsOnNewLine: Boolean);
 
     function LineToVideoTypeInfo(const Line: string): TTypeInfo;
     function LineToExtension(const Line: string): string;
@@ -85,6 +87,11 @@ type
     property Subtitles: TStringList read FSubtitles;
     property SubtitleStatus: TStatus read FSubtitleStatus;
     property LinkType: TLinkType read FURLType;
+    property PlaylistFoundVideosCount: integer read FPlaylistFoundVideos;
+    property Process1: TJvCreateProcess read FFormatProcess;
+    property Process2: TJvCreateProcess read FThumbProcess;
+    property Process3: TJvCreateProcess read FTitleExtractProcess;
+    property Process4: TJvCreateProcess read FSubtitleProcess;
 
     constructor Create(const URL: string; const YouTube_dlPath: string; const TempFolder: string; const UserPass: TUserPass; const DownloadImg: Boolean);
     destructor Destroy(); override;
@@ -166,6 +173,7 @@ begin
   with FPlayListProcess do
   begin
     OnTerminate := ProcessTerminate4;
+    OnRead := PlaylistProcessRead;
     ConsoleOptions := [coRedirect];
     CreationFlags := [cfUnicode];
     Priority := ppIdle;
@@ -246,6 +254,7 @@ procedure TYouTubeVideoInfoExtractor.GetPlayListInfo;
 var
   LPass: string;
 begin
+  FPlaylistFoundVideos := 0;
   FPlayListProcess.ApplicationName := FYouTube_dlPath;
   if (Length(FPass.UserName) > 0) and (Length(FPass.Password) > 0) then
   begin
@@ -314,6 +323,12 @@ begin
   finally
     FreeAndNil(LSplitList);
   end;
+end;
+
+procedure TYouTubeVideoInfoExtractor.PlaylistProcessRead(Sender: TObject;
+  const S: string; const StartsOnNewLine: Boolean);
+begin
+  FPlaylistFoundVideos := FPlayListProcess.ConsoleOutput.Count;
 end;
 
 procedure TYouTubeVideoInfoExtractor.ProcessTerminate(Sender: TObject; ExitCode: Cardinal);
@@ -646,7 +661,7 @@ begin
   begin
     LPass := ' -u ' + FPass.UserName + ' -p ' + FPass.Password;
   end;
-  FTitleExtractProcess.CommandLine := ' ' + LPass + ' -s --skip-download -i --no-playlist --playlist-start 1 --playlist-end 1 --get-filename -o "%(uploader)s - %(title)s.%(ext)s" "' + FURL + '"';
+  FTitleExtractProcess.CommandLine := ' ' + LPass + ' -s --skip-download -i --no-playlist --playlist-start 1 --playlist-end 1 --get-filename -o "%(upload_date)s - %(uploader)s - %(title)s.%(ext)s" "' + FURL + '"';
   FTitleExtractProcess.Run;
 end;
 

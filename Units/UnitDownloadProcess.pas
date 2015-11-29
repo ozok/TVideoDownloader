@@ -62,6 +62,7 @@ type
     FEncoderStatus: TProcessState;
     // flag to indicate if encoding is stopped by user
     FStoppedByUser: Boolean;
+    FErrorLog: TStringList;
 
     // process events
     procedure ProcessRead(Sender: TObject; const S: string; const StartsOnNewLine: Boolean);
@@ -133,6 +134,7 @@ begin
   FEncoderStatus := esStopped;
   FStoppedByUser := False;
   FCommandIndex := 0;
+  FErrorLog := TStringList.Create;
 end;
 
 destructor TDownloadProcess.Destroy;
@@ -140,6 +142,7 @@ begin
   inherited Destroy;
   FDownloadJobs.Free;
   FProcess.Free;
+  FErrorLog.Free;
 end;
 
 function TDownloadProcess.GetCommandCount: integer;
@@ -149,7 +152,7 @@ end;
 
 function TDownloadProcess.GetConsoleOutput: TStrings;
 begin
-  Result := FProcess.ConsoleOutput;
+  Result := FErrorLog;
 end;
 
 function TDownloadProcess.GetCurrentProcessType: TProcessType;
@@ -217,21 +220,22 @@ begin
   begin
     if FileExists(FDownloadJobs[FCommandIndex].RenameJob.AudioFilePath) then
     begin
-      if DeleteFile(FDownloadJobs[FCommandIndex].RenameJob.AudioFilePath) then
+      if not DeleteFile(FDownloadJobs[FCommandIndex].RenameJob.AudioFilePath) then
       begin
-        MainForm.AddToLog(0, 'Deleted: ' + ExtractFileName(FDownloadJobs[FCommandIndex].RenameJob.AudioFilePath));
+        MainForm.AddToLog(0, 'Unable to delete ' + ExtractFileName(FDownloadJobs[FCommandIndex].RenameJob.AudioFilePath));
       end;
     end;
     if FileExists(FDownloadJobs[FCommandIndex].RenameJob.VideoFilePath) then
     begin
-      if DeleteFile(FDownloadJobs[FCommandIndex].RenameJob.VideoFilePath) then
+      if not DeleteFile(FDownloadJobs[FCommandIndex].RenameJob.VideoFilePath) then
       begin
-        MainForm.AddToLog(0, 'Deleted: ' + ExtractFileName(FDownloadJobs[FCommandIndex].RenameJob.VideoFilePath));
+        MainForm.AddToLog(0, 'Unable to delete ' + ExtractFileName(FDownloadJobs[FCommandIndex].RenameJob.VideoFilePath));
       end;
     end;
-    if RenameFile(FDownloadJobs[FCommandIndex].RenameJob.TempMuxedFilePath, FDownloadJobs[FCommandIndex].RenameJob.VideoFilePath) then
+    if not RenameFile(FDownloadJobs[FCommandIndex].RenameJob.TempMuxedFilePath, FDownloadJobs[FCommandIndex].RenameJob.VideoFilePath) then
     begin
-      MainForm.AddToLog(0, 'Renamed: ' + ExtractFileName(FDownloadJobs[FCommandIndex].RenameJob.TempMuxedFilePath) + ' to ' + ExtractFileName(FDownloadJobs[FCommandIndex].RenameJob.VideoFilePath));
+      MainForm.AddToLog(0, 'Unable to rename ' + ExtractFileName(FDownloadJobs[FCommandIndex].RenameJob.TempMuxedFilePath) + ' to ' +
+        ExtractFileName(FDownloadJobs[FCommandIndex].RenameJob.VideoFilePath));
     end;
   end;
 
@@ -249,6 +253,8 @@ begin
       UpdateMainFormItem('Error code: ' + FloatToStr(ExitCode), 0);
       MainForm.AddToLog(0, ExtractFileName(FDownloadJobs[FCommandIndex].ApplicationPath) + ' has exited with ' + FloatToStr(ExitCode) + '.');
       Inc(MainForm.FProcessErrorCount);
+      FErrorLog.AddStrings(FProcess.ConsoleOutput);
+      FProcess.ConsoleOutput.Clear;
     end
     else
     begin
@@ -280,6 +286,7 @@ begin
   FCommandIndex := 0;
   FProcess.ConsoleOutput.Clear;
   FStoppedByUser := False;
+  FErrorLog.Clear;
 end;
 
 procedure TDownloadProcess.Start;

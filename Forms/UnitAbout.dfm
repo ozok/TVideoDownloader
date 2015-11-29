@@ -330,7 +330,7 @@ object AboutForm: TAboutForm
     Align = alTop
     Alignment = taCenter
     AutoSize = False
-    Caption = 'TVideoDownloader 1.5.202'
+    Caption = 'TVideoDownloader 1.7.318'
     ExplicitTop = 105
     ExplicitWidth = 645
   end

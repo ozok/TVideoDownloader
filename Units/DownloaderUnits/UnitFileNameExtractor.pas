@@ -117,7 +117,7 @@ begin
   begin
     LPass := ' -u ' + FPass.UserName + ' -p ' + FPass.Password;
   end;
-  FProcess.CommandLine := ' ' + LPass + ' -s --skip-download --no-playlist --get-filename -f ' + FFormat + ' -o "%(uploader)s - %(title)s.%(ext)s" "' + FURL + '"';
+  FProcess.CommandLine := ' ' + LPass + ' -s --skip-download --no-playlist --get-filename -f ' + FFormat + ' -o "%(upload_date)s - %(uploader)s - %(title)s.%(ext)s" "' + FURL + '"';
   FProcess.Run;
 end;
 

@@ -50,15 +50,6 @@ object YoutubedlUpdateChecker: TYoutubedlUpdateChecker
     ReadOnly = True
     ScrollBars = ssBoth
     TabOrder = 0
-    BoundLabel.Indent = 0
-    BoundLabel.Font.Charset = DEFAULT_CHARSET
-    BoundLabel.Font.Color = clWindowText
-    BoundLabel.Font.Height = -11
-    BoundLabel.Font.Name = 'Tahoma'
-    BoundLabel.Font.Style = []
-    BoundLabel.Layout = sclLeft
-    BoundLabel.MaxWidth = 0
-    BoundLabel.UseSkinColor = True
     SkinData.SkinSection = 'EDIT'
   end
   object sButton1: TsButton
@@ -70,7 +61,6 @@ object YoutubedlUpdateChecker: TYoutubedlUpdateChecker
     Caption = 'Close'
     TabOrder = 1
     OnClick = sButton1Click
-    ExplicitTop = 169
   end
   object DownloadBtn: TsButton
     Left = 408
@@ -81,7 +71,6 @@ object YoutubedlUpdateChecker: TYoutubedlUpdateChecker
     Caption = 'Get the latest version'
     TabOrder = 2
     OnClick = DownloadBtnClick
-    ExplicitTop = 169
   end
   object sSkinProvider1: TsSkinProvider
     AddedTitle.Font.Charset = DEFAULT_CHARSET
@@ -109,7 +98,9 @@ object YoutubedlUpdateChecker: TYoutubedlUpdateChecker
     Request.ContentRangeInstanceLength = -1
     Request.Accept = 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8'
     Request.BasicAuthentication = False
-    Request.UserAgent = 'Mozilla/3.0 (compatible; Indy Library)'
+    Request.UserAgent = 
+      'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, l' +
+      'ike Gecko) Chrome/46.0.2490.86 Safari/537.36 OPR/33.0.1990.115'
     Request.Ranges.Units = 'bytes'
     Request.Ranges = <>
     HTTPOptions = [hoForceEncodeParams]

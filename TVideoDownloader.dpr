@@ -21,7 +21,8 @@ uses
   UnitBatchAdd in 'Forms\UnitBatchAdd.pas' {BatchAddForm} ,
   UnitAbout in 'Forms\UnitAbout.pas' {AboutForm} ,
   DownloadItemFrame in 'Forms\DownloadItemFrame.pas' {DownloadUIItem: TFrame} ,
-  UnitYoutubedlUpdateChecker in 'Forms\UnitYoutubedlUpdateChecker.pas' {YoutubedlUpdateChecker};
+  UnitYoutubedlUpdateChecker in 'Forms\UnitYoutubedlUpdateChecker.pas' {YoutubedlUpdateChecker} ,
+  UnitPreview in 'Forms\UnitPreview.pas' {PreviewForm};
 
 {$R *.res}
 
@@ -35,6 +36,7 @@ begin
   Application.CreateForm(TBatchAddForm, BatchAddForm);
   Application.CreateForm(TAboutForm, AboutForm);
   Application.CreateForm(TYoutubedlUpdateChecker, YoutubedlUpdateChecker);
+  Application.CreateForm(TPreviewForm, PreviewForm);
   Application.Run;
 
 end.

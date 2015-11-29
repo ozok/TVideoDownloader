@@ -29,7 +29,7 @@ object DownloadUIItem: TDownloadUIItem
     object ProgressBar: TsGauge
       Left = 6
       Top = 84
-      Width = 840
+      Width = 759
       Height = 19
       Anchors = [akLeft, akRight, akBottom]
       Animated = False
@@ -37,8 +37,6 @@ object DownloadUIItem: TDownloadUIItem
       ForeColor = clBlack
       Progress = 0
       Suffix = '%'
-      ExplicitTop = 109
-      ExplicitWidth = 564
     end
     object FileNameLabel: TsLabel
       Left = 6
@@ -115,6 +113,15 @@ object DownloadUIItem: TDownloadUIItem
       Anchors = [akRight, akBottom]
       Caption = 'Remove'
       TabOrder = 2
+    end
+    object PreviewBtn: TsButton
+      Left = 771
+      Top = 81
+      Width = 75
+      Height = 25
+      Anchors = [akRight, akBottom]
+      Caption = 'Preview'
+      TabOrder = 3
     end
   end
   object sPanel2: TsPanel

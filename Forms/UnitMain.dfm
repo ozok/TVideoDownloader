@@ -66,15 +66,6 @@ object MainForm: TMainForm
         CheckOnExit = True
         BoundLabel.Active = True
         BoundLabel.Caption = 'Output directory:'
-        BoundLabel.Indent = 0
-        BoundLabel.Font.Charset = DEFAULT_CHARSET
-        BoundLabel.Font.Color = clWindowText
-        BoundLabel.Font.Height = -11
-        BoundLabel.Font.Name = 'Tahoma'
-        BoundLabel.Font.Style = []
-        BoundLabel.Layout = sclLeft
-        BoundLabel.MaxWidth = 0
-        BoundLabel.UseSkinColor = True
         SkinData.SkinSection = 'EDIT'
         GlyphMode.Blend = 0
         GlyphMode.Grayed = False
@@ -126,15 +117,6 @@ object MainForm: TMainForm
         SkinData.SkinSection = 'EDIT'
         BoundLabel.Active = True
         BoundLabel.Caption = 'User name:'
-        BoundLabel.Indent = 0
-        BoundLabel.Font.Charset = DEFAULT_CHARSET
-        BoundLabel.Font.Color = clWindowText
-        BoundLabel.Font.Height = -11
-        BoundLabel.Font.Name = 'Tahoma'
-        BoundLabel.Font.Style = []
-        BoundLabel.Layout = sclLeft
-        BoundLabel.MaxWidth = 0
-        BoundLabel.UseSkinColor = True
       end
       object PassEdit: TsEdit
         Left = 287
@@ -154,15 +136,6 @@ object MainForm: TMainForm
         SkinData.SkinSection = 'EDIT'
         BoundLabel.Active = True
         BoundLabel.Caption = 'Password:'
-        BoundLabel.Indent = 0
-        BoundLabel.Font.Charset = DEFAULT_CHARSET
-        BoundLabel.Font.Color = clWindowText
-        BoundLabel.Font.Height = -11
-        BoundLabel.Font.Name = 'Tahoma'
-        BoundLabel.Font.Style = []
-        BoundLabel.Layout = sclLeft
-        BoundLabel.MaxWidth = 0
-        BoundLabel.UseSkinColor = True
       end
     end
     object ProgressPanel: TsPanel
@@ -239,15 +212,7 @@ object MainForm: TMainForm
         Alignment = taLeftJustify
         BoundLabel.Active = True
         BoundLabel.Caption = 'Post-download action:'
-        BoundLabel.Indent = 0
-        BoundLabel.Font.Charset = DEFAULT_CHARSET
-        BoundLabel.Font.Color = clWindowText
-        BoundLabel.Font.Height = -11
-        BoundLabel.Font.Name = 'Tahoma'
-        BoundLabel.Font.Style = []
         BoundLabel.Layout = sclTopLeft
-        BoundLabel.MaxWidth = 0
-        BoundLabel.UseSkinColor = True
         SkinData.SkinSection = 'COMBOBOX'
         VerticalAlignment = taAlignTop
         Style = csDropDownList
@@ -430,8 +395,8 @@ object MainForm: TMainForm
         Layout = blGlyphTop
         TabOrder = 0
         OnClick = AddLinkBtnClick
-        SkinData.SkinSection = 'ALPHAEDIT'
         Reflected = True
+        SkinData.SkinSection = 'ALPHAEDIT'
       end
       object ClearLinksBtn: TsBitBtn
         Left = 106
@@ -576,8 +541,8 @@ object MainForm: TMainForm
         Layout = blGlyphTop
         TabOrder = 1
         OnClick = ClearLinksBtnClick
-        SkinData.SkinSection = 'ALPHAEDIT'
         Reflected = True
+        SkinData.SkinSection = 'ALPHAEDIT'
       end
       object SettingsBtn: TsBitBtn
         Left = 695
@@ -722,8 +687,8 @@ object MainForm: TMainForm
         Layout = blGlyphTop
         TabOrder = 2
         OnClick = SettingsBtnClick
-        SkinData.SkinSection = 'ALPHAEDIT'
         Reflected = True
+        SkinData.SkinSection = 'ALPHAEDIT'
       end
       object StartDownloadBtn: TsBitBtn
         Left = 1010
@@ -868,8 +833,8 @@ object MainForm: TMainForm
         Layout = blGlyphTop
         TabOrder = 3
         OnClick = StartDownloadBtnClick
-        SkinData.SkinSection = 'ALPHAEDIT'
         Reflected = True
+        SkinData.SkinSection = 'ALPHAEDIT'
       end
       object StopDownloadBtn: TsBitBtn
         Left = 905
@@ -1015,8 +980,8 @@ object MainForm: TMainForm
         Layout = blGlyphTop
         TabOrder = 4
         OnClick = StopDownloadBtnClick
-        SkinData.SkinSection = 'ALPHAEDIT'
         Reflected = True
+        SkinData.SkinSection = 'ALPHAEDIT'
       end
       object PassBtn: TsBitBtn
         Left = 590
@@ -1160,8 +1125,8 @@ object MainForm: TMainForm
         Layout = blGlyphTop
         TabOrder = 5
         OnClick = PassBtnClick
-        SkinData.SkinSection = 'ALPHAEDIT'
         Reflected = True
+        SkinData.SkinSection = 'ALPHAEDIT'
       end
       object LogsBtn: TsBitBtn
         Left = 485
@@ -1306,8 +1271,8 @@ object MainForm: TMainForm
         Layout = blGlyphTop
         TabOrder = 6
         OnClick = LogsBtnClick
-        SkinData.SkinSection = 'ALPHAEDIT'
         Reflected = True
+        SkinData.SkinSection = 'ALPHAEDIT'
       end
       object DonateBtn: TsBitBtn
         Left = 380
@@ -1452,8 +1417,8 @@ object MainForm: TMainForm
         Layout = blGlyphTop
         TabOrder = 7
         OnClick = M1Click
-        SkinData.SkinSection = 'ALPHAEDIT'
         Reflected = True
+        SkinData.SkinSection = 'ALPHAEDIT'
       end
       object sPanel1: TsPanel
         Left = 1
@@ -1485,15 +1450,6 @@ object MainForm: TMainForm
           SkinData.SkinSection = 'EDIT'
           BoundLabel.Active = True
           BoundLabel.Caption = 'Fast link add:'
-          BoundLabel.Indent = 0
-          BoundLabel.Font.Charset = DEFAULT_CHARSET
-          BoundLabel.Font.Color = clWindowText
-          BoundLabel.Font.Height = -11
-          BoundLabel.Font.Name = 'Tahoma'
-          BoundLabel.Font.Style = []
-          BoundLabel.Layout = sclLeft
-          BoundLabel.MaxWidth = 0
-          BoundLabel.UseSkinColor = True
         end
         object LinkTypeList: TsComboBox
           Left = 897
@@ -1504,15 +1460,6 @@ object MainForm: TMainForm
           Alignment = taLeftJustify
           BoundLabel.Active = True
           BoundLabel.Caption = 'Link type:'
-          BoundLabel.Indent = 0
-          BoundLabel.Font.Charset = DEFAULT_CHARSET
-          BoundLabel.Font.Color = clWindowText
-          BoundLabel.Font.Height = -11
-          BoundLabel.Font.Name = 'Tahoma'
-          BoundLabel.Font.Style = []
-          BoundLabel.Layout = sclLeft
-          BoundLabel.MaxWidth = 0
-          BoundLabel.UseSkinColor = True
           SkinData.SkinSection = 'COMBOBOX'
           VerticalAlignment = taAlignTop
           Style = csDropDownList
@@ -1685,8 +1632,8 @@ object MainForm: TMainForm
         Layout = blGlyphTop
         TabOrder = 9
         OnClick = C3Click
-        SkinData.SkinSection = 'ALPHAEDIT'
         Reflected = True
+        SkinData.SkinSection = 'ALPHAEDIT'
       end
       object OpenOutputFolderBtn: TsBitBtn
         Left = 800
@@ -1831,8 +1778,8 @@ object MainForm: TMainForm
         Layout = blGlyphTop
         TabOrder = 10
         OnClick = OpenOutBtnClick
-        SkinData.SkinSection = 'ALPHAEDIT'
         Reflected = True
+        SkinData.SkinSection = 'ALPHAEDIT'
       end
     end
   end
@@ -1848,9 +1795,9 @@ object MainForm: TMainForm
   end
   object LoadPanel: TsPanel
     Left = 214
-    Top = 361
+    Top = 300
     Width = 736
-    Height = 81
+    Height = 142
     BevelOuter = bvNone
     TabOrder = 1
     Visible = False
@@ -1859,7 +1806,7 @@ object MainForm: TMainForm
       Left = 0
       Top = 0
       Width = 736
-      Height = 31
+      Height = 92
       Align = alClient
       Alignment = taCenter
       Caption = 'Status'
@@ -1870,7 +1817,7 @@ object MainForm: TMainForm
     object AbortVideoAddBtn: TsBitBtn
       AlignWithMargins = True
       Left = 10
-      Top = 42
+      Top = 103
       Width = 716
       Height = 36
       Cursor = crHandPoint
@@ -1950,7 +1897,7 @@ object MainForm: TMainForm
     object LoadProgressBar: TsProgressBar
       AlignWithMargins = True
       Left = 10
-      Top = 31
+      Top = 92
       Width = 716
       Height = 10
       Margins.Left = 10
@@ -1983,6 +1930,10 @@ object MainForm: TMainForm
     object Batchaddplaylists1: TMenuItem
       Caption = 'Add playlists/users in batch'
       OnClick = Batchaddplaylists1Click
+    end
+    object Importlinksfromatextfile1: TMenuItem
+      Caption = 'Import links from a text file'
+      OnClick = I1Click
     end
   end
   object Info: TJvComputerInfoEx
@@ -6810,6 +6761,10 @@ object MainForm: TMainForm
         Caption = 'Export links to text file'
         OnClick = E2Click
       end
+      object I1: TMenuItem
+        Caption = 'Import links from a text file'
+        OnClick = I1Click
+      end
     end
     object E1: TMenuItem
       Caption = 'Edit'
@@ -7922,20 +7877,6 @@ object MainForm: TMainForm
     Left = 608
     Top = 264
   end
-  object DropTextTarget1: TDropTextTarget
-    DragTypes = [dtCopy, dtLink]
-    OnDrop = DropTextTarget1Drop
-    Target = NormalPanel
-    WinTarget = 0
-    Left = 64
-    Top = 348
-  end
-  object DropDummy1: TDropDummy
-    DragTypes = []
-    WinTarget = 0
-    Left = 48
-    Top = 402
-  end
   object SaveDialog: TsSaveDialog
     DefaultExt = '.txt'
     Filter = 'Text Files|*.txt'
@@ -7948,5 +7889,10 @@ object MainForm: TMainForm
     OnTimer = TimeTimerTimer
     Left = 328
     Top = 287
+  end
+  object ImportDlg: TsOpenDialog
+    Filter = 'Text Files|*.txt'
+    Left = 768
+    Top = 231
   end
 end

@@ -19,6 +19,7 @@ type
     DeleteButton: TsButton;
     sPanel2: TsPanel;
     PrevievImg: TsImage;
+    PreviewBtn: TsButton;
   private
     { Private declarations }
   public
@@ -40,6 +41,7 @@ begin
   FormatList.Enabled := False;
   SubtitleList.Enabled := False;
   DeleteButton.Enabled := False;
+  PreviewBtn.Enabled := False;
 end;
 
 procedure TDownloadUIItem.Enable;
@@ -49,6 +51,7 @@ begin
   FormatList.Enabled := True;
   SubtitleList.Enabled := True;
   DeleteButton.Enabled := True;
+  PreviewBtn.Enabled := True;
 end;
 
 procedure TDownloadUIItem.ResetProgressLabel;

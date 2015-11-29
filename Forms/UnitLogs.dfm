@@ -37,9 +37,9 @@ object LogForm: TLogForm
         Width = 776
         Height = 386
         Align = alClient
-        Color = clWhite
+        Color = 2038810
         Font.Charset = DEFAULT_CHARSET
-        Font.Color = clBlack
+        Font.Color = 13417908
         Font.Height = -11
         Font.Name = 'Tahoma'
         Font.Style = []
@@ -92,7 +92,7 @@ object LogForm: TLogForm
       end
     end
     object sTabSheet3: TsTabSheet
-      Caption = 'Console outputs'
+      Caption = 'Console error logs'
       SkinData.CustomColor = False
       SkinData.CustomFont = False
       object ConsoleLog: TsMemo
@@ -101,9 +101,9 @@ object LogForm: TLogForm
         Width = 776
         Height = 365
         Align = alClient
-        Color = clWhite
+        Color = 2038810
         Font.Charset = DEFAULT_CHARSET
-        Font.Color = clBlack
+        Font.Color = 13417908
         Font.Height = -11
         Font.Name = 'Tahoma'
         Font.Style = []
@@ -141,8 +141,9 @@ object LogForm: TLogForm
         SkinData.SkinSection = 'COMBOBOX'
         VerticalAlignment = taAlignTop
         Style = csDropDownList
+        Color = 2038810
         Font.Charset = DEFAULT_CHARSET
-        Font.Color = clWindowText
+        Font.Color = 13417908
         Font.Height = -11
         Font.Name = 'Tahoma'
         Font.Style = []
