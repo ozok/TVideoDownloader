@@ -332,9 +332,9 @@ object MainForm: TMainForm
         OnClick = LogsBtnClick
       end
       object DonateBtn: TButton
-        Left = 380
+        Left = 375
         Top = 1
-        Width = 105
+        Width = 110
         Height = 90
         Cursor = crHandPoint
         Hint = 'Support this project'
@@ -346,6 +346,7 @@ object MainForm: TMainForm
         Images = ButtonImages
         TabOrder = 7
         OnClick = M1Click
+        ExplicitLeft = 380
       end
       object sPanel1: TPanel
         Left = 1
@@ -405,7 +406,7 @@ object MainForm: TMainForm
       object GetLatestYoutubedlBtn: TButton
         Left = 211
         Top = 1
-        Width = 169
+        Width = 164
         Height = 90
         Cursor = crHandPoint
         Hint = 'Use this whenever downloader stops to function properly.'
@@ -417,6 +418,7 @@ object MainForm: TMainForm
         Images = ButtonImages
         TabOrder = 9
         OnClick = C3Click
+        ExplicitLeft = 210
       end
       object OpenOutputFolderBtn: TButton
         Left = 800

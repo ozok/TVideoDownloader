@@ -427,6 +427,8 @@ begin
             begin
               if LYIE.PlayListVideoLinks.Count > 0 then
               begin
+                LoadProgressBar.Style := pbstNormal;
+                LoadProgressBar.Max := LYIE.PlayListVideoLinks.Count;
                 if LogForm.Main.Lines.Count > 0 then
                 begin
                   AddToLog(0, '');
@@ -439,6 +441,7 @@ begin
                   begin
                     Break;
                   end;
+                  LoadProgressBar.Position := i + 1;
                   LoadPanelLabel.Caption := 'Adding videos to the list...(' + FloatToStr(i + 1) + '/' + FloatToStr(LYIE.PlayListVideoLinks.Count) + ')';
                   AddURL('http://www.youtube.com/watch?v=' + LYIE.PlayListVideoLinks[i]);
                 end;
@@ -456,6 +459,7 @@ begin
             RedrawWindow(VideoDownloaderList.Handle, nil, 0, RDW_ERASE or RDW_INVALIDATE or RDW_FRAME or RDW_ALLCHILDREN);
             MenuState(True);
             PostAddingState;
+            LoadProgressBar.Position := 0;
             Self.Width := Self.Width + 1;
             Self.Width := Self.Width - 1;
           end;

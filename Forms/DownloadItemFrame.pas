@@ -22,6 +22,7 @@ type
     PreviewBtn: TButton;
     Label1: TLabel;
     Label2: TLabel;
+    Bevel1: TBevel;
   private
     { Private declarations }
   public
