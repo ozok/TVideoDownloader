@@ -1965,7 +1965,7 @@ begin
         begin
           if ID_YES = Application.MessageBox('There is a new version. Would you like to download it?', 'New Version', MB_ICONQUESTION or MB_YESNO) then
           begin
-            ShellExecute(0, 'open', 'https://sourceforge.net/projects/tvideodownloader/', nil, nil, SW_SHOWNORMAL);
+            ShellExecute(0, 'open', 'http://www.ozok26.com/tvdeodownloader-8', nil, nil, SW_SHOWNORMAL);
           end;
         end
         else

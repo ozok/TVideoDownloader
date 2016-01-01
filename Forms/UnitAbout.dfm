@@ -4860,7 +4860,6 @@ object AboutForm: TAboutForm
     Caption = 'Close'
     TabOrder = 0
     OnClick = sButton1Click
-    ExplicitTop = 104
   end
   object sButton2: TButton
     Left = 89
@@ -4871,7 +4870,6 @@ object AboutForm: TAboutForm
     Caption = 'Donate'
     TabOrder = 1
     OnClick = sButton2Click
-    ExplicitTop = 104
   end
   object sButton3: TButton
     Left = 8
@@ -4882,6 +4880,5 @@ object AboutForm: TAboutForm
     Caption = 'Homepage'
     TabOrder = 2
     OnClick = sButton3Click
-    ExplicitTop = 104
   end
 end

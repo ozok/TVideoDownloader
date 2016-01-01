@@ -54,7 +54,7 @@ end;
 
 procedure TAboutForm.sButton3Click(Sender: TObject);
 begin
-  ShellExecute(0, 'open', 'https://sourceforge.net/projects/tvideodownloader/', nil, nil, SW_SHOWNORMAL);
+  ShellExecute(0, 'open', 'http://www.ozok26.com/tvdeodownloader-8', nil, nil, SW_SHOWNORMAL);
 end;
 
 end.
