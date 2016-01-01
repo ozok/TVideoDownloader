@@ -4,22 +4,24 @@ interface
 
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes,
-  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ExtCtrls, sPanel,
-  sGauge, Vcl.StdCtrls, sComboBox, sLabel, acImage, sButton, sBevel;
+  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ExtCtrls, Vcl.StdCtrls,
+  Vcl.Samples.Gauges, acImage;
 
 type
   TDownloadUIItem = class(TFrame)
-    LinkLabel: TsLabel;
-    FileNameLabel: TsLabel;
-    FormatList: TsComboBox;
-    SubtitleList: TsComboBox;
-    ProgressLabel: TsLabel;
-    ProgressBar: TsGauge;
-    sPanel1: TsPanel;
-    DeleteButton: TsButton;
-    sPanel2: TsPanel;
+    LinkLabel: TLabel;
+    FileNameLabel: TLabel;
+    FormatList: TComboBox;
+    SubtitleList: TComboBox;
+    ProgressLabel: TLabel;
+    ProgressBar: TGauge;
+    sPanel1: TPanel;
+    DeleteButton: TButton;
+    sPanel2: TPanel;
     PrevievImg: TsImage;
-    PreviewBtn: TsButton;
+    PreviewBtn: TButton;
+    Label1: TLabel;
+    Label2: TLabel;
   private
     { Private declarations }
   public
@@ -61,3 +63,4 @@ begin
 end;
 
 end.
+

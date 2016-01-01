@@ -3,23 +3,26 @@ unit UnitSettings;
 interface
 
 uses
-  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, sSkinProvider, Vcl.StdCtrls, sEdit,
-  sCheckBox, Vcl.ComCtrls, sTrackBar, sButton, IniFiles;
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes,
+  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ComCtrls,
+  IniFiles, Vcl.Mask, JvExMask, JvSpin;
 
 type
   TSettingsForm = class(TForm)
-    sSkinProvider1: TsSkinProvider;
-    ProcessCountBar: TsTrackBar;
-    DontDoubleDownloadBtn: TsCheckBox;
-    DontPreviewImgBtn: TsCheckBox;
-    PreferedFormatEdit: TsEdit;
-    DashVideoBtn: TsCheckBox;
-    ProcessCountEdit: TsEdit;
-    PlaySoundBtn: TsCheckBox;
-    sButton1: TsButton;
-    sButton2: TsButton;
-    CheckUpdateBtn: TsCheckBox;
+    ProcessCountBar: TTrackBar;
+    DontDoubleDownloadBtn: TCheckBox;
+    DontPreviewImgBtn: TCheckBox;
+    PreferedFormatEdit: TEdit;
+    DashVideoBtn: TCheckBox;
+    ProcessCountEdit: TEdit;
+    PlaySoundBtn: TCheckBox;
+    sButton1: TButton;
+    sButton2: TButton;
+    CheckUpdateBtn: TCheckBox;
+    Label1: TLabel;
+    Label2: TLabel;
+    LinkAddTimeOutEdit: TJvSpinEdit;
+    Label3: TLabel;
     procedure sButton1Click(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure FormCreate(Sender: TObject);
@@ -40,7 +43,8 @@ implementation
 
 {$R *.dfm}
 
-uses UnitMain;
+uses
+  UnitMain;
 
 procedure TSettingsForm.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
@@ -75,6 +79,7 @@ begin
       DontDoubleDownloadBtn.Checked := ReadBool('options', 'doubledownload', True);
       DontPreviewImgBtn.Checked := ReadBool('options', 'noimg', False);
       CheckUpdateBtn.Checked := ReadBool('Options', 'Update', True);
+      LinkAddTimeOutEdit.Value := ReadInteger('Options', 'LoadTimeOut', 60);
     end;
   finally
     ProcessCountBarChange(Self);
@@ -101,6 +106,7 @@ begin
       WriteBool('options', 'doubledownload', DontDoubleDownloadBtn.Checked);
       WriteBool('options', 'noimg', DontPreviewImgBtn.Checked);
       WriteBool('Options', 'Update', CheckUpdateBtn.Checked);
+      WriteInteger('Options', 'LoadTimeOut', Round(LinkAddTimeOutEdit.Value));
     end;
   finally
     OptionFile.Free;
@@ -130,3 +136,4 @@ begin
 end;
 
 end.
+

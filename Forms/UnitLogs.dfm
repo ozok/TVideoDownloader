@@ -18,7 +18,7 @@ object LogForm: TLogForm
   OnShow = FormShow
   PixelsPerInch = 96
   TextHeight = 13
-  object sPageControl1: TsPageControl
+  object sPageControl1: TPageControl
     Left = 0
     Top = 0
     Width = 784
@@ -26,20 +26,16 @@ object LogForm: TLogForm
     ActivePage = sTabSheet1
     Align = alClient
     TabOrder = 0
-    SkinData.SkinSection = 'PAGECONTROL'
-    object sTabSheet1: TsTabSheet
+    object sTabSheet1: TTabSheet
       Caption = 'Main'
-      SkinData.CustomColor = False
-      SkinData.CustomFont = False
-      object Main: TsMemo
+      object Main: TMemo
         Left = 0
         Top = 0
         Width = 776
         Height = 386
         Align = alClient
-        Color = 2038810
         Font.Charset = DEFAULT_CHARSET
-        Font.Color = 13417908
+        Font.Color = clWindowText
         Font.Height = -11
         Font.Name = 'Tahoma'
         Font.Style = []
@@ -47,23 +43,11 @@ object LogForm: TLogForm
         ReadOnly = True
         ScrollBars = ssBoth
         TabOrder = 0
-        BoundLabel.Indent = 0
-        BoundLabel.Font.Charset = DEFAULT_CHARSET
-        BoundLabel.Font.Color = clWindowText
-        BoundLabel.Font.Height = -11
-        BoundLabel.Font.Name = 'Tahoma'
-        BoundLabel.Font.Style = []
-        BoundLabel.Layout = sclLeft
-        BoundLabel.MaxWidth = 0
-        BoundLabel.UseSkinColor = True
-        SkinData.SkinSection = 'EDIT'
       end
     end
-    object sTabSheet2: TsTabSheet
+    object sTabSheet2: TTabSheet
       Caption = 'Command lines'
-      SkinData.CustomColor = False
-      SkinData.CustomFont = False
-      object CMDLog: TsMemo
+      object CMDLog: TMemo
         Left = 0
         Top = 0
         Width = 776
@@ -79,31 +63,18 @@ object LogForm: TLogForm
         ReadOnly = True
         ScrollBars = ssBoth
         TabOrder = 0
-        BoundLabel.Indent = 0
-        BoundLabel.Font.Charset = DEFAULT_CHARSET
-        BoundLabel.Font.Color = clWindowText
-        BoundLabel.Font.Height = -11
-        BoundLabel.Font.Name = 'Tahoma'
-        BoundLabel.Font.Style = []
-        BoundLabel.Layout = sclLeft
-        BoundLabel.MaxWidth = 0
-        BoundLabel.UseSkinColor = True
-        SkinData.SkinSection = 'EDIT'
       end
     end
-    object sTabSheet3: TsTabSheet
+    object sTabSheet3: TTabSheet
       Caption = 'Console error logs'
-      SkinData.CustomColor = False
-      SkinData.CustomFont = False
-      object ConsoleLog: TsMemo
+      object ConsoleLog: TMemo
         Left = 0
         Top = 21
         Width = 776
         Height = 365
         Align = alClient
-        Color = 2038810
         Font.Charset = DEFAULT_CHARSET
-        Font.Color = 13417908
+        Font.Color = clWindowText
         Font.Height = -11
         Font.Name = 'Tahoma'
         Font.Style = []
@@ -111,59 +82,23 @@ object LogForm: TLogForm
         ReadOnly = True
         ScrollBars = ssBoth
         TabOrder = 0
-        BoundLabel.Indent = 0
-        BoundLabel.Font.Charset = DEFAULT_CHARSET
-        BoundLabel.Font.Color = clWindowText
-        BoundLabel.Font.Height = -11
-        BoundLabel.Font.Name = 'Tahoma'
-        BoundLabel.Font.Style = []
-        BoundLabel.Layout = sclLeft
-        BoundLabel.MaxWidth = 0
-        BoundLabel.UseSkinColor = True
-        SkinData.SkinSection = 'EDIT'
       end
-      object ConsolesList: TsComboBox
+      object ConsolesList: TComboBox
         Left = 0
         Top = 0
         Width = 776
         Height = 21
         Align = alTop
-        Alignment = taLeftJustify
-        BoundLabel.Indent = 0
-        BoundLabel.Font.Charset = DEFAULT_CHARSET
-        BoundLabel.Font.Color = clWindowText
-        BoundLabel.Font.Height = -11
-        BoundLabel.Font.Name = 'Tahoma'
-        BoundLabel.Font.Style = []
-        BoundLabel.Layout = sclLeft
-        BoundLabel.MaxWidth = 0
-        BoundLabel.UseSkinColor = True
-        SkinData.SkinSection = 'COMBOBOX'
-        VerticalAlignment = taAlignTop
         Style = csDropDownList
-        Color = 2038810
         Font.Charset = DEFAULT_CHARSET
-        Font.Color = 13417908
+        Font.Color = clWindowText
         Font.Height = -11
         Font.Name = 'Tahoma'
         Font.Style = []
-        ItemIndex = -1
         ParentFont = False
         TabOrder = 1
         OnChange = ConsolesListChange
       end
     end
-  end
-  object sSkinProvider1: TsSkinProvider
-    AddedTitle.Font.Charset = DEFAULT_CHARSET
-    AddedTitle.Font.Color = clNone
-    AddedTitle.Font.Height = -11
-    AddedTitle.Font.Name = 'Tahoma'
-    AddedTitle.Font.Style = []
-    FormHeader.AdditionalHeight = 0
-    SkinData.SkinSection = 'FORM'
-    TitleButtons = <>
-    Left = 312
-    Top = 152
   end
 end

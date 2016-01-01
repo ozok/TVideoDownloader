@@ -3,23 +3,21 @@ unit UnitYoutubedlUpdateChecker;
 interface
 
 uses
-  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, sButton, sMemo,
-  sSkinProvider, IdIOHandler, IdIOHandlerSocket, IdIOHandlerStack, IdSSL,
-  IdSSLOpenSSL, IdBaseComponent, IdComponent, IdTCPConnection, IdTCPClient,
-  IdHTTP, IdThreadComponent, JvComponentBase, JvThread, Vcl.ComCtrls,
-  acProgressBar, sGauge;
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes,
+  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, IdIOHandler,
+  IdIOHandlerSocket, IdIOHandlerStack, IdSSL, IdSSLOpenSSL, IdBaseComponent,
+  IdComponent, IdTCPConnection, IdTCPClient, IdHTTP, IdThreadComponent,
+  JvComponentBase, JvThread, Vcl.ComCtrls, Vcl.Samples.Gauges;
 
 type
   TYoutubedlUpdateChecker = class(TForm)
-    sSkinProvider1: TsSkinProvider;
-    OutputList: TsMemo;
-    sButton1: TsButton;
+    OutputList: TMemo;
+    sButton1: TButton;
     Downloader: TIdHTTP;
     IdSSLIOHandlerSocketOpenSSL1: TIdSSLIOHandlerSocketOpenSSL;
-    DownloadBtn: TsButton;
+    DownloadBtn: TButton;
     UpdateThread: TJvThread;
-    ProgressBar: TsGauge;
+    ProgressBar: TGauge;
     procedure sButton1Click(Sender: TObject);
     procedure DownloadBtnClick(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
@@ -46,7 +44,8 @@ implementation
 
 {$R *.dfm}
 
-uses UnitMain;
+uses
+  UnitMain;
 
 procedure TYoutubedlUpdateChecker.DownloaderWork(ASender: TObject; AWorkMode: TWorkMode; AWorkCount: Int64);
 var
@@ -122,7 +121,7 @@ begin
         begin
           Application.ProcessMessages;
           LLine := LSR.ReadLine;
-          if LLine.Contains(MATCH_LINE) then
+          if LLine.contains(MATCH_LINE) then
           begin
             Break;
           end;
@@ -188,3 +187,4 @@ begin
 end;
 
 end.
+

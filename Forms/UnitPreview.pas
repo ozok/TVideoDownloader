@@ -3,12 +3,13 @@ unit UnitPreview;
 interface
 
 uses
-  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.OleCtrls, SHDocVw, acWebBrowser, ActiveX;
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes,
+  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.OleCtrls, SHDocVw,
+  ActiveX;
 
 type
   TPreviewForm = class(TForm)
-    Browser: TsWebBrowser;
+    Browser: TWebBrowser;
     procedure FormShow(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
   private
@@ -27,7 +28,8 @@ implementation
 
 {$R *.dfm}
 
-uses UnitMain;
+uses
+  UnitMain;
 { TPreviewForm }
 
 procedure TPreviewForm.FormClose(Sender: TObject; var Action: TCloseAction);
@@ -47,8 +49,7 @@ var
   LMS: TMemoryStream;
   LHtmlList: TStringList;
 begin
-  LHtml := '<html><head></style><style type="text/css">.recentcomments a{display:inline !important;padding:0 !important;margin:0 !important;}</style></head><body style="background-color: black">' +
-    '<iframe width="560" height="315" src="' + URL.Replace('watch?v=', 'embed/') + '" frameborder="0" allowfullscreen></iframe></body></html>';
+  LHtml := '<html><head></style><style type="text/css">.recentcomments a{display:inline !important;padding:0 !important;margin:0 !important;}</style></head><body style="background-color: black">' + '<iframe width="560" height="315" src="' + URL.Replace('watch?v=', 'embed/') + '" frameborder="0" allowfullscreen></iframe></body></html>';
 
   Browser.Navigate('about:blank');
   while Browser.ReadyState < READYSTATE_INTERACTIVE do
@@ -74,3 +75,4 @@ begin
 end;
 
 end.
+

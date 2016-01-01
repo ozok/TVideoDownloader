@@ -3,44 +3,42 @@ unit UnitMain;
 interface
 
 uses
-  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, sSkinProvider, sSkinManager,
-  Vcl.StdCtrls, sComboBox, Vcl.ComCtrls, acProgressBar, sCheckBox, Vcl.Buttons,
-  sBitBtn, sScrollBox, sEdit, sLabel, Vcl.ExtCtrls, sPanel, Vcl.Menus, acImage,
-  sButton, Generics.Collections, UnitDownloadProcess, Vcl.Mask, sMaskEdit,
-  sCustomComboEdit, sToolEdit, JvComponentBase, JvComputerInfoEx, StrUtils, MediaInfoDll, windows7taskbar, UnitCommonTypes,
-  JvTrayIcon, acPNG, UnitYouTubeVideoInfoExtractor, ShellAPI, Winapi.MMSystem, IniFiles,
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes,
+  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ComCtrls,
+  Vcl.Buttons, Vcl.ExtCtrls, Vcl.Menus, Generics.Collections,
+  UnitDownloadProcess, Vcl.Mask, JvComponentBase, JvComputerInfoEx, StrUtils,
+  MediaInfoDll, windows7taskbar, UnitCommonTypes, JvTrayIcon,
+  UnitYouTubeVideoInfoExtractor, ShellAPI, Winapi.MMSystem, IniFiles,
   JvUrlListGrabber, JvUrlGrabbers, JvThread, System.Types, DownloadItemFrame,
-  JvDragDrop, sDialogs, IdBaseComponent,
-  IdThreadComponent;
+  JvDragDrop, IdBaseComponent, IdThreadComponent, JvExMask, JvToolEdit, System.ImageList,
+  Vcl.ImgList, System.DateUtils;
 
 type
   TMainForm = class(TForm)
-    PassPnl: TsPanel;
-    sLabel1: TsLabel;
-    UserEdit: TsEdit;
-    PassEdit: TsEdit;
-    VideoDownloaderList: TsScrollBox;
-    VideoDownloadToolBarPanel: TsPanel;
-    AddLinkBtn: TsBitBtn;
-    ClearLinksBtn: TsBitBtn;
-    SettingsBtn: TsBitBtn;
-    StartDownloadBtn: TsBitBtn;
-    StopDownloadBtn: TsBitBtn;
-    PassBtn: TsBitBtn;
-    ProgressPanel: TsPanel;
-    sPanel3: TsPanel;
-    VideoDownloaderProgressLabel: TsLabel;
-    TotalBar: TsProgressBar;
-    PostEncodeList2: TsComboBox;
-    OutputPanel: TsPanel;
+    PassPnl: TPanel;
+    sLabel1: TLabel;
+    UserEdit: TEdit;
+    PassEdit: TEdit;
+    VideoDownloaderList: TScrollBox;
+    VideoDownloadToolBarPanel: TPanel;
+    AddLinkBtn: TButton;
+    ClearLinksBtn: TButton;
+    SettingsBtn: TButton;
+    StartDownloadBtn: TButton;
+    StopDownloadBtn: TButton;
+    PassBtn: TButton;
+    ProgressPanel: TPanel;
+    sPanel3: TPanel;
+    VideoDownloaderProgressLabel: TLabel;
+    TotalBar: TProgressBar;
+    PostEncodeList2: TComboBox;
+    OutputPanel: TPanel;
     AddLinkMenu: TPopupMenu;
     A3: TMenuItem;
     Batchaddlinks1: TMenuItem;
     A2: TMenuItem;
     Batchaddplaylists1: TMenuItem;
-    DirectoryEdit: TsDirectoryEdit;
-    OpenOutBtn: TsButton;
+    OpenOutBtn: TButton;
     Info: TJvComputerInfoEx;
     VideoDownloaderPosTimer: TTimer;
     TrayIcon: TJvTrayIcon;
@@ -48,11 +46,9 @@ type
     L1: TMenuItem;
     E1: TMenuItem;
     H1: TMenuItem;
-    sSkinManager1: TsSkinManager;
-    sSkinProvider1: TsSkinProvider;
-    NormalPanel: TsPanel;
-    LoadPanel: TsPanel;
-    AbortVideoAddBtn: TsBitBtn;
+    NormalPanel: TPanel;
+    LoadPanel: TPanel;
+    AbortVideoAddBtn: TButton;
     CheckUpdateThread: TJvThread;
     UpdateChecker: TJvHttpUrlGrabber;
     Addalink1: TMenuItem;
@@ -67,27 +63,30 @@ type
     N2: TMenuItem;
     M1: TMenuItem;
     S1: TMenuItem;
-    LogsBtn: TsBitBtn;
+    LogsBtn: TButton;
     S2: TMenuItem;
-    DonateBtn: TsBitBtn;
-    ProcessingPanel: TsPanel;
-    sPanel1: TsPanel;
-    LinkEdit: TsEdit;
-    LinkTypeList: TsComboBox;
-    AddSingleLinkBtn: TsBitBtn;
-    GetLatestYoutubedlBtn: TsBitBtn;
-    LoadPanelLabel: TsLabel;
-    LoadProgressBar: TsProgressBar;
+    DonateBtn: TButton;
+    ProcessingPanel: TPanel;
+    sPanel1: TPanel;
+    LinkEdit: TEdit;
+    LinkTypeList: TComboBox;
+    AddSingleLinkBtn: TButton;
+    GetLatestYoutubedlBtn: TButton;
+    LoadPanelLabel: TLabel;
     C2: TMenuItem;
-    SaveDialog: TsSaveDialog;
+    SaveDialog: TSaveDialog;
     E2: TMenuItem;
-    sPanel2: TsPanel;
-    TimeLabel: TsLabel;
+    sPanel2: TPanel;
+    TimeLabel: TLabel;
     TimeTimer: TTimer;
-    OpenOutputFolderBtn: TsBitBtn;
+    OpenOutputFolderBtn: TButton;
     I1: TMenuItem;
-    ImportDlg: TsOpenDialog;
+    ImportDlg: TOpenDialog;
     Importlinksfromatextfile1: TMenuItem;
+    DirectoryEdit: TJvDirectoryEdit;
+    Label1: TLabel;
+    ButtonImages: TImageList;
+    LoadProgressBar: TProgressBar;
     procedure AddLinkBtnClick(Sender: TObject);
     procedure ClearLinksBtnClick(Sender: TObject);
     procedure PassBtnClick(Sender: TObject);
@@ -181,16 +180,14 @@ type
     // save/load settings
     procedure SaveOptions();
     procedure LoadOptions();
-
     procedure ProcessPanelVisibility(const Visible: Boolean);
     procedure AddPanelVisibility(const Visible: Boolean);
-
     function IntToTime(const TimeAsInt: integer): string;
   public
     { Public declarations }
     FAppDataFolder: string;
     // download processes
-    FVideoDownloadProcesses: array [0 .. 15] of TDownloadProcess;
+    FVideoDownloadProcesses: array[0..15] of TDownloadProcess;
     // video download list items
     // FVideoDownloadListItems: TVideoDownloaderItemList;
     FVideoDownloadListItems: TList<TDownloadUIItem>;
@@ -206,15 +203,16 @@ var
   MainForm: TMainForm;
 
 const
-  Portable = True;
+  Portable = False;
   BuildInt = 318;
 
 implementation
 
 {$R *.dfm}
 
-uses UnitSettings, UnitLogs, UnitBatchAdd, UnitAbout,
-  UnitYoutubedlUpdateChecker, UnitPreview;
+uses
+  UnitSettings, UnitLogs, UnitBatchAdd, UnitAbout, UnitYoutubedlUpdateChecker,
+  UnitPreview;
 
 procedure TMainForm.A1Click(Sender: TObject);
 begin
@@ -223,7 +221,7 @@ begin
 end;
 
 procedure TMainForm.A2Click(Sender: TObject);
-Var
+var
   LURL: string;
   LYIE: TYouTubeVideoInfoExtractor;
   I: Integer;
@@ -374,7 +372,6 @@ var
   I: Integer;
   LPass: TUserPass;
 begin
-
   LURL := Trim(LinkEdit.Text);
   if Length(LURL) > 0 then
   begin
@@ -491,7 +488,10 @@ var
   LDownloadItem: TDownloadItem;
   LVideoDownloaderItem: TDownloadUIItem;
   LPass: TUserPass;
+  LStartDate: TDateTime;
+  LDiff: integer;
 begin
+  LStartDate := Now;
   if Length(Url) > 0 then
   begin
     LPass.UserName := UserEdit.Text;
@@ -502,7 +502,8 @@ begin
       YIE.Start;
       while (YIE.FormatStatus = stReading) or (YIE.ThumbStatus = stReading) or (YIE.TitleStatus = stReading) or (YIE.SubtitleStatus = stReading) do
       begin
-        if FStopAddingLink then
+        LDiff := Abs(SecondsBetween(Now, LStartDate));
+        if FStopAddingLink or (LDiff >= Round(SettingsForm.LinkAddTimeOutEdit.Value)) then
         begin
           YIE.StopAll;
           Break;
@@ -586,7 +587,7 @@ begin
 end;
 
 procedure TMainForm.BatchAdd(const Links: TStrings; const SingleLink: Boolean);
-Var
+var
   LURL: string;
   LYIE: TYouTubeVideoInfoExtractor;
   I, j: Integer;
@@ -813,15 +814,11 @@ begin
   begin
     PassPnl.Visible := false;
   end;
-  if PassBtn.Down then
-  begin
-    PassBtn.Down := false;
-  end;
   for I := 0 to FVideoDownloadListItems.Count - 1 do
   begin
     for j := 0 to FVideoDownloadListItems[i].ControlCount - 1 do
     begin
-      if (FVideoDownloadListItems[i].Controls[j] is TsComboBox) or (FVideoDownloadListItems[i].Controls[j] is TsButton) then
+      if (FVideoDownloadListItems[i].Controls[j] is TComboBox) or (FVideoDownloadListItems[i].Controls[j] is TButton) then
         FVideoDownloadListItems[i].Controls[j].Enabled := false;
     end;
   end;
@@ -923,7 +920,7 @@ var
   LItemIndex: integer;
   I: Integer;
 begin
-  LItemIndex := (Sender as TsButton).Tag;
+  LItemIndex := (Sender as TButton).Tag;
   FVideoDownloadListItems[LItemIndex].Visible := false;
   FVideoDownloadListItems.Delete(LItemIndex);
   FDownloadItems.Delete(LItemIndex);
@@ -955,7 +952,7 @@ begin
   begin
     for j := 0 to FVideoDownloadListItems[i].ControlCount - 1 do
     begin
-      if (FVideoDownloadListItems[i].Controls[j] is TsComboBox) or (FVideoDownloadListItems[i].Controls[j] is TsButton) then
+      if (FVideoDownloadListItems[i].Controls[j] is TComboBox) or (FVideoDownloadListItems[i].Controls[j] is TButton) then
         FVideoDownloadListItems[i].Controls[j].Enabled := True;
     end;
   end;
@@ -968,9 +965,9 @@ begin
     for j := 0 to FVideoDownloadListItems[i].ControlCount - 1 do
     begin
       FVideoDownloadListItems[i].Controls[j].Enabled := True;
-      if FVideoDownloadListItems[i].Controls[j] is TsProgressBar then
+      if FVideoDownloadListItems[i].Controls[j] is TProgressBar then
       begin
-        TsProgressBar(FVideoDownloadListItems[i].Controls[j]).Position := 0;
+        TProgressBar(FVideoDownloadListItems[i].Controls[j]).Position := 0;
       end;
       FVideoDownloadListItems[i].ResetProgressLabel;
     end;
@@ -993,9 +990,9 @@ var
   LItemIndex: Integer;
   LTmp: TDownloadItem;
 begin
-  LItemIndex := (Sender as TsComboBox).Tag;
+  LItemIndex := (Sender as TComboBox).Tag;
   LTmp := FDownloadItems[LItemIndex];
-  LTmp.FormatIndex := (Sender as TsComboBox).ItemIndex;
+  LTmp.FormatIndex := (Sender as TComboBox).ItemIndex;
   FDownloadItems[LItemIndex] := LTmp;
 end;
 
@@ -1258,7 +1255,7 @@ end;
 
 procedure TMainForm.LabelClick(Sender: TObject);
 begin
-  ShellExecute(Handle, 'open', PWideChar(TsLabel(Sender).Caption), nil, nil, SW_SHOWNORMAL);
+  ShellExecute(Handle, 'open', PWideChar(TLabel(Sender).Caption), nil, nil, SW_SHOWNORMAL);
 end;
 
 procedure TMainForm.LinkEditKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
@@ -1328,13 +1325,11 @@ begin
   begin
     // hide
     PassPnl.Visible := false;
-    PassBtn.Down := false;
   end
   else
   begin
     // show
     PassPnl.Visible := True;
-    PassBtn.Down := True;
   end;
 end;
 
@@ -1351,9 +1346,8 @@ end;
 procedure TMainForm.PreviewBtnClick(Sender: TObject);
 var
   LItemIndex: integer;
-  I: Integer;
 begin
-  LItemIndex := (Sender as TsButton).Tag;
+  LItemIndex := (Sender as TButton).Tag;
   PreviewForm.Url := FVideoDownloadListItems[LItemIndex].LinkLabel.Caption;
   PreviewForm.Show;
   Self.Enabled := False;
@@ -1510,7 +1504,7 @@ begin
         begin
           if ForceDirectories(DirectoryEdit.Text) then
           begin
-            if not(ForceDirectories(ExcludeTrailingPathDelimiter(DirectoryEdit.Text))) then
+            if not (ForceDirectories(ExcludeTrailingPathDelimiter(DirectoryEdit.Text))) then
             begin
               Application.MessageBox('Cannot create output folder.', 'Error', MB_ICONERROR);
               Exit;
@@ -1582,13 +1576,11 @@ begin
           case FDownloadItems[i].LinkType of
             general:
               begin
-                LCMD := ' ' + LPass + ' -o "' + ExcludeTrailingPathDelimiter(DirectoryEdit.Text) + '\%(upload_date)s - %(uploader)s - %(title)s.%(ext)s" -i --no-playlist -f ' +
-                  FDownloadItems[i].FormatIntegers[FDownloadItems[i].FormatIndex];
+                LCMD := ' ' + LPass + ' -o "' + ExcludeTrailingPathDelimiter(DirectoryEdit.Text) + '\%(upload_date)s - %(uploader)s - %(title)s.%(ext)s" -i --no-playlist -f ' + FDownloadItems[i].FormatIntegers[FDownloadItems[i].FormatIndex];
               end;
             soundcloud:
               begin
-                LCMD := ' ' + LPass + ' -o "' + ExcludeTrailingPathDelimiter(DirectoryEdit.Text) + '\%(upload_date)s - %(uploader)s - %(title)s.%(ext)s" -i --no-playlist -x --audio-format ' +
-                  FDownloadItems[i].FormatIntegers[FDownloadItems[i].FormatIndex];
+                LCMD := ' ' + LPass + ' -o "' + ExcludeTrailingPathDelimiter(DirectoryEdit.Text) + '\%(upload_date)s - %(uploader)s - %(title)s.%(ext)s" -i --no-playlist -x --audio-format ' + FDownloadItems[i].FormatIntegers[FDownloadItems[i].FormatIndex];
               end;
           end;
           // LDownloadSub := False;
@@ -1615,8 +1607,7 @@ begin
             LDASHAudioCode := VideoTypeToAudioCode(LSelectedFormatStr);
 
             // get audio
-            LDownloadJob.CommandLine := ' -o "' + ExcludeTrailingPathDelimiter(DirectoryEdit.Text) + '\%(upload_date)s - %(uploader)s - %(title)s' + LDASHAudioExt + '" -i --no-playlist -f ' +
-              LDASHAudioCode + ' -c -w ' + FVideoDownloadListItems[i].LinkLabel.Caption;
+            LDownloadJob.CommandLine := ' -o "' + ExcludeTrailingPathDelimiter(DirectoryEdit.Text) + '\%(upload_date)s - %(uploader)s - %(title)s' + LDASHAudioExt + '" -i --no-playlist -f ' + LDASHAudioCode + ' -c -w ' + FVideoDownloadListItems[i].LinkLabel.Caption;
             LDownloadJob.ProcessType := youtubedl;
             LDownloadJob.ApplicationPath := FYoutubedlPath;
             LDownloadJob.FileIndex := i;
@@ -1624,9 +1615,7 @@ begin
             FVideoDownloadProcesses[i mod SettingsForm.ProcessCountBar.Position].DownloadJobs.Add(LDownloadJob);
 
             // mux both into video file
-            LDownloadJob.CommandLine := ' -y -i "' + DirectoryEdit.Text + '\' + FVideoDownloadListItems[i].FileNameLabel.Caption + LDASHVideoExt + '" -i "' + DirectoryEdit.Text + '\' +
-              FVideoDownloadListItems[i].FileNameLabel.Caption + LDASHAudioExt + '" -acodec copy -vcodec copy "' + DirectoryEdit.Text + '\' + FVideoDownloadListItems[i].FileNameLabel.Caption +
-              '_muxed' + LDASHVideoExt + '"';
+            LDownloadJob.CommandLine := ' -y -i "' + DirectoryEdit.Text + '\' + FVideoDownloadListItems[i].FileNameLabel.Caption + LDASHVideoExt + '" -i "' + DirectoryEdit.Text + '\' + FVideoDownloadListItems[i].FileNameLabel.Caption + LDASHAudioExt + '" -acodec copy -vcodec copy "' + DirectoryEdit.Text + '\' + FVideoDownloadListItems[i].FileNameLabel.Caption + '_muxed' + LDASHVideoExt + '"';
             LDownloadJob.ProcessType := ffmpeg;
             LDownloadJob.ApplicationPath := FFFMpegPath;
             LDownloadJob.FileIndex := i;
@@ -1749,9 +1738,9 @@ var
   LItemIndex: Integer;
   LTmp: TDownloadItem;
 begin
-  LItemIndex := (Sender as TsComboBox).Tag;
+  LItemIndex := (Sender as TComboBox).Tag;
   LTmp := FDownloadItems[LItemIndex];
-  LTmp.SubIndex := (Sender as TsComboBox).ItemIndex;
+  LTmp.SubIndex := (Sender as TComboBox).ItemIndex;
   FDownloadItems[LItemIndex] := LTmp;
 end;
 
@@ -1867,7 +1856,6 @@ begin
   begin
     TotalBar.Max := 100;
     LNewPos := (100 * (LTotalFilesDone + FSkippedVideoCount) div FVideoDownloadTotalCMDCount);
-    LogForm.Main.Lines.Add(FloatToStr((LTotalFilesDone + FSkippedVideoCount)) + '/' + FloatToStr(FVideoDownloadTotalCMDCount));
 
     TotalBar.Position := LNewPos;
     VideoDownloaderProgressLabel.Caption := 'Progress: ' + FloatToStr(LTotalFilesDone + FSkippedVideoCount) + '/' + FloatToStr(FVideoDownloadTotalCMDCount + FSkippedVideoCount);
@@ -1995,3 +1983,4 @@ begin
 end;
 
 end.
+

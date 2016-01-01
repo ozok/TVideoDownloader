@@ -3,20 +3,19 @@ unit UnitAbout;
 interface
 
 uses
-  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, sLabel, Vcl.ExtCtrls,
-  acImage, sButton, acPNG, ShellAPI, sSkinProvider;
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes,
+  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ExtCtrls,
+  ShellAPI;
 
 type
   TAboutForm = class(TForm)
-    sImage1: TsImage;
-    sLabel1: TsLabel;
-    sLabel2: TsLabel;
-    sLabel3: TsLabel;
-    sButton1: TsButton;
-    sButton2: TsButton;
-    sButton3: TsButton;
-    sSkinProvider1: TsSkinProvider;
+    sLabel1: TLabel;
+    sLabel2: TLabel;
+    sLabel3: TLabel;
+    sButton1: TButton;
+    sButton2: TButton;
+    sButton3: TButton;
+    Image1: TImage;
     procedure sButton1Click(Sender: TObject);
     procedure sButton2Click(Sender: TObject);
     procedure sButton3Click(Sender: TObject);
@@ -34,7 +33,8 @@ implementation
 
 {$R *.dfm}
 
-uses UnitMain;
+uses
+  UnitMain;
 
 procedure TAboutForm.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
@@ -58,3 +58,4 @@ begin
 end;
 
 end.
+

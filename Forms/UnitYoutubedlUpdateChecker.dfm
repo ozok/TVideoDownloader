@@ -5,7 +5,7 @@ object YoutubedlUpdateChecker: TYoutubedlUpdateChecker
   Caption = 'Youtube-dl Update Checker'
   ClientHeight = 172
   ClientWidth = 645
-  Color = 3485741
+  Color = clBtnFace
   DoubleBuffered = True
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -21,28 +21,23 @@ object YoutubedlUpdateChecker: TYoutubedlUpdateChecker
     172)
   PixelsPerInch = 96
   TextHeight = 13
-  object ProgressBar: TsGauge
+  object ProgressBar: TGauge
     Left = 8
     Top = 139
     Width = 394
     Height = 25
     Anchors = [akLeft, akRight, akBottom]
-    Animated = False
-    SkinData.SkinSection = 'GAUGE'
-    ForeColor = clBlack
     Progress = 0
-    Suffix = '%'
     ExplicitTop = 169
   end
-  object OutputList: TsMemo
+  object OutputList: TMemo
     Left = 8
     Top = 8
     Width = 629
     Height = 125
     Anchors = [akLeft, akTop, akRight, akBottom]
-    Color = 2038810
     Font.Charset = DEFAULT_CHARSET
-    Font.Color = 13417908
+    Font.Color = clWindowText
     Font.Height = -11
     Font.Name = 'Tahoma'
     Font.Style = []
@@ -50,9 +45,8 @@ object YoutubedlUpdateChecker: TYoutubedlUpdateChecker
     ReadOnly = True
     ScrollBars = ssBoth
     TabOrder = 0
-    SkinData.SkinSection = 'EDIT'
   end
-  object sButton1: TsButton
+  object sButton1: TButton
     Left = 562
     Top = 139
     Width = 75
@@ -62,7 +56,7 @@ object YoutubedlUpdateChecker: TYoutubedlUpdateChecker
     TabOrder = 1
     OnClick = sButton1Click
   end
-  object DownloadBtn: TsButton
+  object DownloadBtn: TButton
     Left = 408
     Top = 139
     Width = 148
@@ -71,18 +65,6 @@ object YoutubedlUpdateChecker: TYoutubedlUpdateChecker
     Caption = 'Get the latest version'
     TabOrder = 2
     OnClick = DownloadBtnClick
-  end
-  object sSkinProvider1: TsSkinProvider
-    AddedTitle.Font.Charset = DEFAULT_CHARSET
-    AddedTitle.Font.Color = clNone
-    AddedTitle.Font.Height = -11
-    AddedTitle.Font.Name = 'Tahoma'
-    AddedTitle.Font.Style = []
-    FormHeader.AdditionalHeight = 0
-    SkinData.SkinSection = 'FORM'
-    TitleButtons = <>
-    Left = 384
-    Top = 32
   end
   object Downloader: TIdHTTP
     IOHandler = IdSSLIOHandlerSocketOpenSSL1

@@ -3,21 +3,19 @@ unit UnitLogs;
 interface
 
 uses
-  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ComCtrls, sPageControl,
-  sSkinProvider, Vcl.StdCtrls, sMemo, sComboBox;
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes,
+  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ComCtrls, Vcl.StdCtrls;
 
 type
   TLogForm = class(TForm)
-    sSkinProvider1: TsSkinProvider;
-    sPageControl1: TsPageControl;
-    sTabSheet1: TsTabSheet;
-    sTabSheet2: TsTabSheet;
-    Main: TsMemo;
-    sTabSheet3: TsTabSheet;
-    CMDLog: TsMemo;
-    ConsoleLog: TsMemo;
-    ConsolesList: TsComboBox;
+    sPageControl1: TPageControl;
+    sTabSheet1: TTabSheet;
+    sTabSheet2: TTabSheet;
+    Main: TMemo;
+    sTabSheet3: TTabSheet;
+    CMDLog: TMemo;
+    ConsoleLog: TMemo;
+    ConsolesList: TComboBox;
     procedure FormCreate(Sender: TObject);
     procedure ConsolesListChange(Sender: TObject);
     procedure FormShow(Sender: TObject);
@@ -35,7 +33,8 @@ implementation
 
 {$R *.dfm}
 
-uses UnitMain;
+uses
+  UnitMain;
 
 procedure TLogForm.ConsolesListChange(Sender: TObject);
 begin
@@ -68,3 +67,4 @@ begin
 end;
 
 end.
+

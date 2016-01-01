@@ -3,7 +3,7 @@ object SettingsForm: TSettingsForm
   Top = 0
   BorderStyle = bsToolWindow
   Caption = 'Settings'
-  ClientHeight = 208
+  ClientHeight = 229
   ClientWidth = 435
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -17,10 +17,31 @@ object SettingsForm: TSettingsForm
   OnCreate = FormCreate
   DesignSize = (
     435
-    208)
+    229)
   PixelsPerInch = 96
   TextHeight = 13
-  object ProcessCountBar: TsTrackBar
+  object Label1: TLabel
+    Left = 8
+    Top = 12
+    Width = 81
+    Height = 13
+    Caption = 'Prefered format:'
+  end
+  object Label2: TLabel
+    Left = 8
+    Top = 65
+    Width = 117
+    Height = 13
+    Caption = 'Parallel download count:'
+  end
+  object Label3: TLabel
+    Left = 8
+    Top = 170
+    Width = 132
+    Height = 13
+    Caption = 'Link add timeout (seconds):'
+  end
+  object ProcessCountBar: TTrackBar
     Left = 184
     Top = 61
     Width = 244
@@ -33,11 +54,8 @@ object SettingsForm: TSettingsForm
     TickMarks = tmBoth
     TickStyle = tsNone
     OnChange = ProcessCountBarChange
-    SkinData.SkinSection = 'TRACKBAR'
-    BarOffsetV = 0
-    BarOffsetH = 0
   end
-  object DontDoubleDownloadBtn: TsCheckBox
+  object DontDoubleDownloadBtn: TCheckBox
     Left = 11
     Top = 90
     Width = 248
@@ -46,22 +64,16 @@ object SettingsForm: TSettingsForm
     Checked = True
     State = cbChecked
     TabOrder = 1
-    SkinData.SkinSection = 'CHECKBOX'
-    ImgChecked = 0
-    ImgUnchecked = 0
   end
-  object DontPreviewImgBtn: TsCheckBox
+  object DontPreviewImgBtn: TCheckBox
     Left = 11
     Top = 115
     Width = 106
     Height = 20
     Caption = 'Don'#39't load thumbs'
     TabOrder = 2
-    SkinData.SkinSection = 'CHECKBOX'
-    ImgChecked = 0
-    ImgUnchecked = 0
   end
-  object PreferedFormatEdit: TsEdit
+  object PreferedFormatEdit: TEdit
     Left = 90
     Top = 8
     Width = 338
@@ -75,20 +87,8 @@ object SettingsForm: TSettingsForm
     ParentFont = False
     TabOrder = 3
     Text = 'mp4, 1080p, DASH, video'
-    SkinData.SkinSection = 'EDIT'
-    BoundLabel.Active = True
-    BoundLabel.Caption = 'Preferred format:'
-    BoundLabel.Indent = 0
-    BoundLabel.Font.Charset = DEFAULT_CHARSET
-    BoundLabel.Font.Color = clWindowText
-    BoundLabel.Font.Height = -11
-    BoundLabel.Font.Name = 'Tahoma'
-    BoundLabel.Font.Style = []
-    BoundLabel.Layout = sclLeft
-    BoundLabel.MaxWidth = 0
-    BoundLabel.UseSkinColor = True
   end
-  object DashVideoBtn: TsCheckBox
+  object DashVideoBtn: TCheckBox
     Left = 11
     Top = 35
     Width = 274
@@ -97,11 +97,8 @@ object SettingsForm: TSettingsForm
     Checked = True
     State = cbChecked
     TabOrder = 4
-    SkinData.SkinSection = 'CHECKBOX'
-    ImgChecked = 0
-    ImgUnchecked = 0
   end
-  object ProcessCountEdit: TsEdit
+  object ProcessCountEdit: TEdit
     Left = 129
     Top = 60
     Width = 49
@@ -117,53 +114,38 @@ object SettingsForm: TSettingsForm
     ReadOnly = True
     TabOrder = 5
     Text = '4'
-    SkinData.SkinSection = 'EDIT'
-    BoundLabel.Active = True
-    BoundLabel.Caption = 'Parallel download count:'
-    BoundLabel.Indent = 0
-    BoundLabel.Font.Charset = DEFAULT_CHARSET
-    BoundLabel.Font.Color = clWindowText
-    BoundLabel.Font.Height = -11
-    BoundLabel.Font.Name = 'Tahoma'
-    BoundLabel.Font.Style = []
-    BoundLabel.Layout = sclLeft
-    BoundLabel.MaxWidth = 0
-    BoundLabel.UseSkinColor = True
   end
-  object PlaySoundBtn: TsCheckBox
+  object PlaySoundBtn: TCheckBox
     Left = 224
     Top = 115
     Width = 196
     Height = 20
     Caption = 'Play a sound when download is done'
     TabOrder = 6
-    SkinData.SkinSection = 'CHECKBOX'
-    ImgChecked = 0
-    ImgUnchecked = 0
   end
-  object sButton1: TsButton
+  object sButton1: TButton
     Left = 352
-    Top = 175
+    Top = 196
     Width = 75
     Height = 25
     Anchors = [akRight, akBottom]
     Caption = 'Close'
     TabOrder = 7
     OnClick = sButton1Click
-    SkinData.SkinSection = 'BUTTON'
+    ExplicitTop = 175
   end
-  object sButton2: TsButton
+  object sButton2: TButton
     Left = 8
-    Top = 175
+    Top = 196
     Width = 75
     Height = 25
     Anchors = [akLeft, akBottom]
     Caption = 'Reset'
     TabOrder = 8
     OnClick = sButton2Click
-    SkinData.SkinSection = 'BUTTON'
+    ExplicitTop = 175
   end
-  object CheckUpdateBtn: TsCheckBox
+  object CheckUpdateBtn: TCheckBox
     Left = 11
     Top = 141
     Width = 132
@@ -172,20 +154,18 @@ object SettingsForm: TSettingsForm
     Checked = True
     State = cbChecked
     TabOrder = 9
-    SkinData.SkinSection = 'CHECKBOX'
-    ImgChecked = 0
-    ImgUnchecked = 0
   end
-  object sSkinProvider1: TsSkinProvider
-    AddedTitle.Font.Charset = DEFAULT_CHARSET
-    AddedTitle.Font.Color = clNone
-    AddedTitle.Font.Height = -11
-    AddedTitle.Font.Name = 'Tahoma'
-    AddedTitle.Font.Style = []
-    FormHeader.AdditionalHeight = 0
-    SkinData.SkinSection = 'FORM'
-    TitleButtons = <>
-    Left = 336
-    Top = 48
+  object LinkAddTimeOutEdit: TJvSpinEdit
+    Left = 146
+    Top = 167
+    Width = 75
+    Height = 21
+    CheckOptions = [coCheckOnExit, coCropBeyondLimit]
+    CheckMaxValue = False
+    Alignment = taCenter
+    ButtonKind = bkClassic
+    MinValue = 15.000000000000000000
+    Value = 60.000000000000000000
+    TabOrder = 10
   end
 end

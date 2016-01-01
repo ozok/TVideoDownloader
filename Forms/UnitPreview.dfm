@@ -19,16 +19,15 @@ object PreviewForm: TPreviewForm
   OnShow = FormShow
   PixelsPerInch = 96
   TextHeight = 13
-  object Browser: TsWebBrowser
+  object Browser: TWebBrowser
     Left = 0
     Top = 0
     Width = 610
     Height = 355
     Align = alClient
     TabOrder = 0
-    SkinData.SkinSection = 'EDIT'
-    ExplicitLeft = 360
-    ExplicitTop = 144
+    ExplicitLeft = 280
+    ExplicitTop = 184
     ExplicitWidth = 300
     ExplicitHeight = 150
     ControlData = {
