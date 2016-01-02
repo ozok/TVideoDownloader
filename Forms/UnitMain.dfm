@@ -34,12 +34,31 @@ object MainForm: TMainForm
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 0
+    object Bevel2: TBevel
+      Left = 0
+      Top = 589
+      Width = 1116
+      Height = 3
+      Align = alBottom
+      Shape = bsBottomLine
+      ExplicitTop = 542
+    end
+    object Bevel1: TBevel
+      Left = 0
+      Top = 545
+      Width = 1116
+      Height = 3
+      Align = alBottom
+      Shape = bsBottomLine
+      ExplicitTop = 318
+    end
     object OutputPanel: TPanel
       Left = 0
-      Top = 551
+      Top = 548
       Width = 1116
       Height = 41
       Align = alBottom
+      BevelOuter = bvNone
       TabOrder = 2
       DesignSize = (
         1116
@@ -88,6 +107,20 @@ object MainForm: TMainForm
         Height = 13
         Caption = 'User name and password aren'#39't saved for security reasons.'
       end
+      object Label3: TLabel
+        Left = 5
+        Top = 10
+        Width = 55
+        Height = 13
+        Caption = 'User name:'
+      end
+      object Label4: TLabel
+        Left = 231
+        Top = 10
+        Width = 50
+        Height = 13
+        Caption = 'Password:'
+      end
       object UserEdit: TEdit
         Left = 66
         Top = 6
@@ -124,10 +157,19 @@ object MainForm: TMainForm
       Width = 1116
       Height = 50
       Align = alBottom
+      BevelOuter = bvNone
       TabOrder = 3
       DesignSize = (
         1116
         50)
+      object Label2: TLabel
+        Left = 956
+        Top = 6
+        Width = 97
+        Height = 13
+        Anchors = [akRight, akBottom]
+        Caption = 'Post-encode Action:'
+      end
       object sPanel3: TPanel
         Left = -1
         Top = -9
@@ -186,9 +228,8 @@ object MainForm: TMainForm
         Height = 21
         Style = csDropDownList
         Anchors = [akRight, akBottom]
-        Color = 2038810
         Font.Charset = DEFAULT_CHARSET
-        Font.Color = 13417908
+        Font.Color = clWindowText
         Font.Height = -11
         Font.Name = 'Tahoma'
         Font.Style = []
@@ -207,9 +248,13 @@ object MainForm: TMainForm
       Left = 0
       Top = 183
       Width = 1116
-      Height = 368
+      Height = 362
       Align = alClient
+      BevelInner = bvNone
+      BevelOuter = bvNone
+      BorderStyle = bsNone
       TabOrder = 1
+      ExplicitHeight = 368
     end
     object VideoDownloadToolBarPanel: TPanel
       Left = 0
@@ -217,12 +262,13 @@ object MainForm: TMainForm
       Width = 1116
       Height = 125
       Align = alTop
+      BevelOuter = bvNone
       TabOrder = 0
       object AddLinkBtn: TButton
-        Left = 1
-        Top = 1
+        Left = 0
+        Top = 0
         Width = 105
-        Height = 90
+        Height = 92
         Cursor = crHandPoint
         Hint = 'Add links to download'
         Align = alLeft
@@ -233,13 +279,15 @@ object MainForm: TMainForm
         Images = ButtonImages
         TabOrder = 0
         OnClick = AddLinkBtnClick
-        ExplicitLeft = -5
+        ExplicitLeft = 1
+        ExplicitTop = 1
+        ExplicitHeight = 90
       end
       object ClearLinksBtn: TButton
-        Left = 106
-        Top = 1
+        Left = 105
+        Top = 0
         Width = 105
-        Height = 90
+        Height = 92
         Cursor = crHandPoint
         Hint = 'Remove all items from list'
         Align = alLeft
@@ -250,12 +298,15 @@ object MainForm: TMainForm
         Images = ButtonImages
         TabOrder = 1
         OnClick = ClearLinksBtnClick
+        ExplicitLeft = 106
+        ExplicitTop = 1
+        ExplicitHeight = 90
       end
       object SettingsBtn: TButton
-        Left = 695
-        Top = 1
+        Left = 696
+        Top = 0
         Width = 105
-        Height = 90
+        Height = 92
         Cursor = crHandPoint
         Hint = 'Video downloader options'
         Align = alRight
@@ -266,12 +317,15 @@ object MainForm: TMainForm
         Images = ButtonImages
         TabOrder = 2
         OnClick = SettingsBtnClick
+        ExplicitLeft = 695
+        ExplicitTop = 1
+        ExplicitHeight = 90
       end
       object StartDownloadBtn: TButton
-        Left = 1010
-        Top = 1
+        Left = 1011
+        Top = 0
         Width = 105
-        Height = 90
+        Height = 92
         Cursor = crHandPoint
         Hint = 'Start to download videos'
         Align = alRight
@@ -282,12 +336,15 @@ object MainForm: TMainForm
         Images = ButtonImages
         TabOrder = 3
         OnClick = StartDownloadBtnClick
+        ExplicitLeft = 1010
+        ExplicitTop = 1
+        ExplicitHeight = 90
       end
       object StopDownloadBtn: TButton
-        Left = 905
-        Top = 1
+        Left = 906
+        Top = 0
         Width = 105
-        Height = 90
+        Height = 92
         Cursor = crHandPoint
         Hint = 'Stop video downloading'
         Align = alRight
@@ -299,12 +356,15 @@ object MainForm: TMainForm
         Images = ButtonImages
         TabOrder = 4
         OnClick = StopDownloadBtnClick
+        ExplicitLeft = 905
+        ExplicitTop = 1
+        ExplicitHeight = 90
       end
       object PassBtn: TButton
-        Left = 590
-        Top = 1
+        Left = 591
+        Top = 0
         Width = 105
-        Height = 90
+        Height = 92
         Cursor = crHandPoint
         Align = alRight
         Caption = 'Password'
@@ -314,12 +374,15 @@ object MainForm: TMainForm
         Images = ButtonImages
         TabOrder = 5
         OnClick = PassBtnClick
+        ExplicitLeft = 590
+        ExplicitTop = 1
+        ExplicitHeight = 90
       end
       object LogsBtn: TButton
-        Left = 485
-        Top = 1
+        Left = 486
+        Top = 0
         Width = 105
-        Height = 90
+        Height = 92
         Cursor = crHandPoint
         Hint = 'Command lines, console outputs etc'
         Align = alRight
@@ -330,12 +393,15 @@ object MainForm: TMainForm
         Images = ButtonImages
         TabOrder = 6
         OnClick = LogsBtnClick
+        ExplicitLeft = 485
+        ExplicitTop = 1
+        ExplicitHeight = 90
       end
       object DonateBtn: TButton
-        Left = 375
-        Top = 1
+        Left = 376
+        Top = 0
         Width = 110
-        Height = 90
+        Height = 92
         Cursor = crHandPoint
         Hint = 'Support this project'
         Align = alRight
@@ -346,22 +412,37 @@ object MainForm: TMainForm
         Images = ButtonImages
         TabOrder = 7
         OnClick = M1Click
-        ExplicitLeft = 380
+        ExplicitLeft = 375
+        ExplicitTop = 1
+        ExplicitHeight = 90
       end
-      object sPanel1: TPanel
-        Left = 1
-        Top = 91
-        Width = 1114
+      object FastLinkAddPanel: TPanel
+        Left = 0
+        Top = 92
+        Width = 1116
         Height = 33
         Align = alBottom
+        BevelOuter = bvNone
         TabOrder = 8
+        ExplicitLeft = 1
+        ExplicitTop = 91
+        ExplicitWidth = 1114
         DesignSize = (
-          1114
+          1116
           33)
+        object Bevel3: TBevel
+          Left = 0
+          Top = 30
+          Width = 1116
+          Height = 3
+          Align = alBottom
+          Shape = bsBottomLine
+          ExplicitTop = -17
+        end
         object LinkEdit: TEdit
           Left = 3
           Top = 6
-          Width = 888
+          Width = 890
           Height = 21
           Anchors = [akLeft, akTop, akRight]
           Font.Charset = DEFAULT_CHARSET
@@ -373,9 +454,10 @@ object MainForm: TMainForm
           TabOrder = 0
           TextHint = 'Copy&paste your link here and hit Return'
           OnKeyDown = LinkEditKeyDown
+          ExplicitWidth = 888
         end
         object LinkTypeList: TComboBox
-          Left = 897
+          Left = 899
           Top = 7
           Width = 133
           Height = 21
@@ -391,9 +473,10 @@ object MainForm: TMainForm
           Items.Strings = (
             'Single video/audio'
             'Playlist/User')
+          ExplicitLeft = 897
         end
         object AddSingleLinkBtn: TButton
-          Left = 1036
+          Left = 1038
           Top = 6
           Width = 74
           Height = 21
@@ -401,13 +484,14 @@ object MainForm: TMainForm
           Caption = 'Add'
           TabOrder = 2
           OnClick = AddSingleLinkBtnClick
+          ExplicitLeft = 1036
         end
       end
       object GetLatestYoutubedlBtn: TButton
-        Left = 211
-        Top = 1
+        Left = 212
+        Top = 0
         Width = 164
-        Height = 90
+        Height = 92
         Cursor = crHandPoint
         Hint = 'Use this whenever downloader stops to function properly.'
         Align = alRight
@@ -418,13 +502,15 @@ object MainForm: TMainForm
         Images = ButtonImages
         TabOrder = 9
         OnClick = C3Click
-        ExplicitLeft = 210
+        ExplicitLeft = 211
+        ExplicitTop = 1
+        ExplicitHeight = 90
       end
       object OpenOutputFolderBtn: TButton
-        Left = 800
-        Top = 1
+        Left = 801
+        Top = 0
         Width = 105
-        Height = 90
+        Height = 92
         Cursor = crHandPoint
         Hint = 'Open the folder where downloaded files will be stored'
         Align = alRight
@@ -435,6 +521,9 @@ object MainForm: TMainForm
         Images = ButtonImages
         TabOrder = 10
         OnClick = OpenOutBtnClick
+        ExplicitLeft = 800
+        ExplicitTop = 1
+        ExplicitHeight = 90
       end
     end
   end
@@ -480,7 +569,6 @@ object MainForm: TMainForm
       Caption = 'Stop'
       TabOrder = 0
       OnClick = AbortVideoAddBtnClick
-      ExplicitTop = 105
     end
     object LoadProgressBar: TProgressBar
       Left = 1
@@ -491,7 +579,6 @@ object MainForm: TMainForm
       Margins.Bottom = 0
       Align = alBottom
       TabOrder = 1
-      ExplicitTop = 95
     end
   end
   object AddLinkMenu: TPopupMenu
@@ -5438,7 +5525,7 @@ object MainForm: TMainForm
     Left = 960
     Top = 263
     Bitmap = {
-      494C01010A0010001C0020002000FFFFFFFF2110FFFFFFFFFFFFFFFF424D3600
+      494C01010A001000200020002000FFFFFFFF2110FFFFFFFFFFFFFFFF424D3600
       00000000000036000000280000008000000060000000010020000000000000C0
       0000000000000000000000000000000000000000000000000000000000000000
       00000000000000000000000000000000000200000008000000100000001B0000

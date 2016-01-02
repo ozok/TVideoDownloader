@@ -21,15 +21,6 @@ object YoutubedlUpdateChecker: TYoutubedlUpdateChecker
     172)
   PixelsPerInch = 96
   TextHeight = 13
-  object ProgressBar: TGauge
-    Left = 8
-    Top = 139
-    Width = 394
-    Height = 25
-    Anchors = [akLeft, akRight, akBottom]
-    Progress = 0
-    ExplicitTop = 169
-  end
   object OutputList: TMemo
     Left = 8
     Top = 8
@@ -56,15 +47,12 @@ object YoutubedlUpdateChecker: TYoutubedlUpdateChecker
     TabOrder = 1
     OnClick = sButton1Click
   end
-  object DownloadBtn: TButton
-    Left = 408
+  object ProgressBar: TProgressBar
+    Left = 8
     Top = 139
-    Width = 148
+    Width = 548
     Height = 25
-    Anchors = [akRight, akBottom]
-    Caption = 'Get the latest version'
     TabOrder = 2
-    OnClick = DownloadBtnClick
   end
   object Downloader: TIdHTTP
     IOHandler = IdSSLIOHandlerSocketOpenSSL1

@@ -15,11 +15,9 @@ type
     sButton1: TButton;
     Downloader: TIdHTTP;
     IdSSLIOHandlerSocketOpenSSL1: TIdSSLIOHandlerSocketOpenSSL;
-    DownloadBtn: TButton;
     UpdateThread: TJvThread;
-    ProgressBar: TGauge;
+    ProgressBar: TProgressBar;
     procedure sButton1Click(Sender: TObject);
-    procedure DownloadBtnClick(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure FormShow(Sender: TObject);
     procedure UpdateThreadExecute(Sender: TObject; Params: Pointer);
@@ -54,7 +52,7 @@ begin
   if FWorkSize > 0 then
   begin
     LPercent := (100 * AWorkCount) div FWorkSize;
-    ProgressBar.Progress := LPercent;
+    ProgressBar.Position := LPercent;
   end;
 end;
 
@@ -85,10 +83,10 @@ end;
 
 procedure TYoutubedlUpdateChecker.FormShow(Sender: TObject);
 begin
-  DownloadBtn.Enabled := True;
   OutputList.Lines.Clear;
-  ProgressBar.Progress := 0;
+  ProgressBar.Position := 0;
   FWorkSize := 0;
+  UpdateThread.Execute(nil);
 end;
 
 procedure TYoutubedlUpdateChecker.sButton1Click(Sender: TObject);
@@ -105,10 +103,9 @@ var
   LLine: string;
   LPos: integer;
   LFS: TFileStream;
-  LPath: string;
+  LPath: string; // youtube-dl.tmp
 begin
   OutputList.Lines.Add('[' + DateTimeToStr(Now) + '] Starting the update process.');
-  DownloadBtn.Enabled := False;
   try
     LMS := TMemoryStream.Create;
     try
@@ -135,26 +132,30 @@ begin
 
           try
             LPath := ChangeFileExt(Path, '.tmp');
+            // delete tmp file from a previous update
             if FileExists(LPath) then
             begin
               DeleteFile(LPath);
             end;
-            LFS := TFileStream.Create(Path, fmCreate);
+            // write downloaded file to the tmp file
+            LFS := TFileStream.Create(LPath, fmCreate);
             try
               OutputList.Lines.Add('[' + DateTimeToStr(Now) + '] Downloading the latest version...');
               Downloader.Get(LLine, LFS);
-              if FileExists(Path) then
-              begin
-                DeleteFile(Path);
-              end;
-              RenameFile(LPath, Path);
               OutputList.Lines.Add('[' + DateTimeToStr(Now) + '] Downloaded the latest version.');
+              OutputList.Lines.Add('[' + DateTimeToStr(Now) + '] You can close this window now.');
             except
               on E: Exception do
                 OutputList.Lines.Add('[' + DateTimeToStr(Now) + '] Error: ' + E.Message);
             end;
           finally
             LFS.Free;
+            // delete the old version of the exe
+            if FileExists(Path) then
+            begin
+              DeleteFile(Path);
+            end;
+            RenameFile(LPath, Path);
           end;
         end
         else
@@ -171,7 +172,6 @@ begin
     end;
   finally
     LMS.Free;
-    DownloadBtn.Enabled := True;
   end;
 
   UpdateThread.CancelExecute;
@@ -179,11 +179,6 @@ begin
   begin
     Application.Terminate;
   end;
-end;
-
-procedure TYoutubedlUpdateChecker.DownloadBtnClick(Sender: TObject);
-begin
-  UpdateThread.Execute(nil);
 end;
 
 end.

@@ -5,7 +5,7 @@ interface
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ExtCtrls, Vcl.StdCtrls,
-  Vcl.Samples.Gauges, acImage;
+  Vcl.Samples.Gauges, Vcl.ComCtrls;
 
 type
   TDownloadUIItem = class(TFrame)
@@ -14,15 +14,15 @@ type
     FormatList: TComboBox;
     SubtitleList: TComboBox;
     ProgressLabel: TLabel;
-    ProgressBar: TGauge;
     sPanel1: TPanel;
     DeleteButton: TButton;
     sPanel2: TPanel;
-    PrevievImg: TsImage;
+    PrevievImg: TImage;
     PreviewBtn: TButton;
     Label1: TLabel;
     Label2: TLabel;
     Bevel1: TBevel;
+    ProgressBar: TProgressBar;
   private
     { Private declarations }
   public
@@ -60,7 +60,7 @@ end;
 procedure TDownloadUIItem.ResetProgressLabel;
 begin
   ProgressLabel.Caption := '';
-  ProgressBar.Progress := 0;
+  ProgressBar.Position := 0;
 end;
 
 end.

@@ -24,27 +24,24 @@ object DownloadUIItem: TDownloadUIItem
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 0
-    ExplicitHeight = 112
     DesignSize = (
       938
       109)
     object ProgressLabel: TLabel
-      Left = 55
-      Top = 64
-      Width = 67
-      Height = 13
-      Anchors = [akLeft, akBottom]
-      Caption = 'ProgressLabel'
-      ExplicitTop = 95
-    end
-    object ProgressBar: TGauge
       Left = 6
-      Top = 81
+      Top = 68
       Width = 759
-      Height = 19
+      Height = 25
       Anchors = [akLeft, akRight, akBottom]
-      Progress = 0
-      ExplicitTop = 84
+      AutoSize = False
+      Caption = 'ProgressLabel'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -13
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      ParentFont = False
+      Layout = tlCenter
     end
     object FileNameLabel: TLabel
       Left = 6
@@ -102,23 +99,32 @@ object DownloadUIItem: TDownloadUIItem
     end
     object DeleteButton: TButton
       Left = 852
-      Top = 78
+      Top = 68
       Width = 75
       Height = 25
       Anchors = [akRight, akBottom]
       Caption = 'Remove'
       TabOrder = 2
-      ExplicitTop = 81
     end
     object PreviewBtn: TButton
       Left = 771
-      Top = 78
+      Top = 68
       Width = 75
       Height = 25
       Anchors = [akRight, akBottom]
       Caption = 'Preview'
       TabOrder = 3
-      ExplicitTop = 81
+    end
+    object ProgressBar: TProgressBar
+      Left = 0
+      Top = 99
+      Width = 938
+      Height = 10
+      Align = alBottom
+      TabOrder = 4
+      ExplicitLeft = 6
+      ExplicitTop = 83
+      ExplicitWidth = 759
     end
   end
   object sPanel2: TPanel
@@ -128,8 +134,7 @@ object DownloadUIItem: TDownloadUIItem
     Height = 109
     Align = alLeft
     TabOrder = 1
-    ExplicitHeight = 112
-    object PrevievImg: TsImage
+    object PrevievImg: TImage
       Left = 1
       Top = 1
       Width = 176
@@ -140,7 +145,6 @@ object DownloadUIItem: TDownloadUIItem
       Proportional = True
       Stretch = True
       Transparent = True
-      SkinData.SkinSection = 'CHECKBOX'
       ExplicitLeft = 2
       ExplicitTop = 0
       ExplicitHeight = 110

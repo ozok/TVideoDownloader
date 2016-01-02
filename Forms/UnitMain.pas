@@ -67,7 +67,7 @@ type
     S2: TMenuItem;
     DonateBtn: TButton;
     ProcessingPanel: TPanel;
-    sPanel1: TPanel;
+    FastLinkAddPanel: TPanel;
     LinkEdit: TEdit;
     LinkTypeList: TComboBox;
     AddSingleLinkBtn: TButton;
@@ -87,6 +87,12 @@ type
     Label1: TLabel;
     ButtonImages: TImageList;
     LoadProgressBar: TProgressBar;
+    Label2: TLabel;
+    Bevel1: TBevel;
+    Bevel2: TBevel;
+    Label3: TLabel;
+    Label4: TLabel;
+    Bevel3: TBevel;
     procedure AddLinkBtnClick(Sender: TObject);
     procedure ClearLinksBtnClick(Sender: TObject);
     procedure PassBtnClick(Sender: TObject);
@@ -332,7 +338,7 @@ procedure TMainForm.AddingState;
 begin
   MenuState(false);
   VideoDownloadToolBarPanel.Enabled := false;
-  sPanel1.Enabled := false;
+  FastLinkAddPanel.Enabled := false;
   VideoDownloaderList.Enabled := false;
   OutputPanel.Enabled := false;
   ProgressPanel.Enabled := false;
@@ -812,7 +818,7 @@ begin
   StopDownloadBtn.Enabled := True;
   SettingsBtn.Enabled := false;
   PassBtn.Enabled := false;
-  sPanel1.Enabled := false;
+  FastLinkAddPanel.Enabled := false;
   GetLatestYoutubedlBtn.Enabled := false;
   if PassPnl.Visible then
   begin
@@ -826,6 +832,11 @@ begin
         FVideoDownloadListItems[i].Controls[j].Enabled := false;
     end;
   end;
+  for I := 0 to FastLinkAddPanel.ControlCount-1 do
+  begin
+    FastLinkAddPanel.Controls[i].Enabled := False;
+  end;
+
   for I := 0 to MainMenu1.Items.Count - 1 do
   begin
     MainMenu1.Items[i].Enabled := false;
@@ -950,7 +961,7 @@ begin
   StopDownloadBtn.Enabled := false;
   SettingsBtn.Enabled := True;
   PassBtn.Enabled := True;
-  sPanel1.Enabled := True;
+  FastLinkAddPanel.Enabled := True;
   GetLatestYoutubedlBtn.Enabled := True;
   for I := 0 to FVideoDownloadListItems.Count - 1 do
   begin
@@ -975,6 +986,10 @@ begin
       end;
       FVideoDownloadListItems[i].ResetProgressLabel;
     end;
+  end;
+  for I := 0 to FastLinkAddPanel.ControlCount-1 do
+  begin
+    FastLinkAddPanel.Controls[i].Enabled := True;
   end;
   for I := 0 to FVideoDownloadListItems.Count - 1 do
   begin
@@ -1341,7 +1356,7 @@ procedure TMainForm.PostAddingState;
 begin
   MenuState(True);
   VideoDownloadToolBarPanel.Enabled := True;
-  sPanel1.Enabled := True;
+  FastLinkAddPanel.Enabled := True;
   VideoDownloaderList.Enabled := True;
   OutputPanel.Enabled := True;
   ProgressPanel.Enabled := True;
@@ -1566,7 +1581,7 @@ begin
               begin
                 AddToLog(0, 'Ignoring "' + LOutputFile + '" because it contains audio.');
                 FVideoDownloadListItems[i].ProgressLabel.Caption := 'Already downloaded';
-                FVideoDownloadListItems[i].ProgressBar.Progress := 100;
+                FVideoDownloadListItems[i].ProgressBar.Position := 100;
                 Inc(FSkippedVideoCount);
                 Continue;
               end;
