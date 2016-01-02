@@ -210,7 +210,7 @@ var
 
 const
   Portable = False;
-  BuildInt = 318;
+  BuildInt = 362;
 
 implementation
 
@@ -832,7 +832,7 @@ begin
         FVideoDownloadListItems[i].Controls[j].Enabled := false;
     end;
   end;
-  for I := 0 to FastLinkAddPanel.ControlCount-1 do
+  for I := 0 to FastLinkAddPanel.ControlCount - 1 do
   begin
     FastLinkAddPanel.Controls[i].Enabled := False;
   end;
@@ -987,7 +987,7 @@ begin
       FVideoDownloadListItems[i].ResetProgressLabel;
     end;
   end;
-  for I := 0 to FastLinkAddPanel.ControlCount-1 do
+  for I := 0 to FastLinkAddPanel.ControlCount - 1 do
   begin
     FastLinkAddPanel.Controls[i].Enabled := True;
   end;

@@ -21,7 +21,9 @@ unit UnitDownloadProcess;
 
 interface
 
-uses Classes, Windows, SysUtils, JvCreateProcess, Messages, StrUtils, UnitSettings, ComCtrls, Generics.Collections;
+uses
+  Classes, Windows, SysUtils, JvCreateProcess, Messages, StrUtils, UnitSettings,
+  ComCtrls, Generics.Collections;
 
 // current state of the process
 type
@@ -90,10 +92,8 @@ type
     property ExeName: string read GetExeName;
     property FileIndex: Integer read GetFileIndex;
     property DownloadJobs: TDownloadJobs read FDownloadJobs write FDownloadJobs;
-
     constructor Create();
     destructor Destroy(); override;
-
     procedure Start();
     procedure Stop();
     procedure ResetValues();
@@ -104,7 +104,8 @@ implementation
 
 { TDownloadProcess }
 
-uses UnitMain;
+uses
+  UnitMain;
 
 constructor TDownloadProcess.Create;
 begin
@@ -234,8 +235,7 @@ begin
     end;
     if not RenameFile(FDownloadJobs[FCommandIndex].RenameJob.TempMuxedFilePath, FDownloadJobs[FCommandIndex].RenameJob.VideoFilePath) then
     begin
-      MainForm.AddToLog(0, 'Unable to rename ' + ExtractFileName(FDownloadJobs[FCommandIndex].RenameJob.TempMuxedFilePath) + ' to ' +
-        ExtractFileName(FDownloadJobs[FCommandIndex].RenameJob.VideoFilePath));
+      MainForm.AddToLog(0, 'Unable to rename ' + ExtractFileName(FDownloadJobs[FCommandIndex].RenameJob.TempMuxedFilePath) + ' to ' + ExtractFileName(FDownloadJobs[FCommandIndex].RenameJob.VideoFilePath));
     end;
   end;
 
@@ -330,3 +330,4 @@ begin
 end;
 
 end.
+
