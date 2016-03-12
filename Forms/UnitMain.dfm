@@ -254,7 +254,6 @@ object MainForm: TMainForm
       BevelOuter = bvNone
       BorderStyle = bsNone
       TabOrder = 1
-      ExplicitHeight = 368
     end
     object VideoDownloadToolBarPanel: TPanel
       Left = 0
@@ -279,9 +278,6 @@ object MainForm: TMainForm
         Images = ButtonImages
         TabOrder = 0
         OnClick = AddLinkBtnClick
-        ExplicitLeft = 1
-        ExplicitTop = 1
-        ExplicitHeight = 90
       end
       object ClearLinksBtn: TButton
         Left = 105
@@ -298,9 +294,6 @@ object MainForm: TMainForm
         Images = ButtonImages
         TabOrder = 1
         OnClick = ClearLinksBtnClick
-        ExplicitLeft = 106
-        ExplicitTop = 1
-        ExplicitHeight = 90
       end
       object SettingsBtn: TButton
         Left = 696
@@ -317,9 +310,6 @@ object MainForm: TMainForm
         Images = ButtonImages
         TabOrder = 2
         OnClick = SettingsBtnClick
-        ExplicitLeft = 695
-        ExplicitTop = 1
-        ExplicitHeight = 90
       end
       object StartDownloadBtn: TButton
         Left = 1011
@@ -336,9 +326,6 @@ object MainForm: TMainForm
         Images = ButtonImages
         TabOrder = 3
         OnClick = StartDownloadBtnClick
-        ExplicitLeft = 1010
-        ExplicitTop = 1
-        ExplicitHeight = 90
       end
       object StopDownloadBtn: TButton
         Left = 906
@@ -356,9 +343,6 @@ object MainForm: TMainForm
         Images = ButtonImages
         TabOrder = 4
         OnClick = StopDownloadBtnClick
-        ExplicitLeft = 905
-        ExplicitTop = 1
-        ExplicitHeight = 90
       end
       object PassBtn: TButton
         Left = 591
@@ -374,9 +358,6 @@ object MainForm: TMainForm
         Images = ButtonImages
         TabOrder = 5
         OnClick = PassBtnClick
-        ExplicitLeft = 590
-        ExplicitTop = 1
-        ExplicitHeight = 90
       end
       object LogsBtn: TButton
         Left = 486
@@ -393,9 +374,6 @@ object MainForm: TMainForm
         Images = ButtonImages
         TabOrder = 6
         OnClick = LogsBtnClick
-        ExplicitLeft = 485
-        ExplicitTop = 1
-        ExplicitHeight = 90
       end
       object DonateBtn: TButton
         Left = 376
@@ -412,9 +390,6 @@ object MainForm: TMainForm
         Images = ButtonImages
         TabOrder = 7
         OnClick = M1Click
-        ExplicitLeft = 375
-        ExplicitTop = 1
-        ExplicitHeight = 90
       end
       object FastLinkAddPanel: TPanel
         Left = 0
@@ -424,9 +399,6 @@ object MainForm: TMainForm
         Align = alBottom
         BevelOuter = bvNone
         TabOrder = 8
-        ExplicitLeft = 1
-        ExplicitTop = 91
-        ExplicitWidth = 1114
         DesignSize = (
           1116
           33)
@@ -454,7 +426,6 @@ object MainForm: TMainForm
           TabOrder = 0
           TextHint = 'Copy&paste your link here and hit Return'
           OnKeyDown = LinkEditKeyDown
-          ExplicitWidth = 888
         end
         object LinkTypeList: TComboBox
           Left = 899
@@ -473,7 +444,6 @@ object MainForm: TMainForm
           Items.Strings = (
             'Single video/audio'
             'Playlist/User')
-          ExplicitLeft = 897
         end
         object AddSingleLinkBtn: TButton
           Left = 1038
@@ -484,7 +454,6 @@ object MainForm: TMainForm
           Caption = 'Add'
           TabOrder = 2
           OnClick = AddSingleLinkBtnClick
-          ExplicitLeft = 1036
         end
       end
       object GetLatestYoutubedlBtn: TButton
@@ -502,9 +471,6 @@ object MainForm: TMainForm
         Images = ButtonImages
         TabOrder = 9
         OnClick = C3Click
-        ExplicitLeft = 211
-        ExplicitTop = 1
-        ExplicitHeight = 90
       end
       object OpenOutputFolderBtn: TButton
         Left = 801
@@ -521,9 +487,6 @@ object MainForm: TMainForm
         Images = ButtonImages
         TabOrder = 10
         OnClick = OpenOutBtnClick
-        ExplicitLeft = 800
-        ExplicitTop = 1
-        ExplicitHeight = 90
       end
     end
   end
@@ -5525,7 +5488,7 @@ object MainForm: TMainForm
     Left = 960
     Top = 263
     Bitmap = {
-      494C01010A001000200020002000FFFFFFFF2110FFFFFFFFFFFFFFFF424D3600
+      494C01010A0010002C0020002000FFFFFFFF2110FFFFFFFFFFFFFFFF424D3600
       00000000000036000000280000008000000060000000010020000000000000C0
       0000000000000000000000000000000000000000000000000000000000000000
       00000000000000000000000000000000000200000008000000100000001B0000

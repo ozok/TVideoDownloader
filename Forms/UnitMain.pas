@@ -11,7 +11,7 @@ uses
   UnitYouTubeVideoInfoExtractor, ShellAPI, Winapi.MMSystem, IniFiles,
   JvUrlListGrabber, JvUrlGrabbers, JvThread, System.Types, DownloadItemFrame,
   JvDragDrop, IdBaseComponent, IdThreadComponent, JvExMask, JvToolEdit, System.ImageList,
-  Vcl.ImgList, System.DateUtils;
+  Vcl.ImgList, System.DateUtils, UnitYouTubeDlVersionReader;
 
 type
   TMainForm = class(TForm)
@@ -143,7 +143,6 @@ type
     FMyDocFolder: string;
 
     // backend paths
-    FYoutubedlPath: string;
     FFFMpegPath: string;
     FTempFolder: string;
     FMp4BoxPath: string;
@@ -151,6 +150,8 @@ type
     // list of output files to be checked
     FFilesToCheck: TStringList;
     FUserUpdateCheck: Boolean;
+    // youtube-dl version reader
+    FYoutubedlVersionReader: TYouTubedlVersionReader;
 
     // create guid file name
     function CreateTempName: string;
@@ -199,6 +200,8 @@ type
     FVideoDownloadListItems: TList<TDownloadUIItem>;
     // number of processes that exited with an exitcode other than 0
     FProcessErrorCount: integer;
+    // backend paths
+    FYoutubedlPath: string;
     // add links in batch
     procedure BatchAdd(const Links: TStrings; const SingleLink: Boolean);
     // add line to log
@@ -711,6 +714,7 @@ end;
 
 procedure TMainForm.C3Click(Sender: TObject);
 begin
+  YoutubedlUpdateChecker.LocalVersion := '';
   YoutubedlUpdateChecker.Path := FYoutubedlPath;
   Self.Enabled := false;
   YoutubedlUpdateChecker.Show;
@@ -1077,6 +1081,7 @@ begin
     Application.MessageBox('Cannot find youtube-dl!', 'Fatal Error', MB_ICONERROR);
     Application.Terminate;
   end;
+  // copy youtube-dl.exe to appdata folder for installed version
   if not Portable then
   begin
     if not FileExists(FAppDataFolder + '\youtube-dl.exe') then
@@ -1159,6 +1164,19 @@ begin
   if FindCmdLineSwitch('/UpdateYoutube-dl') then
   begin
     YoutubedlUpdateChecker.UpdateThread.Execute(nil);
+  end;
+  Sleep(100);
+  FYoutubedlVersionReader := TYouTubedlVersionReader.Create(FYoutubedlPath);
+  try
+    FYoutubedlVersionReader.Start;
+    while FYoutubedlVersionReader.IsRunning do
+    begin
+      Application.ProcessMessages;
+      Sleep(50);
+    end;
+  finally
+    FYoutubedlVersionReader.StopAll;
+    FYoutubedlVersionReader.Free;
   end;
 end;
 

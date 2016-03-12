@@ -13,7 +13,7 @@ object YoutubedlUpdateChecker: TYoutubedlUpdateChecker
   Font.Name = 'Tahoma'
   Font.Style = []
   OldCreateOrder = False
-  Position = poMainFormCenter
+  Position = poScreenCenter
   OnClose = FormClose
   OnShow = FormShow
   DesignSize = (
@@ -37,7 +37,7 @@ object YoutubedlUpdateChecker: TYoutubedlUpdateChecker
     ScrollBars = ssBoth
     TabOrder = 0
   end
-  object sButton1: TButton
+  object CloseBtn: TButton
     Left = 562
     Top = 139
     Width = 75
@@ -45,7 +45,7 @@ object YoutubedlUpdateChecker: TYoutubedlUpdateChecker
     Anchors = [akRight, akBottom]
     Caption = 'Close'
     TabOrder = 1
-    OnClick = sButton1Click
+    OnClick = CloseBtnClick
   end
   object ProgressBar: TProgressBar
     Left = 8
