@@ -34,6 +34,7 @@ uses
 
 procedure TPreviewForm.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
+  Browser.Navigate('about:home');
   MainForm.Enabled := True;
   MainForm.BringToFront;
 end;

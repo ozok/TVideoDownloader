@@ -23,9 +23,11 @@ object BatchAddForm: TBatchAddForm
   object Label1: TLabel
     Left = 8
     Top = 8
-    Width = 80
+    Width = 302
     Height = 13
-    Caption = 'One link per line:'
+    Caption = 
+      'One link per line (You can drag and drop links to the list below' +
+      '):'
   end
   object LinksList: TMemo
     Left = 8
@@ -62,5 +64,14 @@ object BatchAddForm: TBatchAddForm
     Caption = 'OK'
     TabOrder = 2
     OnClick = OkBtnClick
+  end
+  object DropURLTarget1: TDropURLTarget
+    DragTypes = [dtCopy, dtLink]
+    GetDataOnEnter = True
+    OnDrop = DropURLTarget1Drop
+    Target = LinksList
+    WinTarget = 0
+    Left = 408
+    Top = 104
   end
 end

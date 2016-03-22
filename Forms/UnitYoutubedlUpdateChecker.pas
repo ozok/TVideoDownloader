@@ -170,9 +170,9 @@ begin
               begin
                 DeleteFile(LPath);
               end;
-            // write downloaded file to the tmp file
-              LFS := TFileStream.Create(LPath, fmCreate);
               try
+            // write downloaded file to the tmp file
+                LFS := TFileStream.Create(LPath, fmCreate);
                 OutputList.Lines.Add('[' + DateTimeToStr(Now) + '] Downloading the latest version...');
                 Downloader.Get(LExeLine, LFS);
                 OutputList.Lines.Add('[' + DateTimeToStr(Now) + '] Downloaded the latest version.');

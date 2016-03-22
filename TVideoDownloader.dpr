@@ -16,7 +16,6 @@ uses
   UnitYouTubeVideoInfoExtractor in 'Units\DownloaderUnits\UnitYouTubeVideoInfoExtractor.pas',
   UnitSettings in 'Forms\UnitSettings.pas' {SettingsForm},
   MediaInfoDLL in 'Units\MediaInfoDLL.pas',
-  windows7taskbar in 'Units\windows7taskbar.pas',
   UnitLogs in 'Forms\UnitLogs.pas' {LogForm},
   UnitBatchAdd in 'Forms\UnitBatchAdd.pas' {BatchAddForm},
   UnitAbout in 'Forms\UnitAbout.pas' {AboutForm},

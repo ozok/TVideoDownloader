@@ -23,7 +23,8 @@ interface
 
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes,
-  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls;
+  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, DragDrop,
+  DropTarget, DragDropInternet;
 
 type
   TMode = (singlelink, playlist);
@@ -34,10 +35,12 @@ type
     Label1: TLabel;
     CancelBtn: TButton;
     OkBtn: TButton;
+    DropURLTarget1: TDropURLTarget;
     procedure CancelBtnClick(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure OkBtnClick(Sender: TObject);
     procedure FormShow(Sender: TObject);
+    procedure DropURLTarget1Drop(Sender: TObject; ShiftState: TShiftState; APoint: TPoint; var Effect: Integer);
   private
     { Private declarations }
   public
@@ -58,6 +61,11 @@ uses
 procedure TBatchAddForm.CancelBtnClick(Sender: TObject);
 begin
   Self.Close;
+end;
+
+procedure TBatchAddForm.DropURLTarget1Drop(Sender: TObject; ShiftState: TShiftState; APoint: TPoint; var Effect: Integer);
+begin
+  LinksList.Lines.Add(DropURLTarget1.URL)
 end;
 
 procedure TBatchAddForm.FormClose(Sender: TObject; var Action: TCloseAction);

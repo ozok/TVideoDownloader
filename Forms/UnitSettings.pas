@@ -23,6 +23,12 @@ type
     Label2: TLabel;
     LinkAddTimeOutEdit: TJvSpinEdit;
     Label3: TLabel;
+    CheckYoutubeDlUpdateBtn: TCheckBox;
+    DroppedLinksArePlaylistsBtn: TCheckBox;
+    RateLimitEdit: TJvSpinEdit;
+    Label4: TLabel;
+    SubLangList: TComboBox;
+    Label5: TLabel;
     procedure sButton1Click(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure FormCreate(Sender: TObject);
@@ -80,6 +86,10 @@ begin
       DontPreviewImgBtn.Checked := ReadBool('options', 'noimg', False);
       CheckUpdateBtn.Checked := ReadBool('Options', 'Update', True);
       LinkAddTimeOutEdit.Value := ReadInteger('Options', 'LoadTimeOut', 60);
+      CheckYoutubeDlUpdateBtn.Checked := ReadBool('Options', 'YUpdate', True);
+      DroppedLinksArePlaylistsBtn.Checked := ReadBool('Options', 'TreatAsPl', False);
+      RateLimitEdit.Text := ReadString('Options', 'Rate', '0');
+      SubLangList.ItemIndex := ReadInteger('Options', 'SubLang', 39);
     end;
   finally
     ProcessCountBarChange(Self);
@@ -107,6 +117,10 @@ begin
       WriteBool('options', 'noimg', DontPreviewImgBtn.Checked);
       WriteBool('Options', 'Update', CheckUpdateBtn.Checked);
       WriteInteger('Options', 'LoadTimeOut', Round(LinkAddTimeOutEdit.Value));
+      WriteBool('Options', 'YUpdate', CheckYoutubeDlUpdateBtn.Checked);
+      WriteBool('Options', 'TreatAsPl', DroppedLinksArePlaylistsBtn.Checked);
+      WriteString('Options', 'Rate', RateLimitEdit.Text);
+      WriteInteger('Options', 'SubLang', SubLangList.ItemIndex);
     end;
   finally
     OptionFile.Free;

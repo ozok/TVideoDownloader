@@ -23,14 +23,14 @@ interface
 
 uses
   Classes, Windows, SysUtils, JvCreateProcess, Messages, StrUtils, UnitSettings,
-  ComCtrls, Generics.Collections;
+  ComCtrls, Generics.Collections, Graphics;
 
 // current state of the process
 type
   TProcessState = (esEncoding, esStopped, esDone);
 
 type
-  TProcessType = (youtubedl, ffmpeg, mp4box);
+  TProcessType = (youtubedl, ffmpeg, mp4box, subrenamer);
 
 type
   TRenameJob = record
@@ -48,6 +48,7 @@ type
     ProcessInfo: string;
     FileIndex: integer;
     RenameJob: TRenameJob;
+    SubtitleFilePath: string;
   end;
 
   TDownloadJobs = TList<TDownloadJob>;
@@ -81,6 +82,7 @@ type
     function GetExeName: string;
     function GetFileIndex: Integer;
     function GetProgress(const ConsoleOutput: string): Integer;
+    procedure ProcessSubtitleFile(const FilePath: string);
   public
     property EncoderStatus: TProcessState read FEncoderStatus;
     property FilesDone: integer read FCommandIndex;
@@ -171,6 +173,7 @@ end;
 
 function TDownloadProcess.GetFileIndex: Integer;
 begin
+  Result := -1;
   if FCommandIndex < FDownloadJobs.Count then
     Result := FDownloadJobs[FCommandIndex].FileIndex;
 end;
@@ -214,6 +217,83 @@ begin
   UpdateMainFormItem(GetInfo + ' ' + S.Replace('[download]', '').Trim, GetProgress(S));
 end;
 
+procedure TDownloadProcess.ProcessSubtitleFile(const FilePath: string);
+const
+  START_FLAG = 'WEBVTT';
+var
+  LFileContent: TStringList;
+  LOutputFile: TStringList;
+  LOutputFilePath: string;
+  LLine: string;
+  I: integer;
+  LStartIndex: integer;
+begin
+  try
+    if FileExists(FilePath) then
+    begin
+      try
+        LFileContent := TStringList.Create;
+
+        LFileContent.LoadFromFile(FilePath, TEncoding.UTF8);
+        if LFileContent.Count > 0 then
+        begin
+          LStartIndex := -1;
+          for I := 0 to LFileContent.Count - 1 do
+          begin
+            LLine := Trim(LFileContent[i]);
+            if LLine = START_FLAG then
+            begin
+              LStartIndex := i;
+              Break;
+            end;
+          end;
+          // means found start
+          if LStartIndex > -1 then
+          begin
+            LOutputFile := TStringList.Create;
+            try
+              for I := LStartIndex + 1 to LFileContent.Count - 1 do
+              begin
+                LLine := Trim(LFileContent[i]);
+                LOutputFile.Add(LLine);
+              end;
+              try
+                LOutputFilePath := ChangeFileExt(FilePath, '.srt');
+                LOutputFile.SaveToFile(LOutputFilePath, TEncoding.UTF8);
+                DeleteFile(FilePath);
+                ExitCode := 0;
+              except
+                on E: Exception do
+                begin
+                  MainForm.AddToLog(0, E.ClassName + ': ' + E.Message);
+                  ExitCode := 1;
+                end;
+              end;
+            finally
+              LOutputFile.Free;
+            end;
+          end
+          else
+          begin
+            MainForm.AddToLog(0, 'Unable to find subtitle file start flag');
+          end;
+        end;
+      finally
+        LFileContent.Free;
+      end;
+    end
+    else
+    begin
+      MainForm.AddToLog(0, 'File not found: ' + FilePath);
+    end;
+  except
+    on E: Exception do
+    begin
+      MainForm.AddToLog(0, E.ClassName + ': ' + E.Message);
+    end;
+  end;
+end;
+
 procedure TDownloadProcess.ProcessTerminate(Sender: TObject; ExitCode: Cardinal);
 begin
   FEncoderStatus := esStopped;
@@ -239,6 +319,11 @@ begin
     end;
   end;
 
+  if Length(FDownloadJobs[FCommandIndex].SubtitleFilePath) > 0 then
+  begin
+    ProcessSubtitleFile(FDownloadJobs[FCommandIndex].SubtitleFilePath);
+  end;
+
   // if user has stopped downloading do not try the next item
   if FStoppedByUser then
   begin
@@ -248,17 +333,19 @@ begin
   else
   begin
     // if process has not exited properly, add it to the log
+    MainForm.AddToLog(0, ExtractFileName(FDownloadJobs[FCommandIndex].ApplicationPath) + ' has exited with ' + FloatToStr(ExitCode) + '.');
+    FErrorLog.AddStrings(FProcess.ConsoleOutput);
+    FProcess.ConsoleOutput.Clear;
     if ExitCode <> 0 then
     begin
       UpdateMainFormItem('Error code: ' + FloatToStr(ExitCode), 0);
-      MainForm.AddToLog(0, ExtractFileName(FDownloadJobs[FCommandIndex].ApplicationPath) + ' has exited with ' + FloatToStr(ExitCode) + '.');
       Inc(MainForm.FProcessErrorCount);
-      FErrorLog.AddStrings(FProcess.ConsoleOutput);
-      FProcess.ConsoleOutput.Clear;
+      MainForm.FVideoDownloadListItems[FDownloadJobs[FCommandIndex].FileIndex].ChangeColor(3);
     end
     else
     begin
       UpdateMainFormItem('Done', 100);
+      MainForm.FVideoDownloadListItems[FDownloadJobs[FCommandIndex].FileIndex].ChangeColor(2);
     end;
 
     // run next command
@@ -296,14 +383,11 @@ begin
   begin
     if FDownloadJobs.Count > 0 then
     begin
-      if FileExists(FDownloadJobs[0].ApplicationPath) then
-      begin
-        FProcess.ApplicationName := FDownloadJobs[0].ApplicationPath;
-        FProcess.CommandLine := FDownloadJobs[0].CommandLine;
-        FEncoderStatus := esEncoding;
-        UpdateMainFormItem('Starting...', 0);
-        FProcess.Run;
-      end
+      FProcess.ApplicationName := FDownloadJobs[0].ApplicationPath;
+      FProcess.CommandLine := FDownloadJobs[0].CommandLine;
+      FEncoderStatus := esEncoding;
+      UpdateMainFormItem('Starting...', 0);
+      FProcess.Run;
     end
   end
 end;

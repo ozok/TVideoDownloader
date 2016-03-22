@@ -7,11 +7,12 @@ uses
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ComCtrls,
   Vcl.Buttons, Vcl.ExtCtrls, Vcl.Menus, Generics.Collections,
   UnitDownloadProcess, Vcl.Mask, JvComponentBase, JvComputerInfoEx, StrUtils,
-  MediaInfoDll, windows7taskbar, UnitCommonTypes, JvTrayIcon,
-  UnitYouTubeVideoInfoExtractor, ShellAPI, Winapi.MMSystem, IniFiles,
-  JvUrlListGrabber, JvUrlGrabbers, JvThread, System.Types, DownloadItemFrame,
-  JvDragDrop, IdBaseComponent, IdThreadComponent, JvExMask, JvToolEdit, System.ImageList,
-  Vcl.ImgList, System.DateUtils, UnitYouTubeDlVersionReader;
+  MediaInfoDll, UnitCommonTypes, JvTrayIcon, UnitYouTubeVideoInfoExtractor,
+  ShellAPI, Winapi.MMSystem, IniFiles, JvUrlListGrabber, JvUrlGrabbers, JvThread,
+  System.Types, DownloadItemFrame, JvDragDrop, IdBaseComponent,
+  IdThreadComponent, JvExMask, JvToolEdit, System.ImageList, Vcl.ImgList, System.DateUtils,
+  UnitYouTubeDlVersionReader, DragDrop, DropTarget, DragDropInternet, System.Win.TaskbarCore,
+  Vcl.Taskbar;
 
 type
   TMainForm = class(TForm)
@@ -93,6 +94,10 @@ type
     Label3: TLabel;
     Label4: TLabel;
     Bevel3: TBevel;
+    DropURLTarget1: TDropURLTarget;
+    DropHerePanel: TPanel;
+    Taskbar1: TTaskbar;
+    E3: TMenuItem;
     procedure AddLinkBtnClick(Sender: TObject);
     procedure ClearLinksBtnClick(Sender: TObject);
     procedure PassBtnClick(Sender: TObject);
@@ -131,6 +136,8 @@ type
     procedure E2Click(Sender: TObject);
     procedure TimeTimerTimer(Sender: TObject);
     procedure I1Click(Sender: TObject);
+    procedure DropURLTarget1StartAsyncTransfer(Sender: TObject);
+    procedure DropURLTarget1Drop(Sender: TObject; ShiftState: TShiftState; APoint: TPoint; var Effect: Integer);
   private
     { Private declarations }
     FDownloadItems: TDownloadItemList;
@@ -213,7 +220,7 @@ var
 
 const
   Portable = False;
-  BuildInt = 362;
+  BuildInt = 405;
 
 implementation
 
@@ -503,6 +510,7 @@ var
   LPass: TUserPass;
   LStartDate: TDateTime;
   LDiff: integer;
+  LPreferedSubLangPrefix: string;
 begin
   LStartDate := Now;
   if Length(Url) > 0 then
@@ -546,6 +554,11 @@ begin
           begin
             LDownloadItem.FormatIndex := YIE.FormatList.Count - 1;
           end;
+          // prefred subtitle language
+          // two chars
+          LPreferedSubLangPrefix := UpperCase(SettingsForm.SubLangList.Text);
+          LPreferedSubLangPrefix := LPreferedSubLangPrefix.Substring(0, 2);
+
           LDownloadItem.ImagePath := YIE.ImageName;
           LDownloadItem.OutputExtensions.AddStrings(YIE.OutExt);
           LDownloadItem.OutputExtensionIndex := 0;
@@ -562,6 +575,8 @@ begin
           LVideoDownloaderItem.FileNameLabel.Hint := LVideoDownloaderItem.FileNameLabel.Caption;
           LVideoDownloaderItem.DeleteButton.OnClick := DeleteBtnClick;
           LVideoDownloaderItem.PreviewBtn.OnClick := PreviewBtnClick;
+          LVideoDownloaderItem.DeleteButton.Tag := FVideoDownloadListItems.Count;
+          LVideoDownloaderItem.PreviewBtn.Tag := FVideoDownloadListItems.Count;
           // load program icon if download of thumb fails or user selected not to load it
           if FileExists(YIE.ImageName) then
           begin
@@ -583,10 +598,31 @@ begin
           LVideoDownloaderItem.FormatList.ItemIndex := LDownloadItem.FormatIndex;
           LVideoDownloaderItem.FormatList.OnChange := FormatListChange;
           LVideoDownloaderItem.SubtitleList.Items.AddStrings(YIE.Subtitles);
-          LVideoDownloaderItem.SubtitleList.ItemIndex := LDownloadItem.SubIndex;
+          LVideoDownloaderItem.ChangeColor(0);
+          // try to select the prefed subtitle language
+          if Length(LPreferedSubLangPrefix) > 0 then
+          begin
+            // default is dont download subtitles
+            LDownloadItem.SubIndex := 0;
+            LVideoDownloaderItem.SubtitleList.ItemIndex := LDownloadItem.SubIndex;
+            for I := 0 to LVideoDownloaderItem.SubtitleList.Items.Count - 1 do
+            begin
+              if LVideoDownloaderItem.SubtitleList.Items[i].StartsWith(LPreferedSubLangPrefix) then
+              begin
+                LVideoDownloaderItem.SubtitleList.ItemIndex := i;
+                LDownloadItem.SubIndex := i;
+                Break;
+              end;
+            end;
+          end;
           LVideoDownloaderItem.SubtitleList.OnChange := SubListChange;
           LVideoDownloaderItem.LinkLabel.OnClick := LabelClick;
           FVideoDownloadListItems.Add(LVideoDownloaderItem);
+          // hide the panel
+          if DropHerePanel.Visible then
+          begin
+            DropHerePanel.Visible := False;
+          end;
         end
         else
         begin
@@ -764,6 +800,7 @@ begin
   end;
   FVideoDownloadListItems.Clear;
   FDownloadItems.Clear;
+  DropHerePanel.Visible := True;
 end;
 
 procedure TMainForm.ClearTempFolderEx(const DeleteOnlyText: Boolean);
@@ -849,6 +886,112 @@ begin
   begin
     FVideoDownloadListItems[i].Disable;
   end;
+end;
+
+procedure TMainForm.DropURLTarget1Drop(Sender: TObject; ShiftState: TShiftState; APoint: TPoint; var Effect: Integer);
+var
+  LYIE: TYouTubeVideoInfoExtractor;
+  I: Integer;
+  LPass: TUserPass;
+begin
+  if SettingsForm.DroppedLinksArePlaylistsBtn.Checked then
+  begin
+    // playlist
+    if Length(Trim(DropURLTarget1.URL)) > 0 then
+    begin
+      LPass.UserName := UserEdit.Text;
+      LPass.Password := PassEdit.Text;
+      LYIE := TYouTubeVideoInfoExtractor.Create(Trim(DropURLTarget1.URL), FYoutubedlPath, FTempFolder, LPass, not SettingsForm.DontPreviewImgBtn.Checked);
+      LYIE.GetPlayListInfo;
+      AddPanelVisibility(True);
+      LoadPanel.BringToFront;
+      MenuState(false);
+      AddingState;
+      FStopAddingLink := false;
+      try
+        LoadPanelLabel.Caption := 'Extracting video links from playlist, this may take a while...';
+        while LYIE.PlaylistStatus = stReading do
+        begin
+          if FStopAddingLink then
+          begin
+            LYIE.StopAll;
+            Break;
+          end;
+          Application.ProcessMessages;
+          Sleep(100);
+          LoadPanelLabel.Caption := 'Extracting video links from playlist, this may take a while...(Found ' + LYIE.PlaylistFoundVideosCount.ToString() + ' videos)';
+        end;
+        if not FStopAddingLink then
+        begin
+          if LYIE.PlayListVideoLinks.Count > 0 then
+          begin
+            if LogForm.Main.Lines.Count > 0 then
+            begin
+              AddToLog(0, '');
+            end;
+            AddToLog(0, 'Found ' + FloatToStr(LYIE.PlayListVideoLinks.Count) + ' videos.');
+            AddToLog(0, '');
+            for I := 0 to LYIE.PlayListVideoLinks.Count - 1 do
+            begin
+              if FStopAddingLink then
+              begin
+                Break;
+              end;
+              LoadPanelLabel.Caption := 'Adding videos to the list...(' + FloatToStr(i + 1) + '/' + FloatToStr(LYIE.PlayListVideoLinks.Count) + ')';
+              AddURL('http://www.youtube.com/watch?v=' + LYIE.PlayListVideoLinks[i]);
+            end;
+          end
+          else
+          begin
+            Application.MessageBox('Could not get any links from playlist.', 'Error', MB_ICONERROR);
+          end;
+        end;
+      finally
+        LYIE.Free;
+        Self.Enabled := True;
+        AddPanelVisibility(false);
+      // SendMessage(LinkList.Handle, WM_SETREDRAW, 1, 0);
+        RedrawWindow(VideoDownloaderList.Handle, nil, 0, RDW_ERASE or RDW_INVALIDATE or RDW_FRAME or RDW_ALLCHILDREN);
+        MenuState(True);
+        PostAddingState;
+        Self.Width := Self.Width + 1;
+        Self.Width := Self.Width - 1;
+      end;
+    end;
+  end
+  else
+  begin
+    // single link
+    if Length(Trim(DropURLTarget1.URL)) > 0 then
+    begin
+      AbortVideoAddBtn.Top := (LoadPanel.Height div 2) - (AbortVideoAddBtn.Height div 2);
+      AddPanelVisibility(True);
+      LoadPanel.BringToFront;
+      MenuState(false);
+      AddingState;
+      FStopAddingLink := false;
+    // SendMessage(LinkList.Handle, WM_SETREDRAW, 0, 0);
+      try
+        LoadPanelLabel.Caption := 'Adding given URL to list...';
+        AddURL(Trim(DropURLTarget1.URL));
+      finally
+        Self.Enabled := True;
+        AddPanelVisibility(false);
+      // SendMessage(LinkList.Handle, WM_SETREDRAW, 1, 0);
+        RedrawWindow(VideoDownloaderList.Handle, nil, 0, RDW_ERASE or RDW_INVALIDATE or RDW_FRAME or RDW_ALLCHILDREN);
+        MenuState(True);
+        PostAddingState;
+        Self.Width := Self.Width + 1;
+        Self.Width := Self.Width - 1;
+      end;
+    end
+  end;
+  ;
+end;
+
+procedure TMainForm.DropURLTarget1StartAsyncTransfer(Sender: TObject);
+begin
+
 end;
 
 //procedure TMainForm.DropTextTarget1Drop(Sender: TObject; ShiftState: TShiftState; APoint: TPoint; var Effect: Integer);
@@ -951,6 +1094,10 @@ begin
     end;
     FVideoDownloadListItems[i].Top := i * 112;
   end;
+  if FVideoDownloadListItems.Count = 0 then
+  begin
+    DropHerePanel.Visible := True;
+  end;
 end;
 
 procedure TMainForm.DownloadNormalState;
@@ -1005,7 +1152,7 @@ begin
   VideoDownloaderProgressLabel.Caption := 'Progress: 0/0';
   FVideoDownloaderTime := 0;
   TimeLabel.Caption := '00:00:00';
-  SetProgressValue(Handle, 0, MaxInt);
+  Taskbar1.ProgressValue := 0;
 end;
 
 procedure TMainForm.FormatListChange(Sender: TObject);
@@ -1044,16 +1191,11 @@ begin
   FDownloadItems := TDownloadItemList.Create;
   FVideoDownloadListItems := TList<TDownloadUIItem>.Create;
   for I := Low(FVideoDownloadProcesses) to High(FVideoDownloadProcesses) do
-    FVideoDownloadProcesses[i] := TDownloadProcess.Create;
-  FFilesToCheck := TStringList.Create;
-  // windows 7 taskbar
-  if CheckWin32Version(6, 1) then
   begin
-    if not InitializeTaskbarAPI then
-    begin
-      Application.MessageBox('You seem to have Windows 7 but program can''t start taskbar progressbar!', 'Error', MB_ICONERROR);
-    end;
+    FVideoDownloadProcesses[i] := TDownloadProcess.Create;
   end;
+  FFilesToCheck := TStringList.Create;
+
   if not MediaInfoDLL_Load(ExtractFileDir(Application.ExeName) + '\mediainfo.dll') then
   begin
     Application.MessageBox('Couldn''t load mediainfo.dll library.', 'Fatal Error', MB_ICONERROR);
@@ -1164,19 +1306,6 @@ begin
   if FindCmdLineSwitch('/UpdateYoutube-dl') then
   begin
     YoutubedlUpdateChecker.UpdateThread.Execute(nil);
-  end;
-  Sleep(100);
-  FYoutubedlVersionReader := TYouTubedlVersionReader.Create(FYoutubedlPath);
-  try
-    FYoutubedlVersionReader.Start;
-    while FYoutubedlVersionReader.IsRunning do
-    begin
-      Application.ProcessMessages;
-      Sleep(50);
-    end;
-  finally
-    FYoutubedlVersionReader.StopAll;
-    FYoutubedlVersionReader.Free;
   end;
 end;
 
@@ -1317,6 +1446,22 @@ begin
       if ReadBool('Options', 'Update', True) then
       begin
         CheckUpdateThread.Execute(nil);
+      end;
+      if ReadBool('Options', 'YUpdate', True) then
+      begin
+        Sleep(100);
+        FYoutubedlVersionReader := TYouTubedlVersionReader.Create(FYoutubedlPath);
+        try
+          FYoutubedlVersionReader.Start;
+          while FYoutubedlVersionReader.IsRunning do
+          begin
+            Application.ProcessMessages;
+            Sleep(50);
+          end;
+        finally
+          FYoutubedlVersionReader.StopAll;
+          FYoutubedlVersionReader.Free;
+        end;
       end;
     end;
   finally
@@ -1528,6 +1673,8 @@ var
   LPass: string;
   LDownloadJob: TDownloadJob;
   LRenameJob: TRenameJob;
+  LSubLangStr: string;
+  LSubtitleFilePath: string;
 begin
   if FVideoDownloadListItems.Count > 0 then
   begin
@@ -1589,6 +1736,7 @@ begin
           if LPos1 > 1 then
           begin
             LOutputFile := FVideoDownloadListItems[i].FileNameLabel.Caption + '.' + LowerCase(Copy(FVideoDownloadListItems[i].FormatList.Text, 1, LPos1 - 1));
+            LSubtitleFilePath := FVideoDownloadListItems[i].FileNameLabel.Caption + '.';
           end;
           // don't download twice
           if SettingsForm.DontDoubleDownloadBtn.Checked then
@@ -1600,6 +1748,7 @@ begin
                 AddToLog(0, 'Ignoring "' + LOutputFile + '" because it contains audio.');
                 FVideoDownloadListItems[i].ProgressLabel.Caption := 'Already downloaded';
                 FVideoDownloadListItems[i].ProgressBar.Position := 100;
+                FVideoDownloadListItems[i].ChangeColor(2);
                 Inc(FSkippedVideoCount);
                 Continue;
               end;
@@ -1623,8 +1772,20 @@ begin
           // LDownloadSub := False;
           if FDownloadItems[i].SubIndex > 0 then
           begin
-            LCMD := LCMD + ' --write-sub --sub-lang ' + LowerCase(FVideoDownloadListItems[i].SubtitleList.Text);
+            LSubLangStr := LowerCase(FVideoDownloadListItems[i].SubtitleList.Text);
+            LSubLangStr := LSubLangStr.Substring(0, 2);
+            LSubtitleFilePath := DirectoryEdit.Text + '\' + LSubtitleFilePath + LSubLangStr + '.vtt';
+            LCMD := LCMD + ' --write-sub --sub-lang ' + LSubLangStr;
             // LDownloadSub := True;
+          end
+          else
+          begin
+            LSubtitleFilePath := '';
+          end;
+
+          if SettingsForm.RateLimitEdit.Value > 0 then
+          begin
+            LCMD := LCMD + ' -r ' + SettingsForm.RateLimitEdit.Text + 'K';
           end;
           LCMD := LCMD + ' -v -c -w ' + FVideoDownloadListItems[i].LinkLabel.Caption;
           LDownloadJob.CommandLine := LCMD;
@@ -1632,6 +1793,7 @@ begin
           LDownloadJob.ApplicationPath := FYoutubedlPath;
           LDownloadJob.FileIndex := i;
           LDownloadJob.ProcessInfo := '[Downloading Video]';
+          LDownloadJob.SubtitleFilePath := LSubtitleFilePath;
           FVideoDownloadProcesses[i mod SettingsForm.ProcessCountBar.Position].DownloadJobs.Add(LDownloadJob);
           // if dash video selected
           // detect if selected format is indeed dash video only
@@ -1643,6 +1805,10 @@ begin
             LDASHVideoExt := VideoTypeToVideo(LSelectedFormatStr);
             LDASHAudioCode := VideoTypeToAudioCode(LSelectedFormatStr);
 
+            if SettingsForm.RateLimitEdit.Value > 0 then
+            begin
+              LCMD := LCMD + ' -r ' + SettingsForm.RateLimitEdit.Text + 'K';
+            end;
             // get audio
             LDownloadJob.CommandLine := ' -o "' + ExcludeTrailingPathDelimiter(DirectoryEdit.Text) + '\%(upload_date)s - %(uploader)s - %(title)s' + LDASHAudioExt + '" -i --no-playlist -f ' + LDASHAudioCode + ' -c -w ' + FVideoDownloadListItems[i].LinkLabel.Caption;
             LDownloadJob.ProcessType := youtubedl;
@@ -1730,7 +1896,7 @@ begin
           TrayIcon.Active := True;
           TimeTimer.Enabled := VideoDownloaderPosTimer.Enabled;
           DownloadState();
-          SetProgressState(Handle, tbpsNormal);
+          Taskbar1.ProgressState := TTaskBarProgressState.Normal;
         end
         else
         begin
@@ -1899,7 +2065,8 @@ begin
     if FVideoDownloadTotalCMDCount > 0 then
     begin
       MainForm.Caption := FloatToStr(TotalBar.Position) + '% [TVideoDownloader]';
-      SetProgressValue(Handle, LTotalFilesDone + FSkippedVideoCount, FVideoDownloadTotalCMDCount + FSkippedVideoCount);
+      Taskbar1.ProgressMaxValue := FVideoDownloadTotalCMDCount + FSkippedVideoCount;
+      Taskbar1.ProgressValue := LTotalFilesDone + FSkippedVideoCount;
     end;
   end;
 end;

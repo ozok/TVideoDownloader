@@ -26,6 +26,51 @@ object MainForm: TMainForm
   OnShow = FormShow
   PixelsPerInch = 96
   TextHeight = 13
+  object LoadPanel: TPanel
+    Left = 214
+    Top = 347
+    Width = 736
+    Height = 95
+    BevelOuter = bvLowered
+    TabOrder = 1
+    Visible = False
+    object LoadPanelLabel: TLabel
+      Left = 1
+      Top = 1
+      Width = 734
+      Height = 47
+      Align = alClient
+      Alignment = taCenter
+      Caption = 'Status'
+      Layout = tlCenter
+      ExplicitWidth = 31
+      ExplicitHeight = 13
+    end
+    object AbortVideoAddBtn: TButton
+      Left = 1
+      Top = 58
+      Width = 734
+      Height = 36
+      Cursor = crHandPoint
+      Margins.Left = 10
+      Margins.Top = 1
+      Margins.Right = 10
+      Align = alBottom
+      Caption = 'Stop'
+      TabOrder = 0
+      OnClick = AbortVideoAddBtnClick
+    end
+    object LoadProgressBar: TProgressBar
+      Left = 1
+      Top = 48
+      Width = 734
+      Height = 10
+      Margins.Top = 0
+      Margins.Bottom = 0
+      Align = alBottom
+      TabOrder = 1
+    end
+  end
   object NormalPanel: TPanel
     Left = 0
     Top = 0
@@ -243,17 +288,6 @@ object MainForm: TMainForm
           'Log Off'
           'Restart')
       end
-    end
-    object VideoDownloaderList: TScrollBox
-      Left = 0
-      Top = 183
-      Width = 1116
-      Height = 362
-      Align = alClient
-      BevelInner = bvNone
-      BevelOuter = bvNone
-      BorderStyle = bsNone
-      TabOrder = 1
     end
     object VideoDownloadToolBarPanel: TPanel
       Left = 0
@@ -489,6 +523,33 @@ object MainForm: TMainForm
         OnClick = OpenOutBtnClick
       end
     end
+    object VideoDownloaderList: TScrollBox
+      Left = 0
+      Top = 183
+      Width = 1116
+      Height = 362
+      Align = alClient
+      BevelInner = bvNone
+      BevelOuter = bvNone
+      BorderStyle = bsNone
+      TabOrder = 1
+      object DropHerePanel: TPanel
+        Left = 0
+        Top = 0
+        Width = 1116
+        Height = 362
+        Align = alClient
+        BevelOuter = bvNone
+        Caption = 'Drag and drop links here!'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -32
+        Font.Name = 'Tahoma'
+        Font.Style = []
+        ParentFont = False
+        TabOrder = 0
+      end
+    end
   end
   object ProcessingPanel: TPanel
     Left = 468
@@ -498,51 +559,6 @@ object MainForm: TMainForm
     Caption = 'Please wait...'
     TabOrder = 2
     Visible = False
-  end
-  object LoadPanel: TPanel
-    Left = 214
-    Top = 347
-    Width = 736
-    Height = 95
-    BevelOuter = bvLowered
-    TabOrder = 1
-    Visible = False
-    object LoadPanelLabel: TLabel
-      Left = 1
-      Top = 1
-      Width = 734
-      Height = 47
-      Align = alClient
-      Alignment = taCenter
-      Caption = 'Status'
-      Layout = tlCenter
-      ExplicitWidth = 31
-      ExplicitHeight = 13
-    end
-    object AbortVideoAddBtn: TButton
-      Left = 1
-      Top = 58
-      Width = 734
-      Height = 36
-      Cursor = crHandPoint
-      Margins.Left = 10
-      Margins.Top = 1
-      Margins.Right = 10
-      Align = alBottom
-      Caption = 'Stop'
-      TabOrder = 0
-      OnClick = AbortVideoAddBtnClick
-    end
-    object LoadProgressBar: TProgressBar
-      Left = 1
-      Top = 48
-      Width = 734
-      Height = 10
-      Margins.Top = 0
-      Margins.Bottom = 0
-      Align = alBottom
-      TabOrder = 1
-    end
   end
   object AddLinkMenu: TPopupMenu
     Left = 16
@@ -566,6 +582,10 @@ object MainForm: TMainForm
     object Importlinksfromatextfile1: TMenuItem
       Caption = 'Import links from a text file'
       OnClick = I1Click
+    end
+    object E3: TMenuItem
+      Caption = 'Export links to a text file'
+      OnClick = E2Click
     end
   end
   object Info: TJvComputerInfoEx
@@ -5488,7 +5508,7 @@ object MainForm: TMainForm
     Left = 960
     Top = 263
     Bitmap = {
-      494C01010A0010002C0020002000FFFFFFFF2110FFFFFFFFFFFFFFFF424D3600
+      494C01010A0010004C0020002000FFFFFFFF2110FFFFFFFFFFFFFFFF424D3600
       00000000000036000000280000008000000060000000010020000000000000C0
       0000000000000000000000000000000000000000000000000000000000000000
       00000000000000000000000000000000000200000008000000100000001B0000
@@ -7078,5 +7098,21 @@ object MainForm: TMainForm
       FFE00FFFE000000FFFE0FFFFFFFFFFFFFFF01FFFFF9F3FFFFFF3FFFFFFFFFFFF
       FFF8FFFFFFFFFFFFFFFFFFFFFFFFFFFF00000000000000000000000000000000
       000000000000}
+  end
+  object DropURLTarget1: TDropURLTarget
+    DragTypes = [dtCopy, dtLink]
+    GetDataOnEnter = True
+    OnDrop = DropURLTarget1Drop
+    OnStartAsyncTransfer = DropURLTarget1StartAsyncTransfer
+    Target = NormalPanel
+    WinTarget = 0
+    Left = 880
+    Top = 173
+  end
+  object Taskbar1: TTaskbar
+    TaskBarButtons = <>
+    TabProperties = []
+    Left = 856
+    Top = 288
   end
 end
