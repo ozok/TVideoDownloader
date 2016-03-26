@@ -98,6 +98,7 @@ type
     DropHerePanel: TPanel;
     Taskbar1: TTaskbar;
     E3: TMenuItem;
+    DropURLTarget2: TDropURLTarget;
     procedure AddLinkBtnClick(Sender: TObject);
     procedure ClearLinksBtnClick(Sender: TObject);
     procedure PassBtnClick(Sender: TObject);
@@ -136,8 +137,8 @@ type
     procedure E2Click(Sender: TObject);
     procedure TimeTimerTimer(Sender: TObject);
     procedure I1Click(Sender: TObject);
-    procedure DropURLTarget1StartAsyncTransfer(Sender: TObject);
     procedure DropURLTarget1Drop(Sender: TObject; ShiftState: TShiftState; APoint: TPoint; var Effect: Integer);
+    procedure DropURLTarget2Drop(Sender: TObject; ShiftState: TShiftState; APoint: TPoint; var Effect: Integer);
   private
     { Private declarations }
     FDownloadItems: TDownloadItemList;
@@ -989,9 +990,9 @@ begin
   ;
 end;
 
-procedure TMainForm.DropURLTarget1StartAsyncTransfer(Sender: TObject);
+procedure TMainForm.DropURLTarget2Drop(Sender: TObject; ShiftState: TShiftState; APoint: TPoint; var Effect: Integer);
 begin
-
+  LinkEdit.Text := DropURLTarget2.URL;
 end;
 
 //procedure TMainForm.DropTextTarget1Drop(Sender: TObject; ShiftState: TShiftState; APoint: TPoint; var Effect: Integer);
@@ -2058,7 +2059,7 @@ begin
   else
   begin
     TotalBar.Max := 100;
-    LNewPos := (100 * (LTotalFilesDone + FSkippedVideoCount) div FVideoDownloadTotalCMDCount);
+    LNewPos := (100 * (LTotalFilesDone + FSkippedVideoCount) div (FVideoDownloadTotalCMDCount + FSkippedVideoCount));
 
     TotalBar.Position := LNewPos;
     VideoDownloaderProgressLabel.Caption := 'Progress: ' + FloatToStr(LTotalFilesDone + FSkippedVideoCount) + '/' + FloatToStr(FVideoDownloadTotalCMDCount + FSkippedVideoCount);

@@ -7103,7 +7103,6 @@ object MainForm: TMainForm
     DragTypes = [dtCopy, dtLink]
     GetDataOnEnter = True
     OnDrop = DropURLTarget1Drop
-    OnStartAsyncTransfer = DropURLTarget1StartAsyncTransfer
     Target = NormalPanel
     WinTarget = 0
     Left = 880
@@ -7114,5 +7113,14 @@ object MainForm: TMainForm
     TabProperties = []
     Left = 856
     Top = 288
+  end
+  object DropURLTarget2: TDropURLTarget
+    DragTypes = [dtCopy, dtLink]
+    GetDataOnEnter = True
+    OnDrop = DropURLTarget2Drop
+    Target = LinkEdit
+    WinTarget = 0
+    Left = 1008
+    Top = 173
   end
 end
