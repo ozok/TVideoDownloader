@@ -149,6 +149,7 @@ type
     FStopAddingLink: Boolean;
     FSkippedVideoCount: integer;
     FMyDocFolder: string;
+    FSubsToDelete: TStringList;
 
     // backend paths
     FFFMpegPath: string;
@@ -499,6 +500,10 @@ begin
           LogForm.Main.Lines.Add('');
         end;
       end;
+    1:
+      begin
+        LogForm.ConsoleLog.Lines.Add(Msg);
+      end;
   end;
 end;
 
@@ -810,7 +815,9 @@ var
   lFind: integer;
   lPath: string;
   LType: string;
+  I: Integer;
 begin
+  AddToLog(0, 'Deleting temp files...');
   // remove files from temp folder
   lPath := IncludeTrailingPathDelimiter(FTempFolder);
   if DeleteOnlyText then
@@ -835,9 +842,22 @@ begin
       end;
       lFind := FindNext(lSearchRec);
     end;
+
+    for I := 0 to FSubsToDelete.Count - 1 do
+    begin
+      try
+        DeleteFile(FSubsToDelete[i]);
+      except
+        on E: Exception do
+        begin
+          AddToLog(0, 'Unable to delete ' + FSubsToDelete[i] + '. Error: ' + E.Message);
+        end;
+      end;
+    end;
   finally
     FindClose(lSearchRec);
   end;
+  AddToLog(0, 'Finished deleting temp files.');
 end;
 
 function TMainForm.CreateTempName: string;
@@ -1189,6 +1209,7 @@ procedure TMainForm.FormCreate(Sender: TObject);
 var
   i: integer;
 begin
+  FSubsToDelete := TStringList.Create;
   FDownloadItems := TDownloadItemList.Create;
   FVideoDownloadListItems := TList<TDownloadUIItem>.Create;
   for I := Low(FVideoDownloadProcesses) to High(FVideoDownloadProcesses) do
@@ -1261,7 +1282,6 @@ begin
   begin
     ForceDirectories(FTempFolder);
   end;
-  ClearTempFolderEx(false);
 end;
 
 procedure TMainForm.FormDestroy(Sender: TObject);
@@ -1280,7 +1300,10 @@ begin
   FDownloadItems.Free;
   FVideoDownloadListItems.Free;
   for I := Low(FVideoDownloadProcesses) to High(FVideoDownloadProcesses) do
+  begin
     FVideoDownloadProcesses[i].Free;
+  end;
+  FSubsToDelete.Free;
 end;
 
 procedure TMainForm.FormMouseWheelDown(Sender: TObject; Shift: TShiftState; MousePos: TPoint; var Handled: Boolean);
@@ -1304,10 +1327,8 @@ end;
 procedure TMainForm.FormShow(Sender: TObject);
 begin
   LoadOptions;
-  if FindCmdLineSwitch('/UpdateYoutube-dl') then
-  begin
-    YoutubedlUpdateChecker.UpdateThread.Execute(nil);
-  end;
+
+  ClearTempFolderEx(false);
 end;
 
 function TMainForm.GetFileSizeEx(const FilePath: string): Int64;
@@ -1718,6 +1739,7 @@ begin
         FVideoDownloaderTime := 0;
         FSkippedVideoCount := 0;
         FProcessErrorCount := 0;
+        FSubsToDelete.Clear;
 {$ENDREGION}
         // create command line
         for i := 0 to FVideoDownloadListItems.Count - 1 do
@@ -1834,8 +1856,6 @@ begin
             LDownloadJob.RenameJob := LRenameJob;
             FVideoDownloadProcesses[i mod SettingsForm.ProcessCountBar.Position].DownloadJobs.Add(LDownloadJob);
           end;
-          // file check
-          FFilesToCheck.Add(DirectoryEdit.Text + '\' + LOutputFile);
 
           // remux dash m4a to mp4 audio
           if ContainsText(LSelectedFormatStr, 'M4A, AUDIO, ONLY, DASH') then
@@ -1870,10 +1890,12 @@ begin
             if LOutExt = 'webm' then
             begin
               LCMD := ' -y -i "' + DirectoryEdit.Text + '\' + LOutputFile + '" -i "' + LSubtitleFilePath + '" -map 0:0 -map 0:1 -map 1:0 -c:v copy -c:a copy -c:s copy "' + DirectoryEdit.Text + '\' + ChangeFileExt(LOutputFile, LVideoSubExt) + '"';
+              FSubsToDelete.Add(LSubtitleFilePath);
             end
             else
             begin
               LCMD := ' -y -i "' + DirectoryEdit.Text + '\' + LOutputFile + '" -f srt -i "' + ChangeFileExt(LSubtitleFilePath, '.srt') + '" -map 0:0 -map 0:1 -map 1:0 -c:v copy -c:a copy -c:s mov_text "' + DirectoryEdit.Text + '\' + ChangeFileExt(LOutputFile, LVideoSubExt) + '"';
+              FSubsToDelete.Add(ChangeFileExt(LSubtitleFilePath, '.srt'));
             end;
             LDownloadJob.CommandLine := LCMD;
             LDownloadJob.ProcessType := ffmpeg;
@@ -1882,6 +1904,14 @@ begin
             LDownloadJob.ProcessInfo := '[Muxing subtitle]';
             LDownloadJob.IsWebm := 'webm' = LOutExt;
             FVideoDownloadProcesses[i mod SettingsForm.ProcessCountBar.Position].DownloadJobs.Add(LDownloadJob);
+            // file check
+            FFilesToCheck.Add(DirectoryEdit.Text + '\' + ChangeFileExt(LOutputFile, LVideoSubExt));
+          end
+          else
+          begin
+            // file check
+            // muxing with subtite changes file path
+            FFilesToCheck.Add(DirectoryEdit.Text + '\' + LOutputFile);
           end;
         end;
 
@@ -2000,6 +2030,7 @@ begin
     end;
   end;
 
+  // done
   if LTotalFilesDone = FVideoDownloadTotalCMDCount then
   begin
     VideoDownloaderPosTimer.Enabled := false;

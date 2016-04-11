@@ -335,7 +335,7 @@ begin
   else
   begin
     // if process has not exited properly, add it to the log
-    MainForm.AddToLog(0, ExtractFileName(FDownloadJobs[FCommandIndex].ApplicationPath) + ' has exited with ' + FloatToStr(ExitCode) + '.');
+    MainForm.AddToLog(1, ExtractFileName(FDownloadJobs[FCommandIndex].ApplicationPath) + ' has exited with ' + FloatToStr(ExitCode) + '.');
     FErrorLog.AddStrings(FProcess.ConsoleOutput);
     FProcess.ConsoleOutput.Clear;
     if ExitCode <> 0 then

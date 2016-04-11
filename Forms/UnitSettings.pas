@@ -30,11 +30,17 @@ type
     SubLangList: TComboBox;
     Label5: TLabel;
     MuxSubBtn: TCheckBox;
+    PageControl1: TPageControl;
+    TabSheet1: TTabSheet;
+    TabSheet2: TTabSheet;
+    TabSheet3: TTabSheet;
+    DeleteSubAfterMuxBtn: TCheckBox;
     procedure sButton1Click(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure FormCreate(Sender: TObject);
     procedure sButton2Click(Sender: TObject);
     procedure ProcessCountBarChange(Sender: TObject);
+    procedure MuxSubBtnClick(Sender: TObject);
   private
     { Private declarations }
     procedure LoadOptions();
@@ -92,11 +98,18 @@ begin
       RateLimitEdit.Text := ReadString('Options', 'Rate', '0');
       SubLangList.ItemIndex := ReadInteger('Options', 'SubLang', 39);
       MuxSubBtn.Checked := ReadBool('Options', 'MuxSub', False);
+      DeleteSubAfterMuxBtn.Checked := ReadBool('Options', 'DeleteSub', false);
+      MuxSubBtnClick(Self);
     end;
   finally
     ProcessCountBarChange(Self);
     OptionFile.Free
   end;
+end;
+
+procedure TSettingsForm.MuxSubBtnClick(Sender: TObject);
+begin
+  DeleteSubAfterMuxBtn.Enabled := MuxSubBtn.Checked;
 end;
 
 procedure TSettingsForm.ProcessCountBarChange(Sender: TObject);
@@ -124,6 +137,7 @@ begin
       WriteString('Options', 'Rate', RateLimitEdit.Text);
       WriteInteger('Options', 'SubLang', SubLangList.ItemIndex);
       WriteBool('Options', 'MuxSub', MuxSubBtn.Checked);
+      WriteBool('Options', 'DeleteSub', DeleteSubAfterMuxBtn.Checked);
     end;
   finally
     OptionFile.Free;
@@ -150,6 +164,13 @@ begin
   DontDoubleDownloadBtn.Checked := True;
   DontPreviewImgBtn.Checked := False;
   CheckUpdateBtn.Checked := True;
+  SubLangList.ItemIndex := 39;
+  MuxSubBtn.Checked := False;
+  DeleteSubAfterMuxBtn.Checked := False;
+  DroppedLinksArePlaylistsBtn.Checked := False;
+  CheckYoutubeDlUpdateBtn.Checked := True;
+  LinkAddTimeOutEdit.Text := '60';
+  RateLimitEdit.Text := '0';
 end;
 
 end.
