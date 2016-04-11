@@ -360,6 +360,7 @@ object MainForm: TMainForm
         Images = ButtonImages
         TabOrder = 3
         OnClick = StartDownloadBtnClick
+        ExplicitLeft = 1017
       end
       object StopDownloadBtn: TButton
         Left = 906

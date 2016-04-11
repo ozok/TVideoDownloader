@@ -49,6 +49,7 @@ type
     FileIndex: integer;
     RenameJob: TRenameJob;
     SubtitleFilePath: string;
+    IsWebm: Boolean;
   end;
 
   TDownloadJobs = TList<TDownloadJob>;
@@ -257,6 +258,7 @@ begin
                 LLine := Trim(LFileContent[i]);
                 LOutputFile.Add(LLine);
               end;
+
               try
                 LOutputFilePath := ChangeFileExt(FilePath, '.srt');
                 LOutputFile.SaveToFile(LOutputFilePath, TEncoding.UTF8);
@@ -319,7 +321,7 @@ begin
     end;
   end;
 
-  if Length(FDownloadJobs[FCommandIndex].SubtitleFilePath) > 0 then
+  if (Length(FDownloadJobs[FCommandIndex].SubtitleFilePath) > 0) and (not FDownloadJobs[FCommandIndex].IsWebm) then
   begin
     ProcessSubtitleFile(FDownloadJobs[FCommandIndex].SubtitleFilePath);
   end;

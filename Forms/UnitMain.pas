@@ -1863,16 +1863,24 @@ begin
           end;
 
           // mux sub to mp4 file
-          if (Length(LSubtitleFilePath) > 0) and (LOutExt = 'mp4') and SettingsForm.MuxSubBtn.Checked then
+          if (Length(LSubtitleFilePath) > 0) and ((LOutExt = 'mp4') or (LOutExt = 'webm')) and SettingsForm.MuxSubBtn.Checked then
           begin
-          //ffmpeg.exe -i "20140329 - Clara Henry - 10 sätt att bära ett mensskydd.mp4" -f srt -i "20140329 - Clara Henry - 10 sätt att bära ett mensskydd.en.srt" -map 0:0 -map 0:1 -map 1:0 -c:v copy -c:a copy -c:s mov_text 1.mp4
             LVideoSubExt := '.wsub' + ExtractFileExt(LOutputFile);
-            LCMD := ' -y -i "' + DirectoryEdit.Text + '\' + LOutputFile + '" -f srt -i "' + ChangeFileExt(LSubtitleFilePath, '.srt') + '" -map 0:0 -map 0:1 -map 1:0 -c:v copy -c:a copy -c:s mov_text "' + DirectoryEdit.Text + '\' + ChangeFileExt(LOutputFile, LVideoSubExt) + '"';
+            // vtt for webm
+            if LOutExt = 'webm' then
+            begin
+              LCMD := ' -y -i "' + DirectoryEdit.Text + '\' + LOutputFile + '" -i "' + LSubtitleFilePath + '" -map 0:0 -map 0:1 -map 1:0 -c:v copy -c:a copy -c:s copy "' + DirectoryEdit.Text + '\' + ChangeFileExt(LOutputFile, LVideoSubExt) + '"';
+            end
+            else
+            begin
+              LCMD := ' -y -i "' + DirectoryEdit.Text + '\' + LOutputFile + '" -f srt -i "' + ChangeFileExt(LSubtitleFilePath, '.srt') + '" -map 0:0 -map 0:1 -map 1:0 -c:v copy -c:a copy -c:s mov_text "' + DirectoryEdit.Text + '\' + ChangeFileExt(LOutputFile, LVideoSubExt) + '"';
+            end;
             LDownloadJob.CommandLine := LCMD;
             LDownloadJob.ProcessType := ffmpeg;
             LDownloadJob.ApplicationPath := FFFMpegPath;
             LDownloadJob.FileIndex := i;
             LDownloadJob.ProcessInfo := '[Muxing subtitle]';
+            LDownloadJob.IsWebm := 'webm' = LOutExt;
             FVideoDownloadProcesses[i mod SettingsForm.ProcessCountBar.Position].DownloadJobs.Add(LDownloadJob);
           end;
         end;
