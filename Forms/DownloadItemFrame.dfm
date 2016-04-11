@@ -81,17 +81,6 @@ object DownloadUIItem: TDownloadUIItem
       Anchors = [akTop, akRight]
       Caption = 'Subtitle:'
     end
-    object StateImage: TImage
-      Left = 896
-      Top = 3
-      Width = 32
-      Height = 32
-      Anchors = [akTop, akRight]
-      Center = True
-      Proportional = True
-      Stretch = True
-      Transparent = True
-    end
     object FormatList: TComboBox
       Left = 55
       Top = 41
@@ -170,7 +159,7 @@ object DownloadUIItem: TDownloadUIItem
     Left = 544
     Top = 40
     Bitmap = {
-      494C010104000800280020002000FFFFFFFF2110FFFFFFFFFFFFFFFF424D3600
+      494C010104000900040020002000FFFFFFFF2110FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000800000004000000001002000000000000080
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000

@@ -599,7 +599,7 @@ begin
           LVideoDownloaderItem.FormatList.ItemIndex := LDownloadItem.FormatIndex;
           LVideoDownloaderItem.FormatList.OnChange := FormatListChange;
           LVideoDownloaderItem.SubtitleList.Items.AddStrings(YIE.Subtitles);
-          LVideoDownloaderItem.ChangeColor(0);
+
           // try to select the prefed subtitle language
           if Length(LPreferedSubLangPrefix) > 0 then
           begin
@@ -1676,6 +1676,8 @@ var
   LRenameJob: TRenameJob;
   LSubLangStr: string;
   LSubtitleFilePath: string;
+  LOutExt: string;
+  LVideoSubExt: string;
 begin
   if FVideoDownloadListItems.Count > 0 then
   begin
@@ -1736,7 +1738,8 @@ begin
           LPos1 := PosEx(',', FVideoDownloadListItems[i].FormatList.Text);
           if LPos1 > 1 then
           begin
-            LOutputFile := FVideoDownloadListItems[i].FileNameLabel.Caption + '.' + LowerCase(Copy(FVideoDownloadListItems[i].FormatList.Text, 1, LPos1 - 1));
+            LOutExt := LowerCase(Copy(FVideoDownloadListItems[i].FormatList.Text, 1, LPos1 - 1));
+            LOutputFile := FVideoDownloadListItems[i].FileNameLabel.Caption + '.' + LOutExt;
             LSubtitleFilePath := FVideoDownloadListItems[i].FileNameLabel.Caption + '.';
           end;
           // don't download twice
@@ -1749,7 +1752,6 @@ begin
                 AddToLog(0, 'Ignoring "' + LOutputFile + '" because it contains audio.');
                 FVideoDownloadListItems[i].ProgressLabel.Caption := 'Already downloaded';
                 FVideoDownloadListItems[i].ProgressBar.Position := 100;
-                FVideoDownloadListItems[i].ChangeColor(2);
                 Inc(FSkippedVideoCount);
                 Continue;
               end;
@@ -1858,6 +1860,20 @@ begin
             LDownloadJob.ProcessInfo := '[Extracting Ogg]';
             FVideoDownloadProcesses[i mod SettingsForm.ProcessCountBar.Position].DownloadJobs.Add(LDownloadJob);
             FFilesToCheck.Add(DirectoryEdit.Text + '\' + ChangeFileExt(LOutputFile, '.ogg'));
+          end;
+
+          // mux sub to mp4 file
+          if (Length(LSubtitleFilePath) > 0) and (LOutExt = 'mp4') and SettingsForm.MuxSubBtn.Checked then
+          begin
+          //ffmpeg.exe -i "20140329 - Clara Henry - 10 sätt att bära ett mensskydd.mp4" -f srt -i "20140329 - Clara Henry - 10 sätt att bära ett mensskydd.en.srt" -map 0:0 -map 0:1 -map 1:0 -c:v copy -c:a copy -c:s mov_text 1.mp4
+            LVideoSubExt := '.wsub' + ExtractFileExt(LOutputFile);
+            LCMD := ' -y -i "' + DirectoryEdit.Text + '\' + LOutputFile + '" -f srt -i "' + ChangeFileExt(LSubtitleFilePath, '.srt') + '" -map 0:0 -map 0:1 -map 1:0 -c:v copy -c:a copy -c:s mov_text "' + DirectoryEdit.Text + '\' + ChangeFileExt(LOutputFile, LVideoSubExt) + '"';
+            LDownloadJob.CommandLine := LCMD;
+            LDownloadJob.ProcessType := ffmpeg;
+            LDownloadJob.ApplicationPath := FFFMpegPath;
+            LDownloadJob.FileIndex := i;
+            LDownloadJob.ProcessInfo := '[Muxing subtitle]';
+            FVideoDownloadProcesses[i mod SettingsForm.ProcessCountBar.Position].DownloadJobs.Add(LDownloadJob);
           end;
         end;
 

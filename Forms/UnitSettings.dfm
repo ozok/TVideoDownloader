@@ -3,7 +3,7 @@ object SettingsForm: TSettingsForm
   Top = 0
   BorderStyle = bsToolWindow
   Caption = 'Settings'
-  ClientHeight = 342
+  ClientHeight = 365
   ClientWidth = 435
   Color = clBtnFace
   DoubleBuffered = True
@@ -18,7 +18,7 @@ object SettingsForm: TSettingsForm
   OnCreate = FormCreate
   DesignSize = (
     435
-    342)
+    365)
   PixelsPerInch = 96
   TextHeight = 13
   object Label1: TLabel
@@ -140,25 +140,25 @@ object SettingsForm: TSettingsForm
   end
   object sButton1: TButton
     Left = 352
-    Top = 309
+    Top = 332
     Width = 75
     Height = 25
     Anchors = [akRight, akBottom]
     Caption = 'Close'
     TabOrder = 7
     OnClick = sButton1Click
-    ExplicitTop = 251
+    ExplicitTop = 309
   end
   object sButton2: TButton
     Left = 8
-    Top = 309
+    Top = 332
     Width = 75
     Height = 25
     Anchors = [akLeft, akBottom]
     Caption = 'Reset'
     TabOrder = 8
     OnClick = sButton2Click
-    ExplicitTop = 251
+    ExplicitTop = 309
   end
   object CheckUpdateBtn: TCheckBox
     Left = 11
@@ -406,5 +406,13 @@ object SettingsForm: TSettingsForm
       'yi - Yiddish - '#1497#1497#1460#1491#1497#1513
       'yo - Yoruba - Yor'#249'b'#225
       'za - Zhuang, Chuang - Sa'#623' cue'#331#389', Saw cuengh"}')
+  end
+  object MuxSubBtn: TCheckBox
+    Left = 8
+    Top = 304
+    Width = 117
+    Height = 17
+    Caption = 'Mux subtitle to mp4'
+    TabOrder = 15
   end
 end

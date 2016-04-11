@@ -5,7 +5,7 @@ interface
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ExtCtrls, Vcl.StdCtrls,
-  Vcl.Samples.Gauges, Vcl.ComCtrls, System.ImageList, Vcl.ImgList;
+  Vcl.Samples.Gauges, System.ImageList, Vcl.ImgList, Vcl.ComCtrls;
 
 type
   TDownloadUIItem = class(TFrame)
@@ -23,7 +23,6 @@ type
     Label2: TLabel;
     Bevel1: TBevel;
     ProgressBar: TProgressBar;
-    StateImage: TImage;
     ImageList1: TImageList;
   private
     { Private declarations }
@@ -32,19 +31,12 @@ type
     procedure ResetProgressLabel;
     procedure Disable;
     procedure Enable;
-    procedure ChangeColor(const State: integer);
   end;
 
 implementation
 
 {$R *.dfm}
 { TDownloadUIItem }
-
-procedure TDownloadUIItem.ChangeColor(const State: integer);
-begin
-  StateImage.Picture.Bitmap := nil;
-  ImageList1.GetBitmap(State, StateImage.Picture.Bitmap);
-end;
 
 procedure TDownloadUIItem.Disable;
 begin

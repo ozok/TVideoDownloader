@@ -29,6 +29,7 @@ type
     Label4: TLabel;
     SubLangList: TComboBox;
     Label5: TLabel;
+    MuxSubBtn: TCheckBox;
     procedure sButton1Click(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure FormCreate(Sender: TObject);
@@ -90,6 +91,7 @@ begin
       DroppedLinksArePlaylistsBtn.Checked := ReadBool('Options', 'TreatAsPl', False);
       RateLimitEdit.Text := ReadString('Options', 'Rate', '0');
       SubLangList.ItemIndex := ReadInteger('Options', 'SubLang', 39);
+      MuxSubBtn.Checked := ReadBool('Options', 'MuxSub', False);
     end;
   finally
     ProcessCountBarChange(Self);
@@ -121,6 +123,7 @@ begin
       WriteBool('Options', 'TreatAsPl', DroppedLinksArePlaylistsBtn.Checked);
       WriteString('Options', 'Rate', RateLimitEdit.Text);
       WriteInteger('Options', 'SubLang', SubLangList.ItemIndex);
+      WriteBool('Options', 'MuxSub', MuxSubBtn.Checked);
     end;
   finally
     OptionFile.Free;

@@ -219,7 +219,7 @@ end;
 
 procedure TDownloadProcess.ProcessSubtitleFile(const FilePath: string);
 const
-  START_FLAG = 'WEBVTT';
+  START_FLAG = 'Language:';
 var
   LFileContent: TStringList;
   LOutputFile: TStringList;
@@ -241,7 +241,7 @@ begin
           for I := 0 to LFileContent.Count - 1 do
           begin
             LLine := Trim(LFileContent[i]);
-            if LLine = START_FLAG then
+            if LLine.StartsWith(START_FLAG) then
             begin
               LStartIndex := i;
               Break;
@@ -340,12 +340,10 @@ begin
     begin
       UpdateMainFormItem('Error code: ' + FloatToStr(ExitCode), 0);
       Inc(MainForm.FProcessErrorCount);
-      MainForm.FVideoDownloadListItems[FDownloadJobs[FCommandIndex].FileIndex].ChangeColor(3);
     end
     else
     begin
       UpdateMainFormItem('Done', 100);
-      MainForm.FVideoDownloadListItems[FDownloadJobs[FCommandIndex].FileIndex].ChangeColor(2);
     end;
 
     // run next command
