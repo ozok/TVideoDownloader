@@ -30,7 +30,6 @@ object SettingsForm: TSettingsForm
     Caption = 'Close'
     TabOrder = 0
     OnClick = sButton1Click
-    ExplicitLeft = 352
   end
   object sButton2: TButton
     Left = 8
@@ -52,8 +51,6 @@ object SettingsForm: TSettingsForm
     object TabSheet3: TTabSheet
       Caption = 'General'
       ImageIndex = 2
-      ExplicitLeft = -1
-      ExplicitTop = 28
       object Label3: TLabel
         Left = 8
         Top = 55
@@ -122,8 +119,6 @@ object SettingsForm: TSettingsForm
     end
     object TabSheet1: TTabSheet
       Caption = 'Download'
-      ExplicitLeft = -1
-      ExplicitTop = 28
       object Label1: TLabel
         Left = 16
         Top = 6
@@ -137,6 +132,13 @@ object SettingsForm: TSettingsForm
         Width = 117
         Height = 13
         Caption = 'Parallel download count:'
+      end
+      object Label6: TLabel
+        Left = 3
+        Top = 176
+        Width = 123
+        Height = 13
+        Caption = 'Output file name pattern:'
       end
       object PreferedFormatEdit: TEdit
         Left = 103
@@ -220,12 +222,27 @@ object SettingsForm: TSettingsForm
         Caption = 'Play a sound when download is done'
         TabOrder = 6
       end
+      object FilePatternList: TComboBox
+        Left = 132
+        Top = 173
+        Width = 378
+        Height = 21
+        Style = csDropDownList
+        ItemIndex = 0
+        TabOrder = 7
+        Text = '%(title)s.%(ext)s'
+        Items.Strings = (
+          '%(title)s.%(ext)s'
+          '%(uploader)s.%(ext)s'
+          '%(upload_date)s.%(title)s.%(ext)s'
+          '%(upload_date)s.%(uploader)s.%(ext)s'
+          '%(playlist_title)s.%(title)s.%(ext)s'
+          '%(playlist_title)s.%(playlist_index)s.%(ext)s')
+      end
     end
     object TabSheet2: TTabSheet
       Caption = 'Subtitle'
       ImageIndex = 1
-      ExplicitLeft = 0
-      ExplicitTop = 28
       object Label5: TLabel
         Left = 5
         Top = 6

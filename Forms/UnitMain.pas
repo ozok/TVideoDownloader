@@ -9,10 +9,10 @@ uses
   UnitDownloadProcess, Vcl.Mask, JvComponentBase, JvComputerInfoEx, StrUtils,
   MediaInfoDll, UnitCommonTypes, JvTrayIcon, UnitYouTubeVideoInfoExtractor,
   ShellAPI, Winapi.MMSystem, IniFiles, JvUrlListGrabber, JvUrlGrabbers, JvThread,
-  System.Types, DownloadItemFrame, JvDragDrop, IdBaseComponent,
-  IdThreadComponent, JvExMask, JvToolEdit, System.ImageList, Vcl.ImgList, System.DateUtils,
+  System.Types, DownloadItemFrame, JvDragDrop, IdBaseComponent, JvExMask,
+  JvToolEdit, System.ImageList, Vcl.ImgList, System.DateUtils,
   UnitYouTubeDlVersionReader, DragDrop, DropTarget, DragDropInternet, System.Win.TaskbarCore,
-  Vcl.Taskbar;
+  Vcl.Taskbar, UnitYTSearch, JvHtmlParser, UnitCommonMethods;
 
 type
   TMainForm = class(TForm)
@@ -99,6 +99,15 @@ type
     Taskbar1: TTaskbar;
     E3: TMenuItem;
     DropURLTarget2: TDropURLTarget;
+    FuncPages: TPageControl;
+    TabSheet1: TTabSheet;
+    TabSheet2: TTabSheet;
+    Panel1: TPanel;
+    Bevel4: TBevel;
+    SearchEdit: TEdit;
+    SearchBtn: TButton;
+    JvHTMLParser1: TJvHTMLParser;
+    Memo1: TMemo;
     procedure AddLinkBtnClick(Sender: TObject);
     procedure ClearLinksBtnClick(Sender: TObject);
     procedure PassBtnClick(Sender: TObject);
@@ -139,6 +148,10 @@ type
     procedure I1Click(Sender: TObject);
     procedure DropURLTarget1Drop(Sender: TObject; ShiftState: TShiftState; APoint: TPoint; var Effect: Integer);
     procedure DropURLTarget2Drop(Sender: TObject; ShiftState: TShiftState; APoint: TPoint; var Effect: Integer);
+    procedure SearchEditKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
+    procedure SearchBtnClick(Sender: TObject);
+    procedure JvHTMLParser1KeyFound(Sender: TObject; Key, Results, OriginalLine: string);
+    procedure JvHTMLParser1KeyFoundEx(Sender: TObject; Key, Results, OriginalLine: string; TagInfo: TTagInfo; Attributes: TStrings);
   private
     { Private declarations }
     FDownloadItems: TDownloadItemList;
@@ -161,6 +174,8 @@ type
     FUserUpdateCheck: Boolean;
     // youtube-dl version reader
     FYoutubedlVersionReader: TYouTubedlVersionReader;
+    // youtube search
+    FYTSearcher: TYTSearcher;
 
     // create guid file name
     function CreateTempName: string;
@@ -222,7 +237,7 @@ var
 
 const
   Portable = False;
-  BuildInt = 405;
+  BuildInt = 504;
 
 implementation
 
@@ -544,11 +559,13 @@ begin
         begin
           LDownloadItem := TDownloadItem.Create;
           LDownloadItem.Formats.AddStrings(YIE.FormatList);
+          // select user's selection
           for I := 0 to LDownloadItem.Formats.Count - 1 do
           begin
             Application.ProcessMessages;
             // select the one meets user's selection
-            if ContainsText(LDownloadItem.Formats[i], SettingsForm.PreferedFormatEdit.Text) then
+//            ShowMessage(LDownloadItem.Formats[i].ToUpper + sLineBreak +  UpperCase(SettingsForm.PreferedFormatEdit.Text));
+            if StringStartsWith(LDownloadItem.Formats[i].ToUpper, UpperCase(SettingsForm.PreferedFormatEdit.Text)) then
             begin
               LDownloadItem.FormatIndex := i;
               Break;
@@ -562,7 +579,7 @@ begin
           end;
           // prefred subtitle language
           // two chars
-          LPreferedSubLangPrefix := UpperCase(SettingsForm.SubLangList.Text);
+          LPreferedSubLangPrefix := SettingsForm.SubLangList.Text;
           LPreferedSubLangPrefix := LPreferedSubLangPrefix.Substring(0, 2);
 
           LDownloadItem.ImagePath := YIE.ImageName;
@@ -843,14 +860,17 @@ begin
       lFind := FindNext(lSearchRec);
     end;
 
-    for I := 0 to FSubsToDelete.Count - 1 do
+    if SettingsForm.DeleteSubAfterMuxBtn.Checked then
     begin
-      try
-        DeleteFile(FSubsToDelete[i]);
-      except
-        on E: Exception do
-        begin
-          AddToLog(0, 'Unable to delete ' + FSubsToDelete[i] + '. Error: ' + E.Message);
+      for I := 0 to FSubsToDelete.Count - 1 do
+      begin
+        try
+          DeleteFile(FSubsToDelete[i]);
+        except
+          on E: Exception do
+          begin
+            AddToLog(0, 'Unable to delete ' + FSubsToDelete[i] + '. Error: ' + E.Message);
+          end;
         end;
       end;
     end;
@@ -1212,6 +1232,7 @@ begin
   FSubsToDelete := TStringList.Create;
   FDownloadItems := TDownloadItemList.Create;
   FVideoDownloadListItems := TList<TDownloadUIItem>.Create;
+  FYTSearcher := TYTSearcher.Create;
   for I := Low(FVideoDownloadProcesses) to High(FVideoDownloadProcesses) do
   begin
     FVideoDownloadProcesses[i] := TDownloadProcess.Create;
@@ -1304,6 +1325,7 @@ begin
     FVideoDownloadProcesses[i].Free;
   end;
   FSubsToDelete.Free;
+  FYTSearcher.Free;
 end;
 
 procedure TMainForm.FormMouseWheelDown(Sender: TObject; Shift: TShiftState; MousePos: TPoint; var Handled: Boolean);
@@ -1438,6 +1460,26 @@ begin
   else
   begin
     Result := '00:00:00';
+  end;
+end;
+
+procedure TMainForm.JvHTMLParser1KeyFound(Sender: TObject; Key, Results, OriginalLine: string);
+const
+  A_CLASS = 'yt-uix-sessionlink yt-uix-tile-link yt-ui-ellipsis yt-ui-ellipsis-2       spf-link';
+begin
+  if Results.contains(A_CLASS) then
+  begin
+    ShowMessage(Results);
+  end;
+end;
+
+procedure TMainForm.JvHTMLParser1KeyFoundEx(Sender: TObject; Key, Results, OriginalLine: string; TagInfo: TTagInfo; Attributes: TStrings);
+const
+  A_CLASS = 'yt-uix-sessionlink yt-uix-tile-link yt-ui-ellipsis yt-ui-ellipsis-2       spf-link';
+begin
+  if Results.contains(A_CLASS) then
+  begin
+    ShowMessage(Results);
   end;
 end;
 
@@ -1643,6 +1685,26 @@ begin
   end;
 end;
 
+procedure TMainForm.SearchBtnClick(Sender: TObject);
+var
+  LQuery: string;
+begin
+  if Length(SearchEdit.Text) > 0 then
+  begin
+    LQuery := SearchEdit.Text;
+    LQuery := LQuery.Replace(' ', '+');
+    FYTSearcher.Download(LQuery);
+  end;
+end;
+
+procedure TMainForm.SearchEditKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
+begin
+  if Key = VK_RETURN then
+  begin
+    SearchBtnClick(self);
+  end;
+end;
+
 procedure TMainForm.SettingsBtnClick(Sender: TObject);
 begin
   Self.Enabled := false;
@@ -1699,6 +1761,7 @@ var
   LSubtitleFilePath: string;
   LOutExt: string;
   LVideoSubExt: string;
+  LSubLangSplitIndex: integer;
 begin
   if FVideoDownloadListItems.Count > 0 then
   begin
@@ -1740,6 +1803,7 @@ begin
         FSkippedVideoCount := 0;
         FProcessErrorCount := 0;
         FSubsToDelete.Clear;
+        FFilesToCheck.Clear;
 {$ENDREGION}
         // create command line
         for i := 0 to FVideoDownloadListItems.Count - 1 do
@@ -1787,18 +1851,17 @@ begin
           case FDownloadItems[i].LinkType of
             general:
               begin
-                LCMD := ' ' + LPass + ' -o "' + ExcludeTrailingPathDelimiter(DirectoryEdit.Text) + '\%(upload_date)s - %(uploader)s - %(title)s.%(ext)s" -i --no-playlist -f ' + FDownloadItems[i].FormatIntegers[FDownloadItems[i].FormatIndex];
+                LCMD := ' ' + LPass + ' -o "' + ExcludeTrailingPathDelimiter(DirectoryEdit.Text) + '\' + SettingsForm.FilePatternList.Text + '" -i --no-playlist -f ' + FDownloadItems[i].FormatIntegers[FDownloadItems[i].FormatIndex];
               end;
             soundcloud:
               begin
-                LCMD := ' ' + LPass + ' -o "' + ExcludeTrailingPathDelimiter(DirectoryEdit.Text) + '\%(upload_date)s - %(uploader)s - %(title)s.%(ext)s" -i --no-playlist -x --audio-format ' + FDownloadItems[i].FormatIntegers[FDownloadItems[i].FormatIndex];
+                LCMD := ' ' + LPass + ' -o "' + ExcludeTrailingPathDelimiter(DirectoryEdit.Text) + '\' + SettingsForm.FilePatternList.Text + '" -i --no-playlist -x --audio-format ' + FDownloadItems[i].FormatIntegers[FDownloadItems[i].FormatIndex];
               end;
           end;
           // LDownloadSub := False;
           if FDownloadItems[i].SubIndex > 0 then
           begin
-            LSubLangStr := LowerCase(FVideoDownloadListItems[i].SubtitleList.Text);
-            LSubLangStr := LSubLangStr.Substring(0, 2);
+            LSubLangStr := FVideoDownloadListItems[i].SubtitleList.Text;
             LSubtitleFilePath := DirectoryEdit.Text + '\' + LSubtitleFilePath + LSubLangStr + '.vtt';
             LCMD := LCMD + ' --write-sub --sub-lang ' + LSubLangStr;
             // LDownloadSub := True;
@@ -1813,6 +1876,7 @@ begin
             LCMD := LCMD + ' -r ' + SettingsForm.RateLimitEdit.Text + 'K';
           end;
           LCMD := LCMD + ' -v -c -w ' + FVideoDownloadListItems[i].LinkLabel.Caption;
+          LDownloadJob := TDownloadJob.Create;
           LDownloadJob.CommandLine := LCMD;
           LDownloadJob.ProcessType := youtubedl;
           LDownloadJob.ApplicationPath := FYoutubedlPath;
@@ -1835,7 +1899,8 @@ begin
               LCMD := LCMD + ' -r ' + SettingsForm.RateLimitEdit.Text + 'K';
             end;
             // get audio
-            LDownloadJob.CommandLine := ' -o "' + ExcludeTrailingPathDelimiter(DirectoryEdit.Text) + '\%(upload_date)s - %(uploader)s - %(title)s' + LDASHAudioExt + '" -i --no-playlist -f ' + LDASHAudioCode + ' -c -w ' + FVideoDownloadListItems[i].LinkLabel.Caption;
+            LDownloadJob := TDownloadJob.Create;
+            LDownloadJob.CommandLine := ' -o "' + ExcludeTrailingPathDelimiter(DirectoryEdit.Text) + '\' + SettingsForm.FilePatternList.Text + LDASHAudioExt + '" -i --no-playlist -f ' + LDASHAudioCode + ' -c -w ' + FVideoDownloadListItems[i].LinkLabel.Caption;
             LDownloadJob.ProcessType := youtubedl;
             LDownloadJob.ApplicationPath := FYoutubedlPath;
             LDownloadJob.FileIndex := i;
@@ -1843,6 +1908,7 @@ begin
             FVideoDownloadProcesses[i mod SettingsForm.ProcessCountBar.Position].DownloadJobs.Add(LDownloadJob);
 
             // mux both into video file
+            LDownloadJob := TDownloadJob.Create;
             LDownloadJob.CommandLine := ' -y -i "' + DirectoryEdit.Text + '\' + FVideoDownloadListItems[i].FileNameLabel.Caption + LDASHVideoExt + '" -i "' + DirectoryEdit.Text + '\' + FVideoDownloadListItems[i].FileNameLabel.Caption + LDASHAudioExt + '" -acodec copy -vcodec copy "' + DirectoryEdit.Text + '\' + FVideoDownloadListItems[i].FileNameLabel.Caption + '_muxed' + LDASHVideoExt + '"';
             LDownloadJob.ProcessType := ffmpeg;
             LDownloadJob.ApplicationPath := FFFMpegPath;
@@ -1861,6 +1927,8 @@ begin
           if ContainsText(LSelectedFormatStr, 'M4A, AUDIO, ONLY, DASH') then
           begin
             LCMD := ' -add "' + DirectoryEdit.Text + '\' + LOutputFile + '" -new "' + DirectoryEdit.Text + '\' + LOutputFile + '"';
+
+            LDownloadJob := TDownloadJob.Create;
             LDownloadJob.CommandLine := LCMD;
             LDownloadJob.ProcessType := mp4box;
             LDownloadJob.ApplicationPath := FMp4BoxPath;
@@ -1873,6 +1941,8 @@ begin
           if ContainsText(LSelectedFormatStr, 'WEBM, AUDIO, ONLY, DASH') then
           begin
             LCMD := ' -y -i "' + DirectoryEdit.Text + '\' + LOutputFile + '" -vn -f ogg "' + DirectoryEdit.Text + '\' + ChangeFileExt(LOutputFile, '.ogg') + '"';
+
+            LDownloadJob := TDownloadJob.Create;
             LDownloadJob.CommandLine := LCMD;
             LDownloadJob.ProcessType := ffmpeg;
             LDownloadJob.ApplicationPath := FFFMpegPath;
@@ -1897,6 +1967,7 @@ begin
               LCMD := ' -y -i "' + DirectoryEdit.Text + '\' + LOutputFile + '" -f srt -i "' + ChangeFileExt(LSubtitleFilePath, '.srt') + '" -map 0:0 -map 0:1 -map 1:0 -c:v copy -c:a copy -c:s mov_text "' + DirectoryEdit.Text + '\' + ChangeFileExt(LOutputFile, LVideoSubExt) + '"';
               FSubsToDelete.Add(ChangeFileExt(LSubtitleFilePath, '.srt'));
             end;
+            LDownloadJob := TDownloadJob.Create;
             LDownloadJob.CommandLine := LCMD;
             LDownloadJob.ProcessType := ffmpeg;
             LDownloadJob.ApplicationPath := FFFMpegPath;

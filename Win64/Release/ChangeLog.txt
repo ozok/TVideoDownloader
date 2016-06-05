@@ -1,0 +1,80 @@
+--2.0
+-Added: An option to specify per process download rate limit
+-Added: An option to mux downloaded subtitles to video
+-Added: An option to remove muxed subtitles
+-Added: An option to specify output file name pattern
+-Fixed: Subtitles were not listed
+-Fixed: Subtitles were not downloaded
+-Fixed: Downloaded subtitles were not converted to srt
+-Fixed: Closing the preview window didn't stop playback
+-Fixed: "Reset" button on settings window didn't reset all options
+-Fixed: Unable to download youtube-dl updates due to 302 errors
+
+--1.9
+-Added: An option to automatically check for the latest youtube-dl version
+-Added: Link drag&drop to both main window and batch link add windows
+-Fixed: Remove and Preview buttons did not function properly
+-Updated: FFMpeg and youtube-dl
+
+--1.8
+-Added: An option to specify a timeout for adding a link
+-Added: A few interface changes
+-Added: youtube-dl updater will start updating process as soon as dialog is opened 
+-Fixed: youtube-dl updater was writing downloaded file to exe instead of tmp 
+-Fixed: youtube-dl updater could not delete tmp file in some cases 
+-Fixed: youtube-dl updater could not rename tmp file to exe in some case 
+-Removed: Skin
+-Updated: youtube-dl, mediainfo, ffmpeg, mp4box
+
+--1.7
+-Fixed: Couldn't update youtube-dl (error 403)
+-Fixed: Progress was not updated
+-Updated: youtube-dl and mediainfo
+-Updated: Internal components
+
+--1.6
+-Added: Preview for youtube videos
+-Added: Option to import links from text files
+-Fixed: Remove button on list items didn't function
+-Fixed: Removing one item from the list didn't move other item to the top of the list
+-Updated: Internal libraries
+
+--1.5
+-Added: New general interface and download list item style changes
+-Added: A new way to update youtube-dl
+-Added: Skin
+-Fixed: Could not download WEBM dash videos
+-Fixed: Link adding process would get stuck in some cases
+-Fixed: Drag&drop links function was not working properly
+-Updated: youtube-dl
+-Updated: Internal components
+
+--1.4
+-Added: A faster way of adding links
+-Fixed: Couldn't download video/audio due to changes to youtube-dl
+-Fixed: Default video format wasn't up to date with latest youtube changes
+-Updated: youtube-dl
+
+--1.3
+-Added: Video thumbnails will be resized more smoothly
+-Added: Users can now drag and drop single links
+-Fixed: Temporary images weren't deleted
+-Fixed: icon.ico was missing from the package
+-Fixed: Resizing the window didn't move some controls properly
+-Fixed: Couldn't close the program while adding links
+
+--1.2
+-Added: Improved progress update performance
+-Fixed: Many memory leaks
+-Fixed: Couldn't mux if file name ended/started with space
+-Fixed: "Access violation" errors when removing items from the list
+-Fixed: A few interface bugs
+-Fixed: "Play a sound when download is done" option was not applied
+-Updated: youtube-dl
+
+--1.1 Hotfix
+-Fixed: Mp4Box was missing in the package
+-Fixed: Clicking to tray icon balloon didn't restore window
+
+--1.0
+-First release

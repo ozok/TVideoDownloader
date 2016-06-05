@@ -104,6 +104,9 @@ type
 
 implementation
 
+uses
+  UnitSettings;
+
 { TYouTubeVideoInfoExtractor }
 
 constructor TYouTubeVideoInfoExtractor.Create(const URL: string; const YouTube_dlPath: string; const TempFolder: string; const UserPass: TUserPass; const DownloadImg: Boolean);
@@ -541,12 +544,12 @@ begin
         // means found a sub
         if LStartIndex > -1 then
         begin
-          for I := LStartIndex+2 to FSubtitleProcess.ConsoleOutput.Count - 1 do
+          for I := LStartIndex + 2 to FSubtitleProcess.ConsoleOutput.Count - 1 do
           begin
             LSubLine := Trim(FSubtitleProcess.ConsoleOutput[i]);
             if Length(LSubLine) > 0 then
             begin
-              FSubtitles.Add(UpperCase(LSubLine));
+              FSubtitles.Add(LSubLine.Replace('vtt, ttml', '').Trim);
             end;
           end;
         end;
@@ -664,7 +667,7 @@ begin
   begin
     LPass := ' -u ' + FPass.UserName + ' -p ' + FPass.Password;
   end;
-  FTitleExtractProcess.CommandLine := ' ' + LPass + ' -s --skip-download -i --no-playlist --playlist-start 1 --playlist-end 1 --get-filename -o "%(upload_date)s - %(uploader)s - %(title)s.%(ext)s" "' + FURL + '"';
+  FTitleExtractProcess.CommandLine := ' ' + LPass + ' -s --skip-download -i --no-playlist --playlist-start 1 --playlist-end 1 --get-filename -o "' + SettingsForm.FilePatternList.Text + '" "' + FURL + '"';
   FTitleExtractProcess.Run;
 end;
 

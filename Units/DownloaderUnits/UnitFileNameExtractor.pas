@@ -21,7 +21,9 @@ unit UnitFileNameExtractor;
 
 interface
 
-uses Classes, Windows, SysUtils, JvCreateProcess, Messages, StrUtils, Generics.Collections, UnitImageResize, UnitCommonTypes;
+uses
+  Classes, Windows, SysUtils, JvCreateProcess, Messages, StrUtils, Generics.Collections,
+  UnitImageResize, UnitCommonTypes;
 
 type
   TStatusEx = (stReadingEx, stDoneEx);
@@ -42,20 +44,20 @@ type
     FURL: string;
     FYouTubePath: string;
     FPass: TUserPass;
-
     procedure ProcessTerminate3(Sender: TObject; ExitCode: Cardinal);
   public
     property Status: TStatusEx read FStatus;
     property FileName: string read FFileName;
     property Format: string read FFormat write FFormat;
-
     constructor Create(const URL: string; const YouTube_dlPath: string; const UserPass: TUserPass);
     destructor Destroy(); override;
-
     procedure Start3();
   end;
 
 implementation
+
+uses
+  UnitSettings;
 
 { TFileNameExtractor }
 
@@ -117,8 +119,9 @@ begin
   begin
     LPass := ' -u ' + FPass.UserName + ' -p ' + FPass.Password;
   end;
-  FProcess.CommandLine := ' ' + LPass + ' -s --skip-download --no-playlist --get-filename -f ' + FFormat + ' -o "%(upload_date)s - %(uploader)s - %(title)s.%(ext)s" "' + FURL + '"';
+  FProcess.CommandLine := ' ' + LPass + ' -s --skip-download --no-playlist --get-filename -f ' + FFormat + ' -o "' + SettingsForm.FilePatternList.Text + '" "' + FURL + '"';
   FProcess.Run;
 end;
 
 end.
+

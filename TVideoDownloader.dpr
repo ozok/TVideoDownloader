@@ -22,7 +22,9 @@ uses
   DownloadItemFrame in 'Forms\DownloadItemFrame.pas' {DownloadUIItem: TFrame},
   UnitYoutubedlUpdateChecker in 'Forms\UnitYoutubedlUpdateChecker.pas' {YoutubedlUpdateChecker},
   UnitPreview in 'Forms\UnitPreview.pas' {PreviewForm},
-  UnitYouTubeDlVersionReader in 'Units\UnitYouTubeDlVersionReader.pas';
+  UnitYouTubeDlVersionReader in 'Units\UnitYouTubeDlVersionReader.pas',
+  UnitYTSearch in 'YoutubeSearch\UnitYTSearch.pas',
+  UnitCommonMethods in 'Units\UnitCommonMethods.pas';
 
 {$R *.res}
 

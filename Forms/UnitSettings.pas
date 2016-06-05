@@ -35,6 +35,8 @@ type
     TabSheet2: TTabSheet;
     TabSheet3: TTabSheet;
     DeleteSubAfterMuxBtn: TCheckBox;
+    FilePatternList: TComboBox;
+    Label6: TLabel;
     procedure sButton1Click(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure FormCreate(Sender: TObject);
@@ -99,6 +101,7 @@ begin
       SubLangList.ItemIndex := ReadInteger('Options', 'SubLang', 39);
       MuxSubBtn.Checked := ReadBool('Options', 'MuxSub', False);
       DeleteSubAfterMuxBtn.Checked := ReadBool('Options', 'DeleteSub', false);
+      FilePatternList.ItemIndex := ReadInteger('Options', 'FilePattern', 0);
       MuxSubBtnClick(Self);
     end;
   finally
@@ -138,6 +141,7 @@ begin
       WriteInteger('Options', 'SubLang', SubLangList.ItemIndex);
       WriteBool('Options', 'MuxSub', MuxSubBtn.Checked);
       WriteBool('Options', 'DeleteSub', DeleteSubAfterMuxBtn.Checked);
+      WriteInteger('Options', 'FilePattern', FilePatternList.ItemIndex);
     end;
   finally
     OptionFile.Free;
@@ -171,6 +175,7 @@ begin
   CheckYoutubeDlUpdateBtn.Checked := True;
   LinkAddTimeOutEdit.Text := '60';
   RateLimitEdit.Text := '0';
+  FilePatternList.ItemIndex := 0;
 end;
 
 end.

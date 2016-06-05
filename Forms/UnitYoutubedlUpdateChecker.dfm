@@ -60,6 +60,7 @@ object YoutubedlUpdateChecker: TYoutubedlUpdateChecker
     OnWorkBegin = DownloaderWorkBegin
     OnWorkEnd = DownloaderWorkEnd
     AllowCookies = True
+    HandleRedirects = True
     ProxyParams.BasicAuthentication = False
     ProxyParams.ProxyPort = 0
     Request.ContentLength = -1

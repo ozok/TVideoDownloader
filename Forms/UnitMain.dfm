@@ -104,7 +104,7 @@ object MainForm: TMainForm
       Height = 41
       Align = alBottom
       BevelOuter = bvNone
-      TabOrder = 2
+      TabOrder = 1
       DesignSize = (
         1116
         41)
@@ -143,7 +143,7 @@ object MainForm: TMainForm
       Height = 58
       Align = alTop
       BevelOuter = bvNone
-      TabOrder = 4
+      TabOrder = 3
       Visible = False
       object sLabel1: TLabel
         Left = 3
@@ -203,7 +203,7 @@ object MainForm: TMainForm
       Height = 50
       Align = alBottom
       BevelOuter = bvNone
-      TabOrder = 3
+      TabOrder = 2
       DesignSize = (
         1116
         50)
@@ -360,7 +360,6 @@ object MainForm: TMainForm
         Images = ButtonImages
         TabOrder = 3
         OnClick = StartDownloadBtnClick
-        ExplicitLeft = 1017
       end
       object StopDownloadBtn: TButton
         Left = 906
@@ -524,31 +523,119 @@ object MainForm: TMainForm
         OnClick = OpenOutBtnClick
       end
     end
-    object VideoDownloaderList: TScrollBox
+    object FuncPages: TPageControl
       Left = 0
       Top = 183
       Width = 1116
       Height = 362
       Align = alClient
-      BevelInner = bvNone
-      BevelOuter = bvNone
-      BorderStyle = bsNone
-      TabOrder = 1
-      object DropHerePanel: TPanel
-        Left = 0
-        Top = 0
-        Width = 1116
-        Height = 362
-        Align = alClient
-        BevelOuter = bvNone
-        Caption = 'Drag and drop links here!'
-        Font.Charset = DEFAULT_CHARSET
-        Font.Color = clWindowText
-        Font.Height = -32
-        Font.Name = 'Tahoma'
-        Font.Style = []
-        ParentFont = False
-        TabOrder = 0
+      Style = tsButtons
+      TabOrder = 4
+      object TabSheet1: TTabSheet
+        Caption = 'Media List'
+        TabVisible = False
+        ExplicitLeft = 0
+        ExplicitTop = 27
+        ExplicitWidth = 0
+        ExplicitHeight = 331
+        object VideoDownloaderList: TScrollBox
+          Left = 0
+          Top = 0
+          Width = 1108
+          Height = 352
+          Align = alClient
+          BevelInner = bvNone
+          BevelOuter = bvNone
+          BorderStyle = bsNone
+          TabOrder = 0
+          ExplicitHeight = 331
+          object DropHerePanel: TPanel
+            Left = 0
+            Top = 0
+            Width = 1108
+            Height = 352
+            Align = alClient
+            BevelOuter = bvNone
+            Caption = 'Drag and drop links here!'
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -32
+            Font.Name = 'Tahoma'
+            Font.Style = []
+            ParentFont = False
+            TabOrder = 0
+            ExplicitHeight = 331
+          end
+        end
+      end
+      object TabSheet2: TTabSheet
+        Caption = 'Search Youtube'
+        ImageIndex = 1
+        TabVisible = False
+        ExplicitLeft = 0
+        ExplicitTop = 27
+        ExplicitWidth = 0
+        ExplicitHeight = 331
+        object Panel1: TPanel
+          Left = 0
+          Top = 0
+          Width = 1108
+          Height = 33
+          Align = alTop
+          BevelOuter = bvNone
+          TabOrder = 0
+          DesignSize = (
+            1108
+            33)
+          object Bevel4: TBevel
+            Left = 0
+            Top = 30
+            Width = 1108
+            Height = 3
+            Align = alBottom
+            Shape = bsBottomLine
+            ExplicitTop = -17
+            ExplicitWidth = 1116
+          end
+          object SearchEdit: TEdit
+            Left = 3
+            Top = 6
+            Width = 1004
+            Height = 21
+            Anchors = [akLeft, akTop, akRight]
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'Tahoma'
+            Font.Style = []
+            ParentFont = False
+            TabOrder = 0
+            TextHint = 'Write search query here'
+            OnKeyDown = SearchEditKeyDown
+          end
+          object SearchBtn: TButton
+            Left = 1013
+            Top = 6
+            Width = 99
+            Height = 21
+            Anchors = [akTop, akRight]
+            Caption = 'Search'
+            TabOrder = 1
+            OnClick = SearchBtnClick
+          end
+        end
+        object Memo1: TMemo
+          Left = 0
+          Top = 33
+          Width = 1108
+          Height = 319
+          Align = alClient
+          Lines.Strings = (
+            'Memo1')
+          ReadOnly = True
+          ScrollBars = ssBoth
+          TabOrder = 1
+        end
       end
     end
   end
@@ -562,8 +649,8 @@ object MainForm: TMainForm
     Visible = False
   end
   object AddLinkMenu: TPopupMenu
-    Left = 16
-    Top = 168
+    Left = 24
+    Top = 312
     object A3: TMenuItem
       Caption = 'Add a link'
       OnClick = A3Click
@@ -7123,5 +7210,11 @@ object MainForm: TMainForm
     WinTarget = 0
     Left = 1008
     Top = 173
+  end
+  object JvHTMLParser1: TJvHTMLParser
+    OnKeyFound = JvHTMLParser1KeyFound
+    OnKeyFoundEx = JvHTMLParser1KeyFoundEx
+    Left = 876
+    Top = 359
   end
 end

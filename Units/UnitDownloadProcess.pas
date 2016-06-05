@@ -40,7 +40,7 @@ type
   end;
 
 type
-  TDownloadJob = record
+  TDownloadJob = class
     ApplicationPath: string;
     CommandLine: string;
     FileName: string;
@@ -50,6 +50,7 @@ type
     RenameJob: TRenameJob;
     SubtitleFilePath: string;
     IsWebm: Boolean;
+    constructor Create();
   end;
 
   TDownloadJobs = TList<TDownloadJob>;
@@ -335,7 +336,7 @@ begin
   else
   begin
     // if process has not exited properly, add it to the log
-    MainForm.AddToLog(1, ExtractFileName(FDownloadJobs[FCommandIndex].ApplicationPath) + ' has exited with ' + FloatToStr(ExitCode) + '.');
+    MainForm.AddToLog(0, ExtractFileName(FDownloadJobs[FCommandIndex].ApplicationPath) + ' has exited with ' + FloatToStr(ExitCode) + '.');
     FErrorLog.AddStrings(FProcess.ConsoleOutput);
     FProcess.ConsoleOutput.Clear;
     if ExitCode <> 0 then
@@ -411,6 +412,21 @@ begin
     MainForm.FVideoDownloadListItems[GetFileIndex].ProgressLabel.Caption := ProgressStr;
     MainForm.FVideoDownloadListItems[GetFileIndex].ProgressBar.Position := Progress;
   end;
+end;
+
+{ TDownloadJob }
+
+constructor TDownloadJob.Create;
+begin
+  inherited;
+  ApplicationPath := '';
+  CommandLine := '';
+  FileName := '';
+  ProcessType := TProcessType.youtubedl;
+  ProcessInfo := '';
+  FileIndex := -1;
+  SubtitleFilePath := '';
+  IsWebm := false;
 end;
 
 end.
