@@ -237,7 +237,7 @@ var
 
 const
   Portable = False;
-  BuildInt = 504;
+  BuildInt = 507;
 
 implementation
 
@@ -559,24 +559,24 @@ begin
         begin
           LDownloadItem := TDownloadItem.Create;
           LDownloadItem.Formats.AddStrings(YIE.FormatList);
-          // select user's selection
-          for I := 0 to LDownloadItem.Formats.Count - 1 do
+          LDownloadItem.FormatIndex := LDownloadItem.Formats.Count - 1;
+          if Length(SettingsForm.PreferedFormatEdit.Text) > 0 then
           begin
-            Application.ProcessMessages;
+          // select user's selection
+            for I := 0 to LDownloadItem.Formats.Count - 1 do
+            begin
+              Application.ProcessMessages;
             // select the one meets user's selection
 //            ShowMessage(LDownloadItem.Formats[i].ToUpper + sLineBreak +  UpperCase(SettingsForm.PreferedFormatEdit.Text));
-            if StringStartsWith(LDownloadItem.Formats[i].ToUpper, UpperCase(SettingsForm.PreferedFormatEdit.Text)) then
-            begin
-              LDownloadItem.FormatIndex := i;
-              Break;
+              if StringStartsWith(LDownloadItem.Formats[i].ToUpper, UpperCase(SettingsForm.PreferedFormatEdit.Text)) then
+              begin
+                LDownloadItem.FormatIndex := i;
+                Break;
+              end;
             end;
           end;
           LDownloadItem.FormatIntegers.AddStrings(YIE.FormatInts);
-          // that means couldnt find 1080p dash
-          if LDownloadItem.FormatIndex = -1 then
-          begin
-            LDownloadItem.FormatIndex := YIE.FormatList.Count - 1;
-          end;
+
           // prefred subtitle language
           // two chars
           LPreferedSubLangPrefix := SettingsForm.SubLangList.Text;
@@ -1900,7 +1900,7 @@ begin
             end;
             // get audio
             LDownloadJob := TDownloadJob.Create;
-            LDownloadJob.CommandLine := ' -o "' + ExcludeTrailingPathDelimiter(DirectoryEdit.Text) + '\' + SettingsForm.FilePatternList.Text + LDASHAudioExt + '" -i --no-playlist -f ' + LDASHAudioCode + ' -c -w ' + FVideoDownloadListItems[i].LinkLabel.Caption;
+            LDownloadJob.CommandLine := ' -o "' + ExcludeTrailingPathDelimiter(DirectoryEdit.Text) + '\' + ReplaceStr(SettingsForm.FilePatternList.Text, '.%(ext)s', '') + LDASHAudioExt + '" -i --no-playlist -f ' + LDASHAudioCode + ' -c -w ' + FVideoDownloadListItems[i].LinkLabel.Caption;
             LDownloadJob.ProcessType := youtubedl;
             LDownloadJob.ApplicationPath := FYoutubedlPath;
             LDownloadJob.FileIndex := i;

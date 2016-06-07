@@ -528,16 +528,13 @@ object MainForm: TMainForm
       Top = 183
       Width = 1116
       Height = 362
+      ActivePage = TabSheet1
       Align = alClient
       Style = tsButtons
       TabOrder = 4
       object TabSheet1: TTabSheet
         Caption = 'Media List'
         TabVisible = False
-        ExplicitLeft = 0
-        ExplicitTop = 27
-        ExplicitWidth = 0
-        ExplicitHeight = 331
         object VideoDownloaderList: TScrollBox
           Left = 0
           Top = 0
@@ -548,7 +545,6 @@ object MainForm: TMainForm
           BevelOuter = bvNone
           BorderStyle = bsNone
           TabOrder = 0
-          ExplicitHeight = 331
           object DropHerePanel: TPanel
             Left = 0
             Top = 0
@@ -564,7 +560,6 @@ object MainForm: TMainForm
             Font.Style = []
             ParentFont = False
             TabOrder = 0
-            ExplicitHeight = 331
           end
         end
       end
@@ -572,10 +567,6 @@ object MainForm: TMainForm
         Caption = 'Search Youtube'
         ImageIndex = 1
         TabVisible = False
-        ExplicitLeft = 0
-        ExplicitTop = 27
-        ExplicitWidth = 0
-        ExplicitHeight = 331
         object Panel1: TPanel
           Left = 0
           Top = 0

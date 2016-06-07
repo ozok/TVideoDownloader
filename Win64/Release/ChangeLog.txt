@@ -1,3 +1,7 @@
+--2.0.1
+-Fixed: Added videos were not visible in the list
+-Fixed: Audio could not be muxed if dash video was selected
+
 --2.0
 -Added: An option to specify per process download rate limit
 -Added: An option to mux downloaded subtitles to video
