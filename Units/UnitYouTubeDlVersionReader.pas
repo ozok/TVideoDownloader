@@ -37,6 +37,7 @@ type
     destructor Destroy(); override;
     procedure Start();
     procedure StopAll();
+    procedure ShowDownloadWindow();
   end;
 
 implementation
@@ -85,6 +86,11 @@ end;
 
 procedure TYouTubedlVersionReader.ProcessTerminate(Sender: TObject; ExitCode: Cardinal);
 begin
+  ShowDownloadWindow();
+end;
+
+procedure TYouTubedlVersionReader.ShowDownloadWindow;
+begin
   YoutubedlUpdateChecker.LocalVersion := FProcess.ConsoleOutput.Text;
   YoutubedlUpdateChecker.Path := MainForm.FYoutubedlPath;
   YoutubedlUpdateChecker.Show;
@@ -93,9 +99,16 @@ end;
 
 procedure TYouTubedlVersionReader.Start;
 begin
-  FProcess.ApplicationName := FYouTube_dlPath;
-  FProcess.CommandLine := ' --version';
-  FProcess.Run;
+  try
+    FProcess.ApplicationName := FYouTube_dlPath;
+    FProcess.CommandLine := ' --version';
+    FProcess.Run;
+  except
+    on E: Exception do
+    begin
+      ShowDownloadWindow;
+    end;
+  end;
 end;
 
 procedure TYouTubedlVersionReader.StopAll;

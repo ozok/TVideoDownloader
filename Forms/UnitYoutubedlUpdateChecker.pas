@@ -3,12 +3,7 @@ unit UnitYoutubedlUpdateChecker;
 interface
 
 uses
-  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes,
-  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, IdIOHandler,
-  IdIOHandlerSocket, IdIOHandlerStack, IdSSL, IdSSLOpenSSL, IdBaseComponent,
-  IdComponent, IdTCPConnection, IdTCPClient, IdHTTP, IdThreadComponent,
-  JvComponentBase, JvThread, Vcl.ComCtrls, Vcl.Samples.Gauges,
-  IdHashMessageDigest, IdHash;
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, IdIOHandler, IdIOHandlerSocket, IdIOHandlerStack, IdSSL, IdSSLOpenSSL, IdBaseComponent, IdComponent, IdTCPConnection, IdTCPClient, IdHTTP, IdThreadComponent, JvComponentBase, JvThread, Vcl.ComCtrls, Vcl.Samples.Gauges, IdHashMessageDigest, IdHash;
 
 type
   TYoutubedlUpdateChecker = class(TForm)
@@ -109,9 +104,11 @@ var
   LPos: integer;
   LFS: TFileStream;
   LPath: string; // youtube-dl.tmp
-  FContinue: Boolean;
+  LContinue: Boolean;
   LExeLine: string;
+  LDownloaded: Boolean;
 begin
+  // todo: do not access UI from thread
   OutputList.Lines.Add('[' + DateTimeToStr(Now) + '] Starting the update process.');
   CloseBtn.Enabled := False;
   try
@@ -122,7 +119,7 @@ begin
       LMS.Seek(0, soBeginning);
       LSR := TStreamReader.Create(LMS);
       try
-        FContinue := True;
+        LContinue := True;
         while not LSR.EndOfStream do
         begin
           Application.ProcessMessages;
@@ -143,7 +140,7 @@ begin
                 LLine := LLine.Substring(0, LPos - 1);
                 OutputList.Lines.Add('[' + DateTimeToStr(Now) + '] The Latest Version: ' + LLine);
                 OutputList.Lines.Add('[' + DateTimeToStr(Now) + '] The Local Version: ' + LocalVersion.Trim);
-                FContinue := Trim(LLine) <> Trim(LocalVersion);
+                LContinue := Trim(LLine) <> Trim(LocalVersion);
               end;
             end;
           end;
@@ -154,7 +151,7 @@ begin
             LExeLine := LLine;
           end;
         end;
-        if FContinue then
+        if LContinue then
         begin
           if LExeLine.Length > 0 then
           begin
@@ -185,19 +182,25 @@ begin
                 begin
                   OutputList.Lines.Add('[' + DateTimeToStr(Now) + '] You can close this window now.');
                 end;
+                LDownloaded := True;
               except
                 on E: Exception do
+                begin
                   OutputList.Lines.Add('[' + DateTimeToStr(Now) + '] Error: ' + E.Message);
+                  LDownloaded := False;
+                end;
               end;
             finally
               LFS.Free;
-
-              // delete the old version of the exe
-              if FileExists(Path) then
+              if LDownloaded then
               begin
-                DeleteFile(Path);
+              // delete the old version of the exe
+                if FileExists(Path) then
+                begin
+                  DeleteFile(Path);
+                end;
+                RenameFile(LPath, Path);
               end;
-              RenameFile(LPath, Path);
             end;
           end
           else
@@ -218,7 +221,9 @@ begin
       end;
     except
       on E: Exception do
+      begin
         OutputList.Lines.Add('[' + DateTimeToStr(Now) + '] Error: ' + E.Message)
+      end;
     end;
   finally
     LMS.Free;
@@ -237,4 +242,5 @@ begin
 end;
 
 end.
+
 

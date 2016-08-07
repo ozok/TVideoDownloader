@@ -3,16 +3,8 @@ unit UnitMain;
 interface
 
 uses
-  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes,
-  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ComCtrls,
-  Vcl.Buttons, Vcl.ExtCtrls, Vcl.Menus, Generics.Collections,
-  UnitDownloadProcess, Vcl.Mask, JvComponentBase, JvComputerInfoEx, StrUtils,
-  MediaInfoDll, UnitCommonTypes, JvTrayIcon, UnitYouTubeVideoInfoExtractor,
-  ShellAPI, Winapi.MMSystem, IniFiles, JvUrlListGrabber, JvUrlGrabbers, JvThread,
-  System.Types, DownloadItemFrame, JvDragDrop, IdBaseComponent, JvExMask,
-  JvToolEdit, System.ImageList, Vcl.ImgList, System.DateUtils,
-  UnitYouTubeDlVersionReader, DragDrop, DropTarget, DragDropInternet, System.Win.TaskbarCore,
-  Vcl.Taskbar, UnitYTSearch, JvHtmlParser, UnitCommonMethods;
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ComCtrls, Vcl.Buttons, Vcl.ExtCtrls, Vcl.Menus, Generics.Collections, UnitDownloadProcess, Vcl.Mask, JvComponentBase, JvComputerInfoEx, StrUtils, MediaInfoDll, UnitCommonTypes, JvTrayIcon, UnitYouTubeVideoInfoExtractor, ShellAPI, Winapi.MMSystem, IniFiles, JvUrlListGrabber, JvUrlGrabbers, JvThread, System.Types, DownloadItemFrame, JvDragDrop,
+  IdBaseComponent, JvExMask, JvToolEdit, System.ImageList, Vcl.ImgList, System.DateUtils, UnitYouTubeDlVersionReader, DragDrop, DropTarget, DragDropInternet, System.Win.TaskbarCore, Vcl.Taskbar, UnitYTSearch, JvHtmlParser, UnitCommonMethods;
 
 type
   TMainForm = class(TForm)
@@ -106,7 +98,6 @@ type
     Bevel4: TBevel;
     SearchEdit: TEdit;
     SearchBtn: TButton;
-    JvHTMLParser1: TJvHTMLParser;
     Memo1: TMemo;
     procedure AddLinkBtnClick(Sender: TObject);
     procedure ClearLinksBtnClick(Sender: TObject);
@@ -150,8 +141,6 @@ type
     procedure DropURLTarget2Drop(Sender: TObject; ShiftState: TShiftState; APoint: TPoint; var Effect: Integer);
     procedure SearchEditKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure SearchBtnClick(Sender: TObject);
-    procedure JvHTMLParser1KeyFound(Sender: TObject; Key, Results, OriginalLine: string);
-    procedure JvHTMLParser1KeyFoundEx(Sender: TObject; Key, Results, OriginalLine: string; TagInfo: TTagInfo; Attributes: TStrings);
   private
     { Private declarations }
     FDownloadItems: TDownloadItemList;
@@ -244,8 +233,7 @@ implementation
 {$R *.dfm}
 
 uses
-  UnitSettings, UnitLogs, UnitBatchAdd, UnitAbout, UnitYoutubedlUpdateChecker,
-  UnitPreview;
+  UnitSettings, UnitLogs, UnitBatchAdd, UnitAbout, UnitYoutubedlUpdateChecker, UnitPreview;
 
 procedure TMainForm.A1Click(Sender: TObject);
 begin
@@ -567,7 +555,6 @@ begin
             begin
               Application.ProcessMessages;
             // select the one meets user's selection
-//            ShowMessage(LDownloadItem.Formats[i].ToUpper + sLineBreak +  UpperCase(SettingsForm.PreferedFormatEdit.Text));
               if StringStartsWith(LDownloadItem.Formats[i].ToUpper, UpperCase(SettingsForm.PreferedFormatEdit.Text)) then
               begin
                 LDownloadItem.FormatIndex := i;
@@ -1463,26 +1450,6 @@ begin
   end;
 end;
 
-procedure TMainForm.JvHTMLParser1KeyFound(Sender: TObject; Key, Results, OriginalLine: string);
-const
-  A_CLASS = 'yt-uix-sessionlink yt-uix-tile-link yt-ui-ellipsis yt-ui-ellipsis-2       spf-link';
-begin
-  if Results.contains(A_CLASS) then
-  begin
-    ShowMessage(Results);
-  end;
-end;
-
-procedure TMainForm.JvHTMLParser1KeyFoundEx(Sender: TObject; Key, Results, OriginalLine: string; TagInfo: TTagInfo; Attributes: TStrings);
-const
-  A_CLASS = 'yt-uix-sessionlink yt-uix-tile-link yt-ui-ellipsis yt-ui-ellipsis-2       spf-link';
-begin
-  if Results.contains(A_CLASS) then
-  begin
-    ShowMessage(Results);
-  end;
-end;
-
 procedure TMainForm.LabelClick(Sender: TObject);
 begin
   ShellExecute(Handle, 'open', PWideChar(TLabel(Sender).Caption), nil, nil, SW_SHOWNORMAL);
@@ -1516,11 +1483,18 @@ begin
         Sleep(100);
         FYoutubedlVersionReader := TYouTubedlVersionReader.Create(FYoutubedlPath);
         try
-          FYoutubedlVersionReader.Start;
-          while FYoutubedlVersionReader.IsRunning do
-          begin
-            Application.ProcessMessages;
-            Sleep(50);
+          try
+            FYoutubedlVersionReader.Start;
+            while FYoutubedlVersionReader.IsRunning do
+            begin
+              Application.ProcessMessages;
+              Sleep(50);
+            end;
+          except
+            on E: Exception do
+            begin
+              FYoutubedlVersionReader.ShowDownloadWindow;
+            end;
           end;
         finally
           FYoutubedlVersionReader.StopAll;
@@ -2314,4 +2288,5 @@ begin
 end;
 
 end.
+
 

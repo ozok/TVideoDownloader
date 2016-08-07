@@ -247,7 +247,7 @@ object MainForm: TMainForm
             Left = 5
             Top = 3
             Width = 65
-            Height = 25
+            Height = 28
             Margins.Left = 5
             Align = alLeft
             Caption = 'Progress: 0/0'
@@ -7201,11 +7201,5 @@ object MainForm: TMainForm
     WinTarget = 0
     Left = 1008
     Top = 173
-  end
-  object JvHTMLParser1: TJvHTMLParser
-    OnKeyFound = JvHTMLParser1KeyFound
-    OnKeyFoundEx = JvHTMLParser1KeyFoundEx
-    Left = 876
-    Top = 359
   end
 end
