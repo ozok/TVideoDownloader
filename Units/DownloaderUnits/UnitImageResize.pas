@@ -87,11 +87,11 @@ begin
       Exit;
     end;
     // output bitmap
-    LBMP.PixelFormat := pf24bit;
-    LBMP.Width := 150;
+    LBMP.PixelFormat := pf32bit;
+    LBMP.Width := 180;
     LBMP.Height := Round(150 * (LJpeg.Height / LJpeg.Width));
     // bitmap to hold data from jpeg
-    LJpegBMP.PixelFormat := pf24bit;
+    LJpegBMP.PixelFormat := pf32bit;
     LJpegBMP.Width := LJpeg.Width;
     LJpegBMP.Height :=LJpeg.Height;
     LJpegBMP.Assign(LJpeg);

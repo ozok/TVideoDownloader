@@ -8,12 +8,12 @@ uses
   madListModules,
   Vcl.Forms,
   UnitMain in 'Forms\UnitMain.pas' {MainForm},
-  UnitDownloadProcess in 'Units\UnitDownloadProcess.pas',
-  UnitCommonTypes in 'Units\DownloaderUnits\UnitCommonTypes.pas',
+  UnitDownloadProcess in 'Units\DownloaderUnits\UnitDownloadProcess.pas',
+  UnitCommonTypes in 'Units\Common\UnitCommonTypes.pas',
   UnitFileNameExtractor in 'Units\DownloaderUnits\UnitFileNameExtractor.pas',
   UnitImageResize in 'Units\DownloaderUnits\UnitImageResize.pas',
   UnitImageTypeExtractor in 'Units\DownloaderUnits\UnitImageTypeExtractor.pas',
-  UnitYouTubeVideoInfoExtractor in 'Units\DownloaderUnits\UnitYouTubeVideoInfoExtractor.pas',
+  UnitYouTubeVideoInfoExtractor in 'Units\InfoExtraction\UnitYouTubeVideoInfoExtractor.pas',
   UnitSettings in 'Forms\UnitSettings.pas' {SettingsForm},
   MediaInfoDLL in 'Units\MediaInfoDLL.pas',
   UnitLogs in 'Forms\UnitLogs.pas' {LogForm},
@@ -22,9 +22,9 @@ uses
   DownloadItemFrame in 'Forms\DownloadItemFrame.pas' {DownloadUIItem: TFrame},
   UnitYoutubedlUpdateChecker in 'Forms\UnitYoutubedlUpdateChecker.pas' {YoutubedlUpdateChecker},
   UnitPreview in 'Forms\UnitPreview.pas' {PreviewForm},
-  UnitYouTubeDlVersionReader in 'Units\UnitYouTubeDlVersionReader.pas',
+  UnitYouTubeDlVersionReader in 'Units\VersionCheck\UnitYouTubeDlVersionReader.pas',
   UnitYTSearch in 'YoutubeSearch\UnitYTSearch.pas',
-  UnitCommonMethods in 'Units\UnitCommonMethods.pas';
+  UnitCommonMethods in 'Units\Common\UnitCommonMethods.pas';
 
 {$R *.res}
 

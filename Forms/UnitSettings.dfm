@@ -46,7 +46,7 @@ object SettingsForm: TSettingsForm
     Top = 8
     Width = 521
     Height = 318
-    ActivePage = TabSheet3
+    ActivePage = TabSheet1
     TabOrder = 2
     object TabSheet3: TTabSheet
       Caption = 'General'
@@ -237,7 +237,9 @@ object SettingsForm: TSettingsForm
           '%(upload_date)s.%(title)s.%(ext)s'
           '%(upload_date)s.%(uploader)s.%(ext)s'
           '%(playlist_title)s.%(title)s.%(ext)s'
-          '%(playlist_title)s.%(playlist_index)s.%(ext)s')
+          '%(playlist_title)s.%(playlist_index)s.%(ext)s'
+          '%(uploader)s.%(title)s.%(ext)s'
+          '%(title)s.%(uploader)s.%(ext)s')
       end
     end
     object TabSheet2: TTabSheet

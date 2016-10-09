@@ -28,7 +28,7 @@ object AboutForm: TAboutForm
     Align = alTop
     Alignment = taCenter
     AutoSize = False
-    Caption = 'TVideoDownloader 2.0.1.507'
+    Caption = 'TVideoDownloader 2.0.2.518'
     ExplicitTop = 105
     ExplicitWidth = 645
   end
@@ -4868,6 +4868,7 @@ object AboutForm: TAboutForm
     Anchors = [akLeft, akBottom]
     Caption = 'Donate'
     TabOrder = 1
+    Visible = False
     OnClick = sButton2Click
   end
   object sButton3: TButton

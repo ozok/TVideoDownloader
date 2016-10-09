@@ -1,3 +1,9 @@
+--2.0.2
+-Improved: Downloading youtube-dl updates
+-Removed: Donation links
+-Fixed: Few minor problems
+-Updated: youtube-dl
+
 --2.0.1
 -Fixed: Added videos were not visible in the list
 -Fixed: Audio could not be muxed if dash video was selected

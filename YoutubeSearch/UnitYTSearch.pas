@@ -37,7 +37,7 @@ type
     property Running: Boolean read FRunning;
     property ErrorCode: Integer read FErrorCode;
     constructor Create();
-    destructor Destroy;
+    destructor Destroy; override;
     procedure Download(const Query: string);
   end;
 

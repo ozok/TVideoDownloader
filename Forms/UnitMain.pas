@@ -166,8 +166,6 @@ type
     // youtube search
     FYTSearcher: TYTSearcher;
 
-    // create guid file name
-    function CreateTempName: string;
     // check if video has audio
     function HasAudio(const FileName: string): Boolean;
     procedure SaveDownloadLogs;
@@ -226,7 +224,7 @@ var
 
 const
   Portable = False;
-  BuildInt = 507;
+  BuildInt = 518;
 
 implementation
 
@@ -512,7 +510,7 @@ end;
 
 procedure TMainForm.AddURL(const Url: string);
 var
-  YIE: TYouTubeVideoInfoExtractor;
+  LYIE: TYouTubeVideoInfoExtractor;
   I: Integer;
   LDownloadItem: TDownloadItem;
   LVideoDownloaderItem: TDownloadUIItem;
@@ -520,22 +518,23 @@ var
   LStartDate: TDateTime;
   LDiff: integer;
   LPreferedSubLangPrefix: string;
+  k: Integer;
 begin
   LStartDate := Now;
   if Length(Url) > 0 then
   begin
     LPass.UserName := UserEdit.Text;
     LPass.Password := PassEdit.Text;
-    YIE := TYouTubeVideoInfoExtractor.Create(Url, FYoutubedlPath, FTempFolder, LPass, not SettingsForm.DontPreviewImgBtn.Checked);
+    LYIE := TYouTubeVideoInfoExtractor.Create(Url, FYoutubedlPath, FTempFolder, LPass, not SettingsForm.DontPreviewImgBtn.Checked);
     try
       // read info from link
-      YIE.Start;
-      while (YIE.FormatStatus = stReading) or (YIE.ThumbStatus = stReading) or (YIE.TitleStatus = stReading) or (YIE.SubtitleStatus = stReading) do
+      LYIE.Start;
+      while (LYIE.FormatStatus = stReading) or (LYIE.SubtitleStatus = stReading) do
       begin
         LDiff := Abs(SecondsBetween(Now, LStartDate));
         if FStopAddingLink or (LDiff >= Round(SettingsForm.LinkAddTimeOutEdit.Value)) then
         begin
-          YIE.StopAll;
+          LYIE.StopAll;
           Break;
         end;
         Application.ProcessMessages;
@@ -543,10 +542,10 @@ begin
       end;
       if not FStopAddingLink then
       begin
-        if YIE.FormatList.Count > 0 then
+        if LYIE.FormatList.Count > 0 then
         begin
           LDownloadItem := TDownloadItem.Create;
-          LDownloadItem.Formats.AddStrings(YIE.FormatList);
+          LDownloadItem.Formats.AddRange(LYIE.FormatList);
           LDownloadItem.FormatIndex := LDownloadItem.Formats.Count - 1;
           if Length(SettingsForm.PreferedFormatEdit.Text) > 0 then
           begin
@@ -555,43 +554,42 @@ begin
             begin
               Application.ProcessMessages;
             // select the one meets user's selection
-              if StringStartsWith(LDownloadItem.Formats[i].ToUpper, UpperCase(SettingsForm.PreferedFormatEdit.Text)) then
+              if StringStartsWith(LDownloadItem.Formats[i].Desc.ToUpper, UpperCase(SettingsForm.PreferedFormatEdit.Text)) then
               begin
                 LDownloadItem.FormatIndex := i;
                 Break;
               end;
             end;
           end;
-          LDownloadItem.FormatIntegers.AddStrings(YIE.FormatInts);
 
           // prefred subtitle language
           // two chars
           LPreferedSubLangPrefix := SettingsForm.SubLangList.Text;
           LPreferedSubLangPrefix := LPreferedSubLangPrefix.Substring(0, 2);
 
-          LDownloadItem.ImagePath := YIE.ImageName;
-          LDownloadItem.OutputExtensions.AddStrings(YIE.OutExt);
+          LDownloadItem.ImagePath := LYIE.ImageName;
+          LDownloadItem.OutputExtensions.AddStrings(LYIE.OutExt);
           LDownloadItem.OutputExtensionIndex := 0;
-          LDownloadItem.OutputFileName := YIE.FileName;
-          LDownloadItem.Subtitles.AddStrings(YIE.Subtitles);
+          LDownloadItem.OutputFileName := LYIE.FileName;
+          LDownloadItem.Subtitles.AddStrings(LYIE.Subtitles);
           LDownloadItem.SubIndex := 0;
-          LDownloadItem.LinkType := YIE.LinkType;
+          LDownloadItem.LinkType := LYIE.LinkType;
           FDownloadItems.Add(LDownloadItem);
           LVideoDownloaderItem := TDownloadUIItem.Create(nil);
           LVideoDownloaderItem.Width := VideoDownloaderList.ClientWidth;
           LVideoDownloaderItem.Top := FVideoDownloadListItems.Count * 112;
           LVideoDownloaderItem.LinkLabel.Caption := Url;
-          LVideoDownloaderItem.FileNameLabel.Caption := YIE.FileName;
+          LVideoDownloaderItem.FileNameLabel.Caption := LYIE.FileName;
           LVideoDownloaderItem.FileNameLabel.Hint := LVideoDownloaderItem.FileNameLabel.Caption;
           LVideoDownloaderItem.DeleteButton.OnClick := DeleteBtnClick;
           LVideoDownloaderItem.PreviewBtn.OnClick := PreviewBtnClick;
           LVideoDownloaderItem.DeleteButton.Tag := FVideoDownloadListItems.Count;
           LVideoDownloaderItem.PreviewBtn.Tag := FVideoDownloadListItems.Count;
           // load program icon if download of thumb fails or user selected not to load it
-          if FileExists(YIE.ImageName) then
+          if FileExists(LYIE.ImageName) then
           begin
             try
-              LVideoDownloaderItem.PrevievImg.Picture.LoadFromFile(YIE.ImageName);
+              LVideoDownloaderItem.PrevievImg.Picture.LoadFromFile(LYIE.ImageName);
             except
               // load default image in case of an error
               LVideoDownloaderItem.PrevievImg.Picture.LoadFromFile(ExtractFileDir(Application.ExeName) + '\icon.ico');
@@ -604,10 +602,13 @@ begin
           LVideoDownloaderItem.DeleteButton.OnClick := DeleteBtnClick;
           LVideoDownloaderItem.ProgressLabel.Caption := 'Waiting...';
           VideoDownloaderList.InsertControl(LVideoDownloaderItem);
-          LVideoDownloaderItem.FormatList.Items.AddStrings(YIE.FormatList);
+          for k := 0 to LDownloadItem.Formats.Count - 1 do
+          begin
+            LVideoDownloaderItem.FormatList.Items.Add(LDownloadItem.Formats[k].Desc + ' Format: ' + LDownloadItem.Formats[k].Ext + ' Video: ' + LDownloadItem.Formats[k].VideoCodec + ' Audio: ' + LDownloadItem.Formats[k].AudioCodec);
+          end;
           LVideoDownloaderItem.FormatList.ItemIndex := LDownloadItem.FormatIndex;
           LVideoDownloaderItem.FormatList.OnChange := FormatListChange;
-          LVideoDownloaderItem.SubtitleList.Items.AddStrings(YIE.Subtitles);
+          LVideoDownloaderItem.SubtitleList.Items.AddStrings(LYIE.Subtitles);
 
           // try to select the prefed subtitle language
           if Length(LPreferedSubLangPrefix) > 0 then
@@ -640,7 +641,7 @@ begin
         end;
       end;
     finally
-      YIE.Free;
+      LYIE.Free;
     end;
   end;
 end;
@@ -865,14 +866,6 @@ begin
     FindClose(lSearchRec);
   end;
   AddToLog(0, 'Finished deleting temp files.');
-end;
-
-function TMainForm.CreateTempName: string;
-var
-  LGUID: TGUID;
-begin
-  CreateGUID(LGUID);
-  Result := GUIDToString(LGUID);
 end;
 
 procedure TMainForm.DownloadState;
@@ -1720,14 +1713,11 @@ var
   j: Integer;
   LDownloadedVideoName: string;
   LCMD: string;
-  // LDownloadSub: Boolean;
   LRenameFile: TStringList;
   LOutputFile: string;
-  // LFileNameExtractor: TFileNameExtractor;
   LDASHAudioExt: string;
   LDASHAudioCode: string;
   LDASHVideoExt: string;
-  LPos1: integer;
   LPass: string;
   LDownloadJob: TDownloadJob;
   LRenameJob: TRenameJob;
@@ -1735,7 +1725,6 @@ var
   LSubtitleFilePath: string;
   LOutExt: string;
   LVideoSubExt: string;
-  LSubLangSplitIndex: integer;
 begin
   if FVideoDownloadListItems.Count > 0 then
   begin
@@ -1789,19 +1778,21 @@ begin
           LDownloadedVideoName := FVideoDownloadListItems[i].FileNameLabel.Caption;
           if SettingsForm.DashVideoBtn.Checked then
           begin
-            if ContainsText(LSelectedFormatStr, 'DASH, video') then
+            if ContainsText(LSelectedFormatStr, 'DASH video') then
             begin
-              LDownloadedVideoName := CreateTempName;
+              LDownloadedVideoName := CreateTempFileName;
             end;
           end;
+
           // get file name
-          LPos1 := PosEx(',', FVideoDownloadListItems[i].FormatList.Text);
-          if LPos1 > 1 then
+          if FDownloadItems[i].FormatIndex > FDownloadItems[i].Formats.Count then
           begin
-            LOutExt := LowerCase(Copy(FVideoDownloadListItems[i].FormatList.Text, 1, LPos1 - 1));
-            LOutputFile := FVideoDownloadListItems[i].FileNameLabel.Caption + '.' + LOutExt;
-            LSubtitleFilePath := FVideoDownloadListItems[i].FileNameLabel.Caption + '.';
+            FDownloadItems[i].FormatIndex := FDownloadItems[i].Formats.Count-1;
           end;
+          LOutExt := FDownloadItems[i].Formats[FDownloadItems[i].FormatIndex].Ext;
+          LOutputFile := FVideoDownloadListItems[i].FileNameLabel.Caption + '.' + LOutExt;
+          LSubtitleFilePath := FVideoDownloadListItems[i].FileNameLabel.Caption + '.';
+
           // don't download twice
           if SettingsForm.DontDoubleDownloadBtn.Checked then
           begin
@@ -1817,28 +1808,22 @@ begin
               end;
             end;
           end;
+
+          // password
           if (Length(UserEdit.Text) > 0) and (Length(PassEdit.Text) > 0) then
           begin
             LPass := ' -u ' + UserEdit.Text + ' -p ' + PassEdit.Text;
           end;
+
           // youtube-dl command line
-          case FDownloadItems[i].LinkType of
-            general:
-              begin
-                LCMD := ' ' + LPass + ' -o "' + ExcludeTrailingPathDelimiter(DirectoryEdit.Text) + '\' + SettingsForm.FilePatternList.Text + '" -i --no-playlist -f ' + FDownloadItems[i].FormatIntegers[FDownloadItems[i].FormatIndex];
-              end;
-            soundcloud:
-              begin
-                LCMD := ' ' + LPass + ' -o "' + ExcludeTrailingPathDelimiter(DirectoryEdit.Text) + '\' + SettingsForm.FilePatternList.Text + '" -i --no-playlist -x --audio-format ' + FDownloadItems[i].FormatIntegers[FDownloadItems[i].FormatIndex];
-              end;
-          end;
-          // LDownloadSub := False;
+          LCMD := ' ' + LPass + ' -o "' + IncludeTrailingPathDelimiter(DirectoryEdit.Text) + LOutputFile + '" -i --no-playlist -f ' + FDownloadItems[i].Formats[FDownloadItems[i].FormatIndex].Id;
+
+          // subtitle
           if FDownloadItems[i].SubIndex > 0 then
           begin
             LSubLangStr := FVideoDownloadListItems[i].SubtitleList.Text;
             LSubtitleFilePath := DirectoryEdit.Text + '\' + LSubtitleFilePath + LSubLangStr + '.vtt';
             LCMD := LCMD + ' --write-sub --sub-lang ' + LSubLangStr;
-            // LDownloadSub := True;
           end
           else
           begin
@@ -1849,6 +1834,7 @@ begin
           begin
             LCMD := LCMD + ' -r ' + SettingsForm.RateLimitEdit.Text + 'K';
           end;
+
           LCMD := LCMD + ' -v -c -w ' + FVideoDownloadListItems[i].LinkLabel.Caption;
           LDownloadJob := TDownloadJob.Create;
           LDownloadJob.CommandLine := LCMD;
@@ -1858,10 +1844,11 @@ begin
           LDownloadJob.ProcessInfo := '[Downloading Video]';
           LDownloadJob.SubtitleFilePath := LSubtitleFilePath;
           FVideoDownloadProcesses[i mod SettingsForm.ProcessCountBar.Position].DownloadJobs.Add(LDownloadJob);
+
           // if dash video selected
           // detect if selected format is indeed dash video only
           LSelectedFormatStr := FVideoDownloadListItems[i].FormatList.Text;
-          if SettingsForm.DashVideoBtn.Checked and ContainsText(LSelectedFormatStr, 'DASH, video') then
+          if SettingsForm.DashVideoBtn.Checked and ContainsText(LSelectedFormatStr, 'DASH video') then
           begin
             // audio extension and code
             LDASHAudioExt := VideoTypeToAudio(LSelectedFormatStr);
@@ -1874,7 +1861,7 @@ begin
             end;
             // get audio
             LDownloadJob := TDownloadJob.Create;
-            LDownloadJob.CommandLine := ' -o "' + ExcludeTrailingPathDelimiter(DirectoryEdit.Text) + '\' + ReplaceStr(SettingsForm.FilePatternList.Text, '.%(ext)s', '') + LDASHAudioExt + '" -i --no-playlist -f ' + LDASHAudioCode + ' -c -w ' + FVideoDownloadListItems[i].LinkLabel.Caption;
+            LDownloadJob.CommandLine := ' -o "' + ExcludeTrailingPathDelimiter(DirectoryEdit.Text) + '\' + ChangeFileExt(LOutputFile, '') + LDASHAudioExt + '" -i --no-playlist -f ' + LDASHAudioCode + ' -c -w ' + FVideoDownloadListItems[i].LinkLabel.Caption;
             LDownloadJob.ProcessType := youtubedl;
             LDownloadJob.ApplicationPath := FYoutubedlPath;
             LDownloadJob.FileIndex := i;
@@ -1898,7 +1885,7 @@ begin
           end;
 
           // remux dash m4a to mp4 audio
-          if ContainsText(LSelectedFormatStr, 'M4A, AUDIO, ONLY, DASH') then
+          if ContainsText(LSelectedFormatStr, '(Dash audio)') and (FDownloadItems[i].Formats[FDownloadItems[i].FormatIndex].Ext = 'm4a') then
           begin
             LCMD := ' -add "' + DirectoryEdit.Text + '\' + LOutputFile + '" -new "' + DirectoryEdit.Text + '\' + LOutputFile + '"';
 
@@ -1912,22 +1899,23 @@ begin
           end;
 
           // extract ogg file from webm
-          if ContainsText(LSelectedFormatStr, 'WEBM, AUDIO, ONLY, DASH') then
+          if ContainsText(LSelectedFormatStr, '(Dash audio)') and (FDownloadItems[i].Formats[FDownloadItems[i].FormatIndex].Ext = 'webm') then
           begin
-            LCMD := ' -y -i "' + DirectoryEdit.Text + '\' + LOutputFile + '" -vn -f ogg "' + DirectoryEdit.Text + '\' + ChangeFileExt(LOutputFile, '.ogg') + '"';
+            LCMD := ' -y -i "' + DirectoryEdit.Text + '\' + LOutputFile + '" -vn -c:a copy -f opus "' + DirectoryEdit.Text + '\' + ChangeFileExt(LOutputFile, '.opus') + '"';
 
             LDownloadJob := TDownloadJob.Create;
             LDownloadJob.CommandLine := LCMD;
             LDownloadJob.ProcessType := ffmpeg;
             LDownloadJob.ApplicationPath := FFFMpegPath;
             LDownloadJob.FileIndex := i;
-            LDownloadJob.ProcessInfo := '[Extracting Ogg]';
+            LDownloadJob.ProcessInfo := '[Extracting Opus]';
             FVideoDownloadProcesses[i mod SettingsForm.ProcessCountBar.Position].DownloadJobs.Add(LDownloadJob);
-            FFilesToCheck.Add(DirectoryEdit.Text + '\' + ChangeFileExt(LOutputFile, '.ogg'));
+            FFilesToCheck.Add(DirectoryEdit.Text + '\' + ChangeFileExt(LOutputFile, '.opus'));
+            FSubsToDelete.Add(DirectoryEdit.Text + '\' + LOutputFile);
           end;
 
           // mux sub to mp4 file
-          if (Length(LSubtitleFilePath) > 0) and ((LOutExt = 'mp4') or (LOutExt = 'webm')) and SettingsForm.MuxSubBtn.Checked then
+          if (not ContainsText(LSelectedFormatStr, '(Dash audio)')) and (Length(LSubtitleFilePath) > 0) and ((LOutExt = 'mp4') or (LOutExt = 'webm')) and SettingsForm.MuxSubBtn.Checked then
           begin
             LVideoSubExt := '.wsub' + ExtractFileExt(LOutputFile);
             // vtt for webm

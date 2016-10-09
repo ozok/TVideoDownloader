@@ -26,51 +26,6 @@ object MainForm: TMainForm
   OnShow = FormShow
   PixelsPerInch = 96
   TextHeight = 13
-  object LoadPanel: TPanel
-    Left = 214
-    Top = 347
-    Width = 736
-    Height = 95
-    BevelOuter = bvLowered
-    TabOrder = 1
-    Visible = False
-    object LoadPanelLabel: TLabel
-      Left = 1
-      Top = 1
-      Width = 734
-      Height = 47
-      Align = alClient
-      Alignment = taCenter
-      Caption = 'Status'
-      Layout = tlCenter
-      ExplicitWidth = 31
-      ExplicitHeight = 13
-    end
-    object AbortVideoAddBtn: TButton
-      Left = 1
-      Top = 58
-      Width = 734
-      Height = 36
-      Cursor = crHandPoint
-      Margins.Left = 10
-      Margins.Top = 1
-      Margins.Right = 10
-      Align = alBottom
-      Caption = 'Stop'
-      TabOrder = 0
-      OnClick = AbortVideoAddBtnClick
-    end
-    object LoadProgressBar: TProgressBar
-      Left = 1
-      Top = 48
-      Width = 734
-      Height = 10
-      Margins.Top = 0
-      Margins.Bottom = 0
-      Align = alBottom
-      TabOrder = 1
-    end
-  end
   object NormalPanel: TPanel
     Left = 0
     Top = 0
@@ -351,7 +306,7 @@ object MainForm: TMainForm
         Width = 105
         Height = 92
         Cursor = crHandPoint
-        Hint = 'Start to download videos'
+        Hint = 'Start downloading videos'
         Align = alRight
         Caption = 'DOWNLOAD'
         ImageAlignment = iaTop
@@ -423,6 +378,7 @@ object MainForm: TMainForm
         ImageMargins.Top = 5
         Images = ButtonImages
         TabOrder = 7
+        Visible = False
         OnClick = M1Click
       end
       object FastLinkAddPanel: TPanel
@@ -638,6 +594,51 @@ object MainForm: TMainForm
     Caption = 'Please wait...'
     TabOrder = 2
     Visible = False
+  end
+  object LoadPanel: TPanel
+    Left = 214
+    Top = 347
+    Width = 736
+    Height = 95
+    BevelOuter = bvLowered
+    TabOrder = 1
+    Visible = False
+    object LoadPanelLabel: TLabel
+      Left = 1
+      Top = 1
+      Width = 734
+      Height = 47
+      Align = alClient
+      Alignment = taCenter
+      Caption = 'Status'
+      Layout = tlCenter
+      ExplicitWidth = 31
+      ExplicitHeight = 13
+    end
+    object AbortVideoAddBtn: TButton
+      Left = 1
+      Top = 58
+      Width = 734
+      Height = 36
+      Cursor = crHandPoint
+      Margins.Left = 10
+      Margins.Top = 1
+      Margins.Right = 10
+      Align = alBottom
+      Caption = 'Stop'
+      TabOrder = 0
+      OnClick = AbortVideoAddBtnClick
+    end
+    object LoadProgressBar: TProgressBar
+      Left = 1
+      Top = 48
+      Width = 734
+      Height = 10
+      Margins.Top = 0
+      Margins.Bottom = 0
+      Align = alBottom
+      TabOrder = 1
+    end
   end
   object AddLinkMenu: TPopupMenu
     Left = 24
@@ -5534,6 +5535,7 @@ object MainForm: TMainForm
       end
       object M1: TMenuItem
         Caption = 'Make a donation'
+        Visible = False
         OnClick = M1Click
       end
       object S1: TMenuItem
