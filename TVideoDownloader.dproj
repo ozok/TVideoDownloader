@@ -127,9 +127,9 @@
         <DCC_LocalDebugSymbols>true</DCC_LocalDebugSymbols>
         <DCC_Define>madExcept;$(DCC_Define)</DCC_Define>
         <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
-        <VerInfo_Build>596</VerInfo_Build>
+        <VerInfo_Build>598</VerInfo_Build>
         <Icon_MainIcon>TVideoDownloader_Icon1.ico</Icon_MainIcon>
-        <VerInfo_Keys>CompanyName=ozok;FileDescription=TVideoDownloader;FileVersion=2.1.0.596;InternalName=TVideoDownloader;LegalCopyright=(c) 2014-2016;LegalTrademarks=TVideoDownloader;OriginalFilename=TVideoDownloader.exe;ProductName=TVideoDownloader;ProductVersion=1.0.0.0;Comments=TVideoDownloader;ProgramID=com.embarcadero.$(MSBuildProjectName)</VerInfo_Keys>
+        <VerInfo_Keys>CompanyName=ozok;FileDescription=TVideoDownloader;FileVersion=2.1.0.598;InternalName=TVideoDownloader;LegalCopyright=(c) 2014-2016;LegalTrademarks=TVideoDownloader;OriginalFilename=TVideoDownloader.exe;ProductName=TVideoDownloader;ProductVersion=1.0.0.0;Comments=TVideoDownloader;ProgramID=com.embarcadero.$(MSBuildProjectName)</VerInfo_Keys>
         <VerInfo_Locale>1033</VerInfo_Locale>
         <BT_BuildType>Debug</BT_BuildType>
     </PropertyGroup>

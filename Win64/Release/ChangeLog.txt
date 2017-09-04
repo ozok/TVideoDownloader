@@ -2,6 +2,8 @@
 -Added: Paste button
 -Added: Preview is now using mpv
 -Improved: Interface
+-Fixed: A possible fix for mp4box not starting correctly in some systems
+-Updated: youtube-dl and mp4box
 
 --2.0.2
 -Improved: Downloading youtube-dl updates

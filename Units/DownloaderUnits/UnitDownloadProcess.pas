@@ -68,6 +68,7 @@ type
     // flag to indicate if encoding is stopped by user
     FStoppedByUser: Boolean;
     FErrorLog: TStringList;
+    FPercentage: integer;
 
     // process events
     procedure ProcessRead(Sender: TObject; const S: string; const StartsOnNewLine: Boolean);
@@ -96,6 +97,7 @@ type
     property ExeName: string read GetExeName;
     property FileIndex: Integer read GetFileIndex;
     property DownloadJobs: TDownloadJobs read FDownloadJobs write FDownloadJobs;
+    property Percentage: integer read FPercentage;
     constructor Create();
     destructor Destroy(); override;
     procedure Start();
@@ -411,6 +413,7 @@ begin
   begin
     MainForm.FVideoDownloadListItems[GetFileIndex].ProgressLabel.Caption := ProgressStr;
     MainForm.FVideoDownloadListItems[GetFileIndex].ProgressBar.Position := Progress;
+    FPercentage := Progress;
   end;
 end;
 

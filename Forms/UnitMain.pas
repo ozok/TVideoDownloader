@@ -2103,6 +2103,7 @@ var
   I: Integer;
   LMissingFileList: TStringList;
   LNewPos: integer;
+  LProcessProgresses: integer;
 begin
   LTotalFilesDone := 0;
   for I := Low(FVideoDownloadProcesses) to High(FVideoDownloadProcesses) do
@@ -2138,7 +2139,7 @@ begin
           // check output files
           LMissingFileList := TStringList.Create;
           try
-            if not  CheckOutputFiles(LMissingFileList) then
+            if not CheckOutputFiles(LMissingFileList) then
             begin
               AddToLog(0, 'TVideoDownloader could locate all output files.');
             end;
@@ -2191,7 +2192,21 @@ begin
     TotalBar.Max := 100;
     LNewPos := (100 * (LTotalFilesDone + FSkippedVideoCount) div (FVideoDownloadTotalCMDCount + FSkippedVideoCount));
 
-    TotalBar.Position := LNewPos;
+    LProcessProgresses := 0;
+    for I := Low(FVideoDownloadProcesses) to High(FVideoDownloadProcesses) do
+    begin
+      if FVideoDownloadProcesses[I].DownloadJobs.Count > 0 then
+      begin
+        Inc(LProcessProgresses, FVideoDownloadProcesses[I].Percentage);
+      end;
+    end;
+
+    if FVideoDownloadTotalCMDCount > 0 then
+    begin
+      LProcessProgresses := LProcessProgresses div FVideoDownloadTotalCMDCount
+    end;
+
+    TotalBar.Position := LNewPos + LProcessProgresses;
     VideoDownloaderProgressLabel.Caption := 'Progress: ' + FloatToStr(LTotalFilesDone + FSkippedVideoCount) + '/' + FloatToStr(FVideoDownloadTotalCMDCount + FSkippedVideoCount);
     if FVideoDownloadTotalCMDCount > 0 then
     begin
