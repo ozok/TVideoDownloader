@@ -40,7 +40,7 @@ object AboutForm: TAboutForm
     Align = alTop
     Alignment = taCenter
     AutoSize = False
-    Caption = '2014-2016 (c) ozok - ozok26@gmail.com GPLv2'
+    Caption = '2014-2017 (c) ozok - ozok26@gmail.com GPLv2'
     ExplicitTop = 41
   end
   object sLabel3: TLabel

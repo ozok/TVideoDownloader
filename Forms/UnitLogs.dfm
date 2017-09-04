@@ -47,6 +47,10 @@ object LogForm: TLogForm
     end
     object sTabSheet2: TTabSheet
       Caption = 'Command lines'
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object CMDLog: TMemo
         Left = 0
         Top = 0
@@ -67,6 +71,10 @@ object LogForm: TLogForm
     end
     object sTabSheet3: TTabSheet
       Caption = 'Console error logs'
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object ConsoleLog: TMemo
         Left = 0
         Top = 21

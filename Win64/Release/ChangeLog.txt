@@ -1,3 +1,8 @@
+--2.1.0
+-Added: Paste button
+-Added: Preview is now using mpv
+-Improved: Interface
+
 --2.0.2
 -Improved: Downloading youtube-dl updates
 -Removed: Donation links

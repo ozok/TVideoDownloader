@@ -1,20 +1,20 @@
 { *
-  * Copyright (C) 2011-2014 ozok <ozok26@gmail.com>
+  * Copyright (C) 2014-2017 ozok <ozok26@gmail.com>
   *
-  * This file is part of TEncoder.
+  * This file is part of TVideoDownloader.
   *
-  * TEncoder is free software: you can redistribute it and/or modify
+  * TVideoDownloader is free software: you can redistribute it and/or modify
   * it under the terms of the GNU General Public License as published by
   * the Free Software Foundation, either version 2 of the License, or
   * (at your option) any later version.
   *
-  * TEncoder is distributed in the hope that it will be useful,
+  * TVideoDownloader is distributed in the hope that it will be useful,
   * but WITHOUT ANY WARRANTY; without even the implied warranty of
   * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
   * GNU General Public License for more details.
   *
   * You should have received a copy of the GNU General Public License
-  * along with TEncoder.  If not, see <http://www.gnu.org/licenses/>.
+  * along with TVideoDownloader.  If not, see <http://www.gnu.org/licenses/>.
   *
   * }
 unit UnitCommonTypes;
@@ -22,7 +22,7 @@ unit UnitCommonTypes;
 interface
 
 uses
-  Generics.Collections, Classes;
+  Generics.Collections, Classes, Windows, SysUtils, Messages;
 
 type
   TUserPass = record
@@ -42,7 +42,7 @@ type
 type
   TLinkType = (general = 0, soundcloud = 1);
 
-Type
+type
   TDownloadItem = class(TObject)
   private
     FFormats: TList<TFormadItem>;
@@ -65,7 +65,6 @@ Type
     property Subtitles: TStringList read FSubtitles write FSubtitles;
     property SubIndex: integer read FSubIndex write FSubIndex;
     property LinkType: TLinkType read FType write FType;
-
     constructor Create;
     destructor Destroy; override;
   end;
@@ -97,3 +96,4 @@ begin
 end;
 
 end.
+

@@ -1222,4 +1222,9 @@ object DownloadUIItem: TDownloadUIItem
       FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF00000000000000000000000000000000
       000000000000}
   end
+  object PreviewProcess: TJvCreateProcess
+    OnTerminate = PreviewProcessTerminate
+    Left = 786
+    Top = 24
+  end
 end

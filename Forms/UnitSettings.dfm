@@ -46,7 +46,7 @@ object SettingsForm: TSettingsForm
     Top = 8
     Width = 521
     Height = 318
-    ActivePage = TabSheet1
+    ActivePage = TabSheet3
     TabOrder = 2
     object TabSheet3: TTabSheet
       Caption = 'General'
@@ -245,6 +245,10 @@ object SettingsForm: TSettingsForm
     object TabSheet2: TTabSheet
       Caption = 'Subtitle'
       ImageIndex = 1
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Label5: TLabel
         Left = 5
         Top = 6

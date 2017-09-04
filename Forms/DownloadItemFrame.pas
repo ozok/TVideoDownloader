@@ -1,3 +1,22 @@
+{ *
+  * Copyright (C) 2014-2017 ozok <ozok26@gmail.com>
+  *
+  * This file is part of TVideoDownloader.
+  *
+  * TVideoDownloader is free software: you can redistribute it and/or modify
+  * it under the terms of the GNU General Public License as published by
+  * the Free Software Foundation, either version 2 of the License, or
+  * (at your option) any later version.
+  *
+  * TVideoDownloader is distributed in the hope that it will be useful,
+  * but WITHOUT ANY WARRANTY; without even the implied warranty of
+  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  * GNU General Public License for more details.
+  *
+  * You should have received a copy of the GNU General Public License
+  * along with TVideoDownloader.  If not, see <http://www.gnu.org/licenses/>.
+  *
+  * }
 unit DownloadItemFrame;
 
 interface
@@ -5,7 +24,8 @@ interface
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ExtCtrls, Vcl.StdCtrls,
-  Vcl.Samples.Gauges, System.ImageList, Vcl.ImgList, Vcl.ComCtrls;
+  Vcl.Samples.Gauges, System.ImageList, Vcl.ImgList, Vcl.ComCtrls,
+  JvComponentBase, JvCreateProcess;
 
 type
   TDownloadUIItem = class(TFrame)
@@ -24,6 +44,8 @@ type
     Bevel1: TBevel;
     ProgressBar: TProgressBar;
     ImageList1: TImageList;
+    PreviewProcess: TJvCreateProcess;
+    procedure PreviewProcessTerminate(Sender: TObject; ExitCode: Cardinal);
   private
     { Private declarations }
   public
@@ -55,6 +77,11 @@ begin
   FormatList.Enabled := True;
   SubtitleList.Enabled := True;
   DeleteButton.Enabled := True;
+  PreviewBtn.Enabled := True;
+end;
+
+procedure TDownloadUIItem.PreviewProcessTerminate(Sender: TObject; ExitCode: Cardinal);
+begin
   PreviewBtn.Enabled := True;
 end;
 
