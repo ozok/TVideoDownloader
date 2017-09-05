@@ -354,7 +354,7 @@ object MainForm: TMainForm
         Width = 110
         Height = 67
         Cursor = crHandPoint
-        Hint = 'Support this project'
+        Hint = 'Make a donation to support this software'
         Align = alRight
         Caption = 'Support This Project'
         ImageAlignment = iaTop
@@ -2398,12 +2398,6 @@ object MainForm: TMainForm
     Left = 880
     Top = 173
   end
-  object Taskbar1: TTaskbar
-    TaskBarButtons = <>
-    TabProperties = []
-    Left = 856
-    Top = 288
-  end
   object DropURLTarget2: TDropURLTarget
     DragTypes = [dtCopy, dtLink]
     GetDataOnEnter = True
@@ -2971,5 +2965,11 @@ object MainForm: TMainForm
       FF8001FF000000000000000000000000FFF00FFF000000000000000000000000
       FFF00FFF00000000000000000000000000000000000000000000000000000000
       000000000000}
+  end
+  object Taskbar1: TTaskbar
+    TaskBarButtons = <>
+    TabProperties = []
+    Left = 768
+    Top = 312
   end
 end

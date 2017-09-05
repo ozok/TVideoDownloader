@@ -67,14 +67,13 @@ end;
 
 procedure TAboutForm.sButton2Click(Sender: TObject);
 begin
-  ShellExecute(0, 'open', 'https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=2DCLCV369NLBW', nil, nil, SW_SHOWNORMAL);
+  ShellExecute(0, 'open', 'https://ozok26.com/donate/', nil, nil, SW_SHOWNORMAL);
 end;
 
 procedure TAboutForm.sButton3Click(Sender: TObject);
 begin
-  ShellExecute(0, 'open', 'http://www.ozok26.com/tvdeodownloader-8', nil, nil, SW_SHOWNORMAL);
+  ShellExecute(0, 'open', 'https://ozok26.com/category/tvideodownloader/', nil, nil, SW_SHOWNORMAL);
 end;
 
 end.
-
 

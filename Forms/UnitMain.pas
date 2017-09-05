@@ -114,7 +114,6 @@ type
     Bevel3: TBevel;
     DropURLTarget1: TDropURLTarget;
     DropHerePanel: TPanel;
-    Taskbar1: TTaskbar;
     E3: TMenuItem;
     DropURLTarget2: TDropURLTarget;
     FuncPages: TPageControl;
@@ -130,6 +129,7 @@ type
     S3: TMenuItem;
     PasteLinkBtn: TButton;
     JvImageList1: TJvImageList;
+    Taskbar1: TTaskbar;
     procedure AddLinkBtnClick(Sender: TObject);
     procedure ClearLinksBtnClick(Sender: TObject);
     procedure PassBtnClick(Sender: TObject);
@@ -463,6 +463,7 @@ begin
           MenuState(false);
           AddingState;
           FStopAddingLink := false;
+          Taskbar1.ProgressState := TTaskBarProgressState.Indeterminate;
           try
             LoadPanelLabel.Caption := 'Extracting video links from playlist, this may take a while...';
             while LYIE.PlaylistStatus = stReading do
@@ -476,8 +477,12 @@ begin
               Sleep(100);
               LoadPanelLabel.Caption := 'Extracting video links from playlist, this may take a while...(Found ' + LYIE.PlaylistFoundVideosCount.ToString() + ' videos)';
             end;
-            if not FStopAddingLink then
+
+            if Application.MessageBox('Program may have extracted some links. Add them?', 'Add Links', MB_ICONQUESTION or MB_YESNO) = ID_YES then
             begin
+              FStopAddingLink := False;
+
+              Taskbar1.ProgressState := TTaskBarProgressState.Normal;
               if LYIE.PlayListVideoLinks.Count > 0 then
               begin
                 LoadProgressBar.Style := pbstNormal;
@@ -488,13 +493,15 @@ begin
                 end;
                 AddToLog(0, 'Found ' + FloatToStr(LYIE.PlayListVideoLinks.Count) + ' videos.');
                 AddToLog(0, '');
+                Taskbar1.ProgressMaxValue := LYIE.PlayListVideoLinks.Count;
                 for I := 0 to LYIE.PlayListVideoLinks.Count - 1 do
                 begin
                   if FStopAddingLink then
                   begin
                     Break;
                   end;
-                  LoadProgressBar.Position := I + 1;
+                  LoadProgressBar.Position := I;
+                  Taskbar1.ProgressValue := I;
                   LoadPanelLabel.Caption := 'Adding videos to the list...(' + FloatToStr(I + 1) + '/' + FloatToStr(LYIE.PlayListVideoLinks.Count) + ')';
                   AddURL('http://www.youtube.com/watch?v=' + LYIE.PlayListVideoLinks[I]);
                 end;
@@ -515,6 +522,7 @@ begin
             LoadProgressBar.Position := 0;
             Self.Width := Self.Width + 1;
             Self.Width := Self.Width - 1;
+            Taskbar1.ProgressState := TTaskBarProgressState.None;
           end;
         end;
     end;
@@ -937,7 +945,8 @@ begin
   DirectoryEdit.Enabled := false;
   ClearLinksBtn.Enabled := false;
   StopDownloadBtn.Enabled := True;
-  SettingsBtn.Enabled := false;
+//  SettingsBtn.Enabled := false;
+  S3.Enabled := False;
   PassBtn.Enabled := false;
   FastLinkAddPanel.Enabled := false;
   GetLatestYoutubedlBtn.Enabled := false;
@@ -1191,7 +1200,8 @@ begin
   DirectoryEdit.Enabled := True;
   ClearLinksBtn.Enabled := True;
   StopDownloadBtn.Enabled := false;
-  SettingsBtn.Enabled := True;
+//  SettingsBtn.Enabled := True;
+  S3.Enabled := True;
   PassBtn.Enabled := True;
   FastLinkAddPanel.Enabled := True;
   GetLatestYoutubedlBtn.Enabled := True;
@@ -2208,12 +2218,11 @@ begin
 
     TotalBar.Position := LNewPos + LProcessProgresses;
     VideoDownloaderProgressLabel.Caption := 'Progress: ' + FloatToStr(LTotalFilesDone + FSkippedVideoCount) + '/' + FloatToStr(FVideoDownloadTotalCMDCount + FSkippedVideoCount);
-    if FVideoDownloadTotalCMDCount > 0 then
-    begin
-      MainForm.Caption := FloatToStr(TotalBar.Position) + '% [TVideoDownloader]';
-      Taskbar1.ProgressMaxValue := FVideoDownloadTotalCMDCount + FSkippedVideoCount;
-      Taskbar1.ProgressValue := LTotalFilesDone + FSkippedVideoCount;
-    end;
+
+    MainForm.Caption := FloatToStr(TotalBar.Position) + '% [TVideoDownloader]';
+    Taskbar1.ProgressMaxValue := TotalBar.Max;
+    Taskbar1.ProgressValue := TotalBar.Position;
+
   end;
 end;
 
@@ -2315,7 +2324,7 @@ begin
         begin
           if ID_YES = Application.MessageBox('There is a new version. Would you like to download it?', 'New Version', MB_ICONQUESTION or MB_YESNO) then
           begin
-            ShellExecute(0, 'open', 'http://www.ozok26.com/tvdeodownloader-8', nil, nil, SW_SHOWNORMAL);
+            ShellExecute(0, 'open', 'https://ozok26.com/category/tvideodownloader/', nil, nil, SW_SHOWNORMAL);
           end;
         end
         else

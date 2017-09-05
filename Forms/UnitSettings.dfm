@@ -228,27 +228,12 @@ object SettingsForm: TSettingsForm
         Width = 378
         Height = 21
         Style = csDropDownList
-        ItemIndex = 0
         TabOrder = 7
-        Text = '%(title)s.%(ext)s'
-        Items.Strings = (
-          '%(title)s.%(ext)s'
-          '%(uploader)s.%(ext)s'
-          '%(upload_date)s.%(title)s.%(ext)s'
-          '%(upload_date)s.%(uploader)s.%(ext)s'
-          '%(playlist_title)s.%(title)s.%(ext)s'
-          '%(playlist_title)s.%(playlist_index)s.%(ext)s'
-          '%(uploader)s.%(title)s.%(ext)s'
-          '%(title)s.%(uploader)s.%(ext)s')
       end
     end
     object TabSheet2: TTabSheet
       Caption = 'Subtitle'
       ImageIndex = 1
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object Label5: TLabel
         Left = 5
         Top = 6

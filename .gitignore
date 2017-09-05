@@ -17,3 +17,7 @@ Win64/Release/TVideoDownloader.lng
 *.stat
 TVideoDownloader.identcache
 Win64/Release/formats.json
+/Win32/Release/tools/mpv.com
+/Win64/Release/tools/mpv.com
+/Win32/Release/tools/manual.pdf
+/Win64/Release/tools/manual.pdf

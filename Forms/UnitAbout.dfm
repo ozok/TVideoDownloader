@@ -51,7 +51,7 @@ object AboutForm: TAboutForm
     Align = alTop
     Alignment = taCenter
     AutoSize = False
-    Caption = 'Uses youtube-dl, ffmpeg, mp4box, mediainfo'
+    Caption = 'Uses youtube-dl, ffmpeg, mp4box, mediainfo, mpv'
     ExplicitTop = 135
     ExplicitWidth = 645
   end
@@ -4868,7 +4868,6 @@ object AboutForm: TAboutForm
     Anchors = [akLeft, akBottom]
     Caption = 'Donate'
     TabOrder = 1
-    Visible = False
     OnClick = sButton2Click
   end
   object sButton3: TButton

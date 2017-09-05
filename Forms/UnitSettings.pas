@@ -89,6 +89,8 @@ end;
 
 procedure TSettingsForm.FormCreate(Sender: TObject);
 begin
+  FilePatternList.Items.LoadFromFile(ExtractFileDir(Application.ExeName) + '\patterns.txt');
+
   LoadOptions;
 end;
 
