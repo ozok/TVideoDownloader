@@ -48,11 +48,13 @@ type
     procedure PreviewProcessTerminate(Sender: TObject; ExitCode: Cardinal);
   private
     { Private declarations }
+    FMPVPath, FLocalMPVPath: string;
   public
     { Public declarations }
     procedure ResetProgressLabel;
     procedure Disable;
     procedure Enable;
+    procedure Preview(const MPVPath: string; const LocalMPVPath: string);
   end;
 
 implementation
@@ -80,9 +82,48 @@ begin
   PreviewBtn.Enabled := True;
 end;
 
-procedure TDownloadUIItem.PreviewProcessTerminate(Sender: TObject; ExitCode: Cardinal);
+procedure TDownloadUIItem.Preview(const MPVPath: string; const LocalMPVPath: string);
+var
+  LURL: string;
 begin
-  PreviewBtn.Enabled := True;
+  LURL := LinkLabel.Caption;
+
+  FMPVPath := MPVPath;
+  FLocalMPVPath := LocalMPVPath;
+
+  if FileExists(MPVPath) then
+  begin
+    PreviewProcess.ApplicationName := MPVPath;
+    PreviewProcess.CommandLine := ' --ytdl "' + LURL + '" --geometry=800x600';
+    PreviewBtn.Enabled := False;
+    PreviewProcess.Run;
+  end
+  else
+  begin
+    Application.MessageBox('Unable to find mpv.exe.', 'Error', MB_ICONERROR);
+  end;
+end;
+
+procedure TDownloadUIItem.PreviewProcessTerminate(Sender: TObject; ExitCode: Cardinal);
+var
+  LURL: string;
+begin
+  LURL := LinkLabel.Caption;
+    PreviewBtn.Enabled := True;
+  if ExitCode <> 0 then
+  begin
+    if FileExists(FLocalMPVPath) then
+    begin
+      PreviewProcess.ApplicationName := FLocalMPVPath;
+      PreviewProcess.CommandLine := ' --ytdl "' + LURL + '" --geometry=800x600';
+      PreviewBtn.Enabled := False;
+      PreviewProcess.Run;
+    end
+    else
+    begin
+      Application.MessageBox('Unable to find mpv.exe.', 'Error', MB_ICONERROR);
+    end;
+  end;
 end;
 
 procedure TDownloadUIItem.ResetProgressLabel;

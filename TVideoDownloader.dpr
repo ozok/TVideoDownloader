@@ -24,13 +24,16 @@ uses
   UnitPreview in 'Forms\UnitPreview.pas' {PreviewForm},
   UnitYouTubeDlVersionReader in 'Units\VersionCheck\UnitYouTubeDlVersionReader.pas',
   UnitYTSearch in 'YoutubeSearch\UnitYTSearch.pas',
-  UnitCommonMethods in 'Units\Common\UnitCommonMethods.pas';
+  UnitCommonMethods in 'Units\Common\UnitCommonMethods.pas',
+  Vcl.Themes,
+  Vcl.Styles;
 
 {$R *.res}
 
 begin
   Application.Initialize;
   Application.MainFormOnTaskbar := True;
+  TStyleManager.TrySetStyle('Emerald Light Slate');
   Application.Title := 'TVideoDownloader';
   Application.CreateForm(TMainForm, MainForm);
   Application.CreateForm(TSettingsForm, SettingsForm);

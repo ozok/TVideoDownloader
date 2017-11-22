@@ -3,7 +3,7 @@ object AboutForm: TAboutForm
   Top = 0
   BorderStyle = bsToolWindow
   Caption = 'About TVideoDownloader'
-  ClientHeight = 115
+  ClientHeight = 249
   ClientWidth = 296
   Color = clBtnFace
   DoubleBuffered = True
@@ -17,7 +17,7 @@ object AboutForm: TAboutForm
   OnClose = FormClose
   DesignSize = (
     296
-    115)
+    249)
   PixelsPerInch = 96
   TextHeight = 13
   object sLabel1: TLabel
@@ -4852,32 +4852,68 @@ object AboutForm: TAboutForm
   end
   object sButton1: TButton
     Left = 213
-    Top = 82
+    Top = 216
     Width = 75
     Height = 25
     Anchors = [akRight, akBottom]
     Caption = 'Close'
     TabOrder = 0
     OnClick = sButton1Click
-  end
-  object sButton2: TButton
-    Left = 89
-    Top = 82
-    Width = 75
-    Height = 25
-    Anchors = [akLeft, akBottom]
-    Caption = 'Donate'
-    TabOrder = 1
-    OnClick = sButton2Click
+    ExplicitTop = 82
   end
   object sButton3: TButton
     Left = 8
-    Top = 82
+    Top = 216
     Width = 75
     Height = 25
     Anchors = [akLeft, akBottom]
     Caption = 'Homepage'
-    TabOrder = 2
+    TabOrder = 1
     OnClick = sButton3Click
+    ExplicitTop = 82
+  end
+  object GroupBox1: TGroupBox
+    Left = 8
+    Top = 88
+    Width = 280
+    Height = 122
+    Caption = 'Donate'
+    TabOrder = 2
+    object Label1: TLabel
+      Left = 16
+      Top = 24
+      Width = 249
+      Height = 27
+      AutoSize = False
+      Caption = 'Please consider making a donation to this project using bitcoin.'
+      WordWrap = True
+    end
+    object BtcEdit: TEdit
+      Left = 16
+      Top = 55
+      Width = 249
+      Height = 21
+      Alignment = taCenter
+      TabOrder = 0
+      Text = '1Kgpb6xAwc7xgfs5ocYsbh9KMqmoaBLDYd'
+    end
+    object Button1: TButton
+      Left = 16
+      Top = 82
+      Width = 75
+      Height = 25
+      Caption = 'Copy'
+      TabOrder = 1
+      OnClick = Button1Click
+    end
+    object Button2: TButton
+      Left = 112
+      Top = 82
+      Width = 153
+      Height = 25
+      Caption = 'Bitcoin Wikipedia Page'
+      TabOrder = 2
+      OnClick = Button2Click
+    end
   end
 end

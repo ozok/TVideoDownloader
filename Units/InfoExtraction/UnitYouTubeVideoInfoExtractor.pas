@@ -248,7 +248,7 @@ begin
           LURl := LSingeThumb.JsonString.ToString;
         end;
 
-        LogForm.Main.Lines.Add('Thumb link: ' + LURl);
+        //LogForm.Main.Lines.Add('Thumb link: ' + LURl);
 
         if FDownloadImg then
         begin
@@ -322,6 +322,7 @@ begin
     except
       on E: Exception do
       begin
+        LogForm.Main.Lines.Add('Video link: ' + FURL);
         LogForm.Main.Lines.Add('Json parsing error: ' + E.Message);
       end;
     end;
@@ -451,5 +452,4 @@ begin
 end;
 
 end.
-
 

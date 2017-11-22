@@ -23,7 +23,7 @@ interface
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ExtCtrls,
-  ShellAPI;
+  ShellAPI, Vcl.Clipbrd;
 
 type
   TAboutForm = class(TForm)
@@ -31,13 +31,18 @@ type
     sLabel2: TLabel;
     sLabel3: TLabel;
     sButton1: TButton;
-    sButton2: TButton;
     sButton3: TButton;
     Image1: TImage;
+    GroupBox1: TGroupBox;
+    BtcEdit: TEdit;
+    Label1: TLabel;
+    Button1: TButton;
+    Button2: TButton;
     procedure sButton1Click(Sender: TObject);
-    procedure sButton2Click(Sender: TObject);
     procedure sButton3Click(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
+    procedure Button1Click(Sender: TObject);
+    procedure Button2Click(Sender: TObject);
   private
     { Private declarations }
   public
@@ -54,6 +59,16 @@ implementation
 uses
   UnitMain;
 
+procedure TAboutForm.Button1Click(Sender: TObject);
+begin
+  Clipboard.AsText := BtcEdit.Text;
+end;
+
+procedure TAboutForm.Button2Click(Sender: TObject);
+begin
+  ShellExecute(0, 'open', 'https://en.wikipedia.org/wiki/Bitcoin', nil, nil, SW_SHOWNORMAL);
+end;
+
 procedure TAboutForm.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
   MainForm.Enabled := True;
@@ -65,14 +80,9 @@ begin
   Self.Close;
 end;
 
-procedure TAboutForm.sButton2Click(Sender: TObject);
-begin
-  ShellExecute(0, 'open', 'https://ozok26.com/donate/', nil, nil, SW_SHOWNORMAL);
-end;
-
 procedure TAboutForm.sButton3Click(Sender: TObject);
 begin
-  ShellExecute(0, 'open', 'https://ozok26.com/category/tvideodownloader/', nil, nil, SW_SHOWNORMAL);
+  ShellExecute(0, 'open', 'https://sourceforge.net/projects/tvideodownloader/', nil, nil, SW_SHOWNORMAL);
 end;
 
 end.

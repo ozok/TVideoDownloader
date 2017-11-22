@@ -246,6 +246,7 @@ type
     // backend paths
     FYoutubedlPath: string;
     FMPVPath: string;
+    FLocalMPVPath: string;
     // add links in batch
     procedure BatchAdd(const Links: TStrings; const SingleLink: Boolean);
     // add line to log
@@ -269,7 +270,7 @@ uses
 
 procedure TMainForm.A1Click(Sender: TObject);
 begin
-  Self.Enabled := false;
+  Self.Enabled := False;
   AboutForm.Show;
 end;
 
@@ -1317,10 +1318,12 @@ begin
     Application.MessageBox('Cannot find youtube-dl!', 'Fatal Error', MB_ICONERROR);
     Application.Terminate;
   end;
+
+  FLocalMPVPath := ExtractFilePath(Application.ExeName) + '\tools\mpv.exe';
   // copy youtube-dl.exe to appdata folder for installed version
   if not Portable then
   begin
-    FMPVPath := ExtractFilePath(Application.ExeName) + '\mpv\mpv.exe';
+    FMPVPath := ExtractFilePath(Application.ExeName) + '\tools\mpv.exe';
     if not FileExists(FAppDataFolder + '\youtube-dl.exe') then
     begin
       if not CopyFile(PWideChar(FYoutubedlPath), PWideChar(FAppDataFolder + '\youtube-dl.exe'), false) then
@@ -1551,7 +1554,8 @@ end;
 
 procedure TMainForm.M1Click(Sender: TObject);
 begin
-  ShellExecute(0, 'open', 'https://ozok26.com/donate/', nil, nil, SW_SHOWNORMAL);
+  Self.Enabled := False;
+  AboutForm.Show;
 end;
 
 procedure TMainForm.MenuState(const _Enabled: Boolean);
@@ -1612,15 +1616,7 @@ var
   LURL: string;
 begin
   LItemIndex := (Sender as TButton).Tag;
-  LURL := FVideoDownloadListItems[LItemIndex].LinkLabel.Caption;
-
-  with FVideoDownloadListItems[LItemIndex] do
-  begin
-    PreviewProcess.ApplicationName := FMPVPath;
-    PreviewProcess.CommandLine := ' --ytdl "' + LURL + '" --geometry=800x600';
-    PreviewBtn.Enabled := False;
-    PreviewProcess.Run;
-  end;
+  FVideoDownloadListItems[LItemIndex].Preview(FMPVPath, FLocalMPVPath);
 end;
 
 procedure TMainForm.ProcessPanelVisibility(const Visible: Boolean);
